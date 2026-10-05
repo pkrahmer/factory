@@ -1,15 +1,16 @@
-# watch.py contract (version 4)
+# watch.py contract (version 5)
 
 `factory-watch` (`src/factory/watch.py`) is the deterministic router. Everything else in the pipeline is written against this contract, so changing the contract means changing `version` in `stages.yml`.
 
 ## Model
 
 - Features are folders under `root` (`factory/features` by default): `<F0001-slug>/` with a `FEATURE.md` and up to three subfolders, `drafts/`, `ongoing/`, `done/`. A story is a file `<F0001-S0003-slug>.md` in exactly one of them; its id is the stem without the slug, the feature's id is the first part. The watcher reads only `*/ongoing/*.md`. Promotion (`drafts/` → `ongoing/`) is the human's `git mv`; archiving (`ongoing/` → `done/`) is the dispatcher's, in the commit that sets `stage: done`. Neither is a stage change: a file that moved has no stage before.
-- The stage is the frontmatter field `stage`. Missing frontmatter means `ready`: a story freshly promoted from `drafts/` needs none. The frontmatter holds seven fields, `stage`, `pr`, `blocked`, `comments_seen`, `claimed_at`, `round`, `attempts`; the watcher reads `stage`, `pr`, `blocked`, `claimed_at`, `attempts`.
+- The stage is the frontmatter field `stage`. Missing frontmatter means `ready`: a story freshly promoted from `drafts/` needs none. The frontmatter holds six fields, `stage`, `pr`, `blocked`, `comments_seen`, `round`, `attempts`; the watcher reads `stage`, `pr`, `blocked`, `attempts`. Only the dispatcher writes them. A `claimed_at` left over from version 4 is ignored and dropped on the next write.
+- An agent at work is not in the story: the dispatcher writes `.git/factory-run.json` (`path`, `started`) before it starts an agent and removes it when the agent returns. A file left behind belongs to a run that was killed.
 - Every story past `ready` lives on the branch `ticket/<file stem>`. The watcher reads a story from the tip of that branch when the branch exists (local first, then `origin/`), otherwise from `origin/main` when that ref exists (the checkout may sit on a ticket branch while a new story lands on main; the tick fetches before it evaluates), otherwise from the working tree. A branch that is already an ancestor of main counts as absent: it was merged, and the copy on `main` is the newer one, however long its ref lingers.
 - A pull request number in `pr` ties the story to its GitHub pull request; `gh pr view` answers for it.
 - A stage with `gate` in `stages.yml` has no agent: the human leaves it by merging or closing the pull request.
-- A feature's acceptance is a ticket of its own: `<feature>/ACCEPTANCE.md`, id the feature folder, branch `acceptance/<folder>`, frontmatter the seven fields plus `stories` (the archived story ids it covers). It is due when the feature has stories under `done/`, none under `ongoing/` or `drafts/`, and no report whose `stories` equals the archived set; then the watcher lists it with stage `feature` even though the file does not exist yet, and `run acceptor <path> main` follows. While `acceptance/<folder>` exists the report is read from that branch; a report at `done` that covers the archived set silences the acceptance until another story is archived; its `outcome` (`accepted` when the human merged, `refused` when the human closed) is the feature's status. `--board` shows it per feature as `-` (incomplete), `due`, `running`, `accepted` or `refused`.
+- A feature's acceptance is a ticket of its own: `<feature>/ACCEPTANCE.md`, id the feature folder, branch `acceptance/<folder>`, frontmatter the six fields plus `stories` (the archived story ids it covers). It is due when the feature has stories under `done/`, none under `ongoing/` or `drafts/`, and no report whose `stories` equals the archived set; then the watcher lists it with stage `feature` even though the file does not exist yet, and `run acceptor <path> main` follows. While `acceptance/<folder>` exists the report is read from that branch; a report at `done` that covers the archived set silences the acceptance until another story is archived; its `outcome` (`accepted` when the human merged, `refused` when the human closed) is the feature's status. `--board` shows it per feature as `-` (incomplete), `due`, `running`, `accepted` or `refused`.
 
 ## Invocation
 
@@ -28,6 +29,7 @@ factory-watch --board     # print the board, exit 0
 - `git for-each-ref` over `refs/heads/ticket/`, `refs/remotes/origin/ticket/`, `refs/heads/acceptance/` and `refs/remotes/origin/acceptance/`
 - Every file under `<root>/<feature>/` (to tell drafts, ongoing and done apart for the acceptance rule)
 - For stage checks: the files in `git diff --name-only HEAD~1 HEAD -- <root>`, with their `stage` at `HEAD~1` and `HEAD`
+- `.git/factory-run.json`, the run in progress (for `busy` and `expired`)
 - `gh pr view <pr> --json state,comments` for stories with a `pr` that wait for the human: in a gate stage, or with a question posted on the pull request (`blocked: asked`)
 
 ## Output
@@ -43,12 +45,12 @@ Exactly one line per evaluation, first match wins:
 | `closed <path> <branch>` | The story's pull request was closed without merging |
 | `pr <path> OPEN <n>` | The story waits for the human (gate stage or `blocked: asked`) and its pull request is open with `n` comments; the dispatcher reacts when `n` exceeds `comments_seen` |
 | `ask <path>` | Any story with `blocked: question`, or in a gate stage without a `pr`, or with `attempts` at or above `max_attempts` |
-| `busy <path>` | A story is claimed (`claimed_at` set) and the claim is younger than `lease_minutes` |
-| `expired <path>` | A story is claimed and its lease is older than `lease_minutes` |
-| `run <agent> <path> <where>` | Lowest id among unclaimed tickets in a stage with an agent; `<where>` is `main` for `ready` and `feature` (the agent creates the branch) and the ticket's branch otherwise |
+| `busy <path>` | `.git/factory-run.json` names the story and its run started less than `lease_minutes` ago |
+| `expired <path>` | `.git/factory-run.json` names the story and its run started `lease_minutes` ago or more |
+| `run <agent> <path> <where>` | Lowest id among tickets in a stage with an agent; `<where>` is `main` for `ready` and `feature` (the agent creates the branch) and the ticket's branch otherwise |
 | `idle` | Nothing above matched |
 
-`busy` enforces WIP 1: while a lease is alive, no `run` is emitted for any other story. Id order is `F0001-S0001 < F0001-S0002 < F0001-todo-service < F0002-S0001`: feature by feature, story by story, then the feature's acceptance (its id is the folder name, which sorts after `F0001-S…`).
+`busy` enforces WIP 1: while a run is alive, no `run` is emitted for any other story. Id order is `F0001-S0001 < F0001-S0002 < F0001-todo-service < F0002-S0001`: feature by feature, story by story, then the feature's acceptance (its id is the folder name, which sorts after `F0001-S…`).
 
 ## What it must not do
 
@@ -59,4 +61,4 @@ Exactly one line per evaluation, first match wins:
 
 ## Implementation
 
-Standard library plus PyYAML and the `gh` CLI for pull request state. `evaluate()` is a pure function of (config, tickets, last change, now, pr lookup), so routing is tested without git or GitHub; `tests/test_watch.py` covers it and the git-backed readers.
+Standard library plus PyYAML and the `gh` CLI for pull request state. `evaluate()` is a pure function of (config, tickets, last change, now, pr lookup, run in progress), so routing is tested without git or GitHub; `tests/test_watch.py` covers it and the git-backed readers.

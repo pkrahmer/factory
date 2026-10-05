@@ -85,12 +85,15 @@ class Ticket:
             return f"acceptance/{self.feature}"
         return f"ticket/{self.path.stem}"
 
-    @property
-    def claimed(self) -> bool:
-        return bool(self.meta.get("claimed_at"))
 
-    def claim_age(self, now: datetime) -> timedelta:
-        return now - parse_timestamp(str(self.meta["claimed_at"]))
+@dataclass(frozen=True)
+class Running:
+    """A stage agent at work: the story and when its run started. Written by the dispatcher into
+    `.git/factory-run.json` before the agent starts and removed when it returns; a file left
+    behind belongs to a run that was killed."""
+
+    path: str
+    started: datetime
 
 
 # --- reading ---------------------------------------------------------------
@@ -380,13 +383,12 @@ def _asking(config: Config, tickets: list[Ticket]) -> str | None:
     return None
 
 
-def _leased(config: Config, tickets: list[Ticket], now: datetime) -> str | None:
+def _leased(config: Config, running: Running | None, now: datetime) -> str | None:
+    if running is None:
+        return None
     lease = timedelta(minutes=int(config["lease_minutes"]))
-    for ticket in tickets:
-        if ticket.claimed:
-            verb = "busy" if ticket.claim_age(now) < lease else "expired"
-            return f"{verb} {ticket.path.as_posix()}"
-    return None
+    verb = "busy" if now - running.started < lease else "expired"
+    return f"{verb} {running.path}"
 
 
 def _runnable(config: Config, tickets: list[Ticket]) -> str | None:
@@ -402,12 +404,14 @@ def _runnable(config: Config, tickets: list[Ticket]) -> str | None:
     return None
 
 
-def evaluate(
+def evaluate(  # noqa: PLR0913 — one parameter per input of the pure function
     config: Config,
     tickets: list[Ticket],
     change: Change | None,
     now: datetime,
     lookup: PrLookup = lambda _ticket: None,
+    *,
+    running: Running | None = None,
 ) -> str:
     """Pure: same inputs, same line. First match wins, in contract order."""
     return (
@@ -415,7 +419,7 @@ def evaluate(
         or _duplicated(tickets)
         or _pull_requests(config, tickets, lookup)
         or _asking(config, tickets)
-        or _leased(config, tickets, now)
+        or _leased(config, running, now)
         or _runnable(config, tickets)
         or "idle"
     )
@@ -432,6 +436,7 @@ def evaluate_repo(root: Path) -> str:
         last_change(root, config),
         datetime.now(UTC),
         lambda ticket: gh_pr_state(root, ticket),
+        running=read_running(root),
     )
 
 
@@ -486,8 +491,12 @@ def board(root: Path) -> str:
         for name, d, o, done, status in feature_counts(root, config, running)
     )
     rows.append("")
-    rows.append(f"{'story':<13} {'stage':<8} {'pr':<5} {'claimed':<20} flags")
+    rows.append(f"{'story':<13} {'stage':<8} {'pr':<5} {'running since':<20} flags")
+    at_work = read_running(root)
     for t in tickets:
+        since = "-"
+        if at_work is not None and at_work.path == t.path.as_posix():
+            since = at_work.started.strftime("%Y-%m-%dT%H:%M:%SZ")
         flags = [
             f"blocked:{t.meta.get('blocked')}" if t.meta.get("blocked") else "",
             f"round:{t.meta.get('round')}" if t.meta.get("round") else "",
@@ -495,7 +504,7 @@ def board(root: Path) -> str:
         ]
         rows.append(
             f"{t.ticket_id:<13} {t.stage:<8} {str(t.meta.get('pr') or '-'):<5} "
-            f"{str(t.meta.get('claimed_at') or '-'):<20} {' '.join(f for f in flags if f)}"
+            f"{since:<20} {' '.join(f for f in flags if f)}"
         )
     return "\n".join(rows)
 
@@ -507,6 +516,32 @@ def fingerprint(root: Path, config: Config, tick: int, pr_every: int) -> str:
     status = git(root, "status", "--porcelain", "--", features_dir(config).as_posix())
     refs = git(root, "for-each-ref", "--format=%(refname) %(objectname)", *TICKET_REFS)
     return head + status + refs + str(tick // pr_every)
+
+
+RUN_FILE = "factory-run.json"
+
+
+def _run_file(root: Path) -> Path:
+    return Path(git(root, "rev-parse", "--absolute-git-dir").strip()) / RUN_FILE
+
+
+def read_running(root: Path) -> Running | None:
+    """The run in progress, or the one a kill left behind; None when no agent is at work."""
+    try:
+        data = json.loads(_run_file(root).read_text(encoding="utf-8"))
+        return Running(str(data["path"]), parse_timestamp(str(data["started"])))
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def write_running(root: Path, running: Running) -> None:
+    started = running.started.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    payload = json.dumps({"path": running.path, "started": started})
+    _run_file(root).write_text(payload + "\n", encoding="utf-8")
+
+
+def clear_running(root: Path) -> None:
+    _run_file(root).unlink(missing_ok=True)
 
 
 def _memo(root: Path) -> Path:

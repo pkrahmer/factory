@@ -3,7 +3,7 @@
 The tick calls `handle` with the line it got from the watcher. `run` lines start the stage agent
 named in the line (through `Context.start`) after bringing its branch up to date; every other
 line is bookkeeping on the story and its pull request: archive, discard, refuse, ask, copy an
-answer, move an illegal change back, clear a dead claim. Each handler ends in at most one commit
+answer, move an illegal change back, clear a dead run. Each handler ends in at most one commit
 and one push, or in nothing at all, and says so in one sentence for the tick log.
 
 The rules for each line are those of `docs/WATCH_CONTRACT.md` and, for what a stage does, of the
@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -84,6 +85,7 @@ def _write(ctx: Context, path: str, text: str) -> None:
 def _edit(ctx: Context, path: str, *entries: str, **fields: Any) -> None:
     """Set frontmatter fields and append log entries to the story in the working tree."""
     meta, body = story.split(_read(ctx, path))
+    meta.pop("claimed_at", None)  # contract version 4 kept the claim here; the run file has it
     meta.update(fields)
     for entry in entries:
         body = story.append(body, entry)
@@ -133,9 +135,9 @@ def merged(ctx: Context, path: str, branch: str) -> Handled:
     entry = f"done (pull request merged); {cost}"
     ticket = watch.Ticket(Path(path), {})
     if ticket.is_acceptance:
-        _edit(ctx, path, entry, stage="done", outcome="accepted", claimed_at=None)
+        _edit(ctx, path, entry, stage="done", outcome="accepted")
     else:
-        _edit(ctx, path, entry, stage="done", blocked=None, claimed_at=None)
+        _edit(ctx, path, entry, stage="done", blocked=None)
         archived = Path(path).parent.parent / "done" / Path(path).name
         (ctx.root / archived).parent.mkdir(parents=True, exist_ok=True)
         watch.git(ctx.root, "mv", path, archived.as_posix())
@@ -165,7 +167,8 @@ def _refused(ctx: Context, path: str, branch: str) -> Handled:
     _to_main(ctx)
     cost = costs.one_line(ctx.root, path)
     meta, body = story.split(report)
-    meta.update(stage="done", outcome="refused", claimed_at=None)
+    meta.update(stage="done", outcome="refused")
+    meta.pop("claimed_at", None)
     body = story.insert_under(body, "Verdict", f"Refused by the human on {ctx.today}: {reason}")
     body = story.append(body, f"done (pull request closed by the human); {cost}")
     _write(ctx, path, story.render(meta, body))
@@ -209,7 +212,7 @@ def _sent_back(ctx: Context, path: str, branch: str, current: watch.Ticket) -> H
     _to_branch(ctx, branch)
     _copy_comments(ctx, path, pr)
     rounds = int(_meta(ctx, path).get("round") or 0) + 1
-    _edit(ctx, path, stage="doing", round=rounds, claimed_at=None)
+    _edit(ctx, path, stage="doing", round=rounds)
     cap = _max_rounds(ctx, "demo")
     if _reason_given(story.split(_read(ctx, path))[1]) and rounds <= cap:
         _edit(ctx, path, blocked=None)
@@ -269,7 +272,7 @@ def ask(ctx: Context, path: str) -> Handled:
         _edit(ctx, path, question)
     else:
         question = last
-    _edit(ctx, path, blocked="asked", claimed_at=None, comments_seen=_post(ctx, pr, question))
+    _edit(ctx, path, blocked="asked", comments_seen=_post(ctx, pr, question))
     _commit_and_push(ctx, branch, _subject(path, "question asked on the pull request"))
     return Handled(True, f"asked the question of {path} on pull request {pr}")
 
@@ -291,7 +294,7 @@ def answers(ctx: Context, path: str) -> Handled:
         retry = (
             {"attempts": 0} if int(current.meta.get("attempts") or 0) >= _max_attempts(ctx) else {}
         )
-        _edit(ctx, path, blocked=None, claimed_at=None, **retry)
+        _edit(ctx, path, blocked=None, **retry)
     _commit_and_push(ctx, branch, _subject(path, "comments from the pull request"))
     return Handled(True, f"copied {copied} comments of pull request {pr} into {path}")
 
@@ -315,19 +318,19 @@ def reject(ctx: Context, path: str, before: str, after: str) -> Handled:
 
 
 def expired(ctx: Context, path: str) -> Handled:
-    """The run that claimed the story is gone (lease over, or the machine restarted)."""
+    """The run that held the story is gone (lease over, or the machine restarted)."""
+    watch.clear_running(ctx.root)
     branch = _story_branch(ctx, path)
     if branch is None:
-        raise RuntimeError(f"a claim on {path} without a branch")
+        raise RuntimeError(f"a run on {path} without a branch")
     _to_branch(ctx, branch)
     meta = _meta(ctx, path)
     attempts = int(meta.get("attempts") or 0) + 1
     _edit(
         ctx,
         path,
-        "claim expired: the run that held it ended without finishing (lease over or machine "
+        "run expired: the run that held it ended without finishing (lease over or machine "
         "restarted)",
-        claimed_at=None,
         attempts=attempts,
     )
     pr = int(meta.get("pr") or 0)
@@ -337,8 +340,8 @@ def expired(ctx: Context, path: str) -> Handled:
             f"(attempt {attempts} of {_max_attempts(ctx)}). Retrying."
         )
         _edit(ctx, path, comments_seen=_post(ctx, pr, said))
-    _commit_and_push(ctx, branch, _subject(path, "claim expired"))
-    return Handled(True, f"cleared the expired claim on {path}")
+    _commit_and_push(ctx, branch, _subject(path, "run expired"))
+    return Handled(True, f"cleared the expired run on {path}")
 
 
 # --- run ---------------------------------------------------------------------------------------
@@ -354,7 +357,6 @@ def _stall(ctx: Context, path: str, branch: str, reason: str) -> None:
         ctx,
         path,
         f"stage {stage} stalled: {reason}; partial work committed",
-        claimed_at=None,
         attempts=attempts,
     )
     pr = int(meta.get("pr") or 0)
@@ -406,7 +408,7 @@ def _refuse_format(ctx: Context, path: str, findings: list[str]) -> str:
     """Intake moved on although the story's form is wrong: back to `ready`, and the findings are
     the question. Code checks the form; no model can accept a story past it."""
     entry = "format check: the story cannot start until its form is right: " + "; ".join(findings)
-    _edit(ctx, path, entry + ".", stage="ready", blocked="question", claimed_at=None)
+    _edit(ctx, path, entry + ".", stage="ready", blocked="question")
     subject = _subject(path, "ready → tests refused by the format check, moved back")
     _commit_and_push(ctx, watch.Ticket(Path(path), {}).branch, subject)
     return f"the format check refused {path}: {'; '.join(findings)}"
@@ -453,7 +455,7 @@ def run(ctx: Context, name: str, path: str, where: str) -> Handled:
     """Bring the story's branch up to date, start the agent, and count a run that made no
     progress as a stall."""
     current, branch = _current(ctx, path)
-    if current.claimed or ctx.config["stages"].get(current.stage, {}).get("agent") != name:
+    if ctx.config["stages"].get(current.stage, {}).get("agent") != name:
         return NOTHING
     decided = _decided_on_github(ctx, current)
     if decided is not None:
@@ -464,7 +466,11 @@ def run(ctx: Context, name: str, path: str, where: str) -> Handled:
         return Handled(True, f"stage {current.stage} of {path} stalled: {blocked}")
     findings = story.check_file(ctx.root, Path(path)) if current.stage == "ready" else []
     started_at = repo.head(ctx.root)
-    result = ctx.start(name, _task(ctx, current, branch_line, findings))
+    watch.write_running(ctx.root, watch.Running(path, datetime.now(UTC)))
+    try:
+        result = ctx.start(name, _task(ctx, current, branch_line, findings))
+    finally:
+        watch.clear_running(ctx.root)
     return _after_run(ctx, current, findings, result, started_at)
 
 

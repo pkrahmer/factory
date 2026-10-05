@@ -3,7 +3,7 @@
 <!-- A story: one branch, one pull request, one run through tests, code, review, docs and demo.
      File: factory/features/<F0001-slug>/drafts/F0001-S0003-short-slug.md while you write it;
      move it to ../ongoing/ to start it. No frontmatter needed: the pipeline writes its own
-     state fields (stage, pr, blocked, comments_seen, claimed_at, round, attempts). -->
+     state fields (stage, pr, blocked, comments_seen, round, attempts). -->
 
 ## Assignment (as of log entry 1)
 

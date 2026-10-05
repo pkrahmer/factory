@@ -1,6 +1,6 @@
 [project]
 name = "factory"
-version = "4.0.0"
+version = "5.0.0"
 description = "A file-based delivery pipeline: tickets in Git, one stage agent at a time, acceptance by pull request"
 readme = "README.md"
 requires-python = ">=3.12"

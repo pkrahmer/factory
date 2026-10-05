@@ -18,7 +18,7 @@ import yaml
 from factory import watch
 
 # The machine fields in the order they are written; any other key follows in its own order.
-FIELDS = ("stage", "pr", "blocked", "comments_seen", "claimed_at", "round", "attempts")
+FIELDS = ("stage", "pr", "blocked", "comments_seen", "round", "attempts")
 TRAILING = ("stories", "outcome")  # the acceptance report's two extra fields
 LOG_HEADING = "## Log"
 ENTRY = re.compile(r"^(\d+)\. ")

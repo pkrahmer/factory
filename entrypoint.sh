@@ -60,7 +60,8 @@ prepare() {
 
 # Nothing runs in a checkout before the first round, so a lock found there was left by a run
 # the restart killed: a tick lock would idle the repository for lease + 10 minutes, a git index
-# lock would fail every git command. The start time lets the tick expire claims of killed runs.
+# lock would fail every git command. The run file (.git/factory-run.json) stays: it is the
+# evidence of a killed run, and the start time lets the tick expire it at once.
 # The memo of the last handled line goes too: a restart usually brings a new factory version,
 # and whatever the old one left as handled-but-stuck deserves one more try.
 export FACTORY_STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"

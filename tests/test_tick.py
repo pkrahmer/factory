@@ -64,14 +64,15 @@ def test_a_pull_request_line_with_only_the_cost_table_unseen_is_skipped(
     assert not tick.only_own_comments(Path("."), RUN_CODER, tickets)
 
 
-def test_a_claim_older_than_the_machine_is_expired_at_once() -> None:
+def test_a_run_older_than_the_machine_is_expired_at_once() -> None:
     started = watch.parse_timestamp("2026-10-04T22:00:00Z")
-    old = [ticket(S1, claimed_at="2026-10-04T21:55:00Z")]
-    new = [ticket(S1, claimed_at="2026-10-04T22:01:00Z")]
+    old = watch.Running(S1, watch.parse_timestamp("2026-10-04T21:55:00Z"))
+    new = watch.Running(S1, watch.parse_timestamp("2026-10-04T22:01:00Z"))
     assert tick.outlived_claim(f"busy {S1}", old, started) == f"expired {S1}"
     assert tick.outlived_claim(f"busy {S1}", new, started) == f"busy {S1}"
     assert tick.outlived_claim(f"busy {S1}", old, None) == f"busy {S1}"  # start unknown
     assert tick.outlived_claim(RUN_CODER, old, started) == RUN_CODER
+    assert tick.outlived_claim(f"busy {S1}", None, started) == f"busy {S1}"
 
 
 def test_the_machine_start_comes_from_the_entrypoint(monkeypatch: pytest.MonkeyPatch) -> None:

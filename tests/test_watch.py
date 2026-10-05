@@ -110,8 +110,9 @@ def test_unposted_question_is_an_ask_and_does_not_poll() -> None:
 
 
 def test_running_stage_with_pull_request_is_not_polled() -> None:
-    tickets = [ticket("doing", "F0001-S0002", pr=2, claimed_at=NOW.isoformat())]
-    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("OPEN", 5))
+    tickets = [ticket("doing", "F0001-S0002", pr=2)]
+    running = watch.Running(S2, NOW)
+    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("OPEN", 5), running=running)
     assert line == f"busy {S2}"
 
 
@@ -156,15 +157,21 @@ def test_failed_pull_request_lookup_is_an_error_line() -> None:
     assert watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: None) == f"error pr-lookup {S1}"
 
 
-def test_live_claim_blocks_everything_else() -> None:
-    claimed = ticket("tests", "F0001-S0001", claimed_at=(NOW - timedelta(minutes=5)).isoformat())
-    tickets = [claimed, ticket("ready", "F0001-S0002")]
-    assert watch.evaluate(CONFIG, tickets, None, NOW) == f"busy {S1}"
+def test_a_running_stage_blocks_everything_else() -> None:
+    tickets = [ticket("tests", "F0001-S0001"), ticket("ready", "F0001-S0002")]
+    running = watch.Running(S1, NOW - timedelta(minutes=5))
+    assert watch.evaluate(CONFIG, tickets, None, NOW, running=running) == f"busy {S1}"
 
 
 def test_stale_claim_is_reported_as_expired() -> None:
-    stale = ticket("tests", "F0001-S0001", claimed_at=(NOW - timedelta(minutes=61)).isoformat())
-    assert watch.evaluate(CONFIG, [stale], None, NOW) == f"expired {S1}"
+    running = watch.Running(S1, NOW - timedelta(minutes=61))
+    line = watch.evaluate(CONFIG, [ticket("tests", "F0001-S0001")], None, NOW, running=running)
+    assert line == f"expired {S1}"
+
+
+def test_a_claim_left_in_old_frontmatter_is_ignored() -> None:
+    old = ticket("tests", "F0001-S0001", claimed_at=NOW.isoformat())
+    assert watch.evaluate(CONFIG, [old], None, NOW) == f"run tester {S1} {B1}"
 
 
 def test_too_many_attempts_asks_instead_of_running() -> None:
@@ -202,7 +209,6 @@ def test_frontmatter_is_the_first_yaml_block_only() -> None:
 def test_text_without_frontmatter_reads_as_a_fresh_story() -> None:
     t = watch.Ticket(Path(S1), watch.parse_frontmatter("# Just a title\n"))
     assert t.stage == "ready"
-    assert not t.claimed
 
 
 def test_id_feature_and_branch_come_from_the_path() -> None:
@@ -525,3 +531,15 @@ def test_board_shows_the_acceptance_status_of_each_feature(repo: Path) -> None:
     git(repo, "commit", "-qm", "acceptance F0001-thing: feature → accept")
     git(repo, "checkout", "-q", "main")
     assert watch.board(repo).splitlines()[1].split()[-1] == "running"
+
+
+def test_the_run_file_round_trips_under_git(repo: Path) -> None:
+    assert watch.read_running(repo) is None
+    watch.write_running(repo, watch.Running(S1, NOW))
+    assert (repo / ".git" / "factory-run.json").is_file()
+    assert watch.read_running(repo) == watch.Running(S1, NOW)
+    assert watch.board(repo).splitlines()[-1].split()[3] == NOW.strftime("%Y-%m-%dT%H:%M:%SZ")
+    watch.clear_running(repo)
+    assert watch.read_running(repo) is None
+    (repo / ".git" / "factory-run.json").write_text("not json")
+    assert watch.read_running(repo) is None

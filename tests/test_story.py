@@ -34,10 +34,10 @@ def test_split_and_render_round_trip_with_the_fields_in_order() -> None:
 
 
 def test_update_writes_null_and_keeps_strings_readable() -> None:
-    text = story.update(TEXT, claimed_at=None, blocked="question")
-    assert "\nblocked: question\nclaimed_at: null\n" in text
-    stamped = story.update(TEXT, claimed_at="2026-10-05T10:00:00Z")
-    assert story.split(stamped)[0]["claimed_at"] == "2026-10-05T10:00:00Z"
+    text = story.update(TEXT, blocked=None, comments_seen=2)
+    assert "\npr: 7\nblocked: null\ncomments_seen: 2\nattempts: 0\n" in text
+    stamped = story.update(TEXT, outcome="2026-10-05T10:00:00Z")
+    assert story.split(stamped)[0]["outcome"] == "2026-10-05T10:00:00Z"
 
 
 def test_a_story_without_frontmatter_gets_one() -> None:

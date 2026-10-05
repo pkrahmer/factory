@@ -87,18 +87,14 @@ def unseen_are_own(bodies: list[str], seen: int) -> bool:
     return bool(unseen) and all(github.is_own(body) for body in unseen)
 
 
-def outlived_claim(line: str, tickets: list[watch.Ticket], started: datetime | None) -> str:
-    """`busy` for a claim made before this machine started is `expired`. No run survives a
-    restart, so nobody holds that claim; waiting out the lease would idle the story for up to
-    an hour after every restart. Any other line, or no known start, is returned as it is."""
+def outlived_claim(line: str, running: watch.Running | None, started: datetime | None) -> str:
+    """`busy` for a run that started before this machine did is `expired`. No run survives a
+    restart, so nobody is at work; waiting out the lease would idle the story for up to an hour
+    after every restart. Any other line, or no known start, is returned as it is."""
     parts = line.split()
-    if started is None or parts[0] != "busy":
+    if started is None or running is None or parts[0] != "busy":
         return line
-    ticket = next((t for t in tickets if t.path.as_posix() == parts[1]), None)
-    if ticket is None or not ticket.claimed:
-        return line
-    claimed = watch.parse_timestamp(str(ticket.meta["claimed_at"]))
-    return f"expired {parts[1]}" if claimed < started else line
+    return f"expired {parts[1]}" if running.started < started else line
 
 
 def machine_started() -> datetime | None:
@@ -161,7 +157,7 @@ def release_lock(root: Path) -> None:
 def recover_dirty_tree(root: Path) -> bool:
     """An interrupted run (container restart, killed process) leaves an agent's edits behind.
     On a ticket branch they are committed as they are, so the record is complete and the
-    loop can go on; the claim stays and the lease decides when the stage is retried.
+    loop can go on; the run file stays and the lease decides when the stage is retried.
     On main nothing is committed: that is not a situation the loop creates."""
     branch = watch.git(root, "rev-parse", "--abbrev-ref", "HEAD").strip()
     if not branch.startswith(("ticket/", "acceptance/")):
@@ -323,7 +319,9 @@ def tick(root: Path, claude: str, *, dry_run: bool = False) -> int:
         fetch(root)
         sync_main(root)
         tickets = watch.scan_tickets(root, config)
-        line = outlived_claim(watch.evaluate_repo(root), tickets, machine_started())
+        line = outlived_claim(
+            watch.evaluate_repo(root), watch.read_running(root), machine_started()
+        )
         head = watch.git(root, "rev-parse", "HEAD").strip()
         memo = read_memo(root)
         if not needs_handling(line, memo, head, tickets) or only_own_comments(root, line, tickets):

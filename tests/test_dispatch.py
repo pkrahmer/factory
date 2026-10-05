@@ -148,7 +148,6 @@ class World:
             "pr": 7,
             "blocked": None,
             "comments_seen": 0,
-            "claimed_at": None,
             "round": 0,
             "attempts": 0,
             **meta,
@@ -196,7 +195,7 @@ def test_a_merged_story_is_archived_on_main_and_its_branch_deleted(world: World)
     assert handled.ok
     done = f"{FEATURE}/done/F0001-S0001-thing.md"
     meta = world.meta(done, "origin/main")
-    assert (meta["stage"], meta["blocked"], meta["claimed_at"]) == ("done", None, None)
+    assert (meta["stage"], meta["blocked"]) == ("done", None)
     assert story.last_entry(world.read(done, "origin/main")).startswith(
         "done (pull request merged); cost: 0 runs"
     )
@@ -239,7 +238,7 @@ def test_a_refused_acceptance_keeps_its_report_on_main_without_the_drafts(world:
     assert world.handle(f"closed {ACCEPT} {AB}").ok
     text = world.read(ACCEPT, "origin/main")
     meta = watch.parse_frontmatter(text)
-    assert (meta["stage"], meta["outcome"], meta["claimed_at"]) == ("done", "refused", None)
+    assert (meta["stage"], meta["outcome"]) == ("done", "refused")
     refusal = "Refused by the human on 2026-10-05: the order draft belongs to F0001"
     assert f"## Verdict\n\n{refusal}\n\naccepted with drafts" in text
     assert story.last_entry(text).startswith("done (pull request closed by the human); cost:")
@@ -335,14 +334,14 @@ def with_entry(world: World, entry: str) -> None:
 
 
 def test_a_question_is_posted_verbatim_and_marked_asked(world: World) -> None:
-    world.on_branch(B1, stage="tests", blocked="question", claimed_at="2026-10-05T09:00:00Z")
+    world.on_branch(B1, stage="tests", blocked="question")
     with_entry(world, "tester: criterion 6 calls list(open_only=True); which is meant?")
     assert world.handle(f"ask {S1}").ok
     assert world.gh.posts(7) == [
         f"tester: criterion 6 calls list(open_only=True); which is meant?\n\n{github.MARKER}"
     ]
     meta = world.meta(S1, f"origin/{B1}")
-    assert (meta["blocked"], meta["comments_seen"], meta["claimed_at"]) == ("asked", 1, None)
+    assert (meta["blocked"], meta["comments_seen"]) == ("asked", 1)
     tip = world.tip(f"origin/{B1}")
     assert world.handle(f"ask {S1}").ok  # already asked: nothing more
     assert world.tip(f"origin/{B1}") == tip and len(world.gh.posts(7)) == 1
@@ -403,13 +402,16 @@ def test_an_illegal_stage_change_is_moved_back_and_said_on_the_pull_request(worl
     assert world.gh.posts(7)[0].startswith("The stage was changed from tests to demo")
 
 
-def test_an_expired_claim_is_cleared_and_counted(world: World) -> None:
+def test_an_expired_run_is_cleared_and_counted(world: World) -> None:
     world.on_branch(B1, stage="review", claimed_at="2026-10-05T08:00:00Z", comments_seen=3)
+    watch.write_running(world.root, watch.Running(S1, watch.parse_timestamp("2026-10-05T08:00Z")))
     world.gh.comments[7] = [github.Comment("x", "2026-10-05", own=False)] * 3
     assert world.handle(f"expired {S1}").ok
+    assert watch.read_running(world.root) is None
     meta = world.meta(S1, f"origin/{B1}")
-    assert (meta["claimed_at"], meta["attempts"], meta["comments_seen"]) == (None, 1, 4)
-    assert story.last_entry(world.read(S1, f"origin/{B1}")).startswith("claim expired")
+    assert "claimed_at" not in meta  # a field of contract version 4, dropped on the next write
+    assert (meta["attempts"], meta["comments_seen"]) == (1, 4)
+    assert story.last_entry(world.read(S1, f"origin/{B1}")).startswith("run expired")
     assert world.gh.posts(7) == [
         "Stage review stalled: its run ended without finishing (attempt 1 of 2). Retrying."
         f"\n\n{github.MARKER}"
@@ -434,7 +436,6 @@ def stage_agent(
             "pr": meta.get("pr") or 7,
             "blocked": None,
             "comments_seen": 0,
-            "claimed_at": None,
             "round": 0,
             "attempts": 0,
         }
@@ -492,10 +493,9 @@ def test_a_closed_pull_request_discards_instead_of_starting_the_agent(world: Wor
     assert (world.root / FEATURE / "drafts" / "F0001-S0001-thing.md").exists()
 
 
-def test_a_claimed_or_moved_story_is_not_run_again(world: World) -> None:
-    world.on_branch(B1, stage="doing", claimed_at="2026-10-05T09:00:00Z")
-    assert world.handle(f"run coder {S1} {B1}").summary == "nothing to do"
-    world.write(S1, story.update(world.read(S1), claimed_at=None, stage="review"))
+def test_a_story_that_moved_on_is_not_run_again(world: World) -> None:
+    world.on_branch(B1, stage="doing")
+    world.write(S1, story.update(world.read(S1), stage="review"))
     world.commit("ticket F0001-S0001: doing → review")
     git(world.root, "push", "-q")
     assert world.handle(f"run coder {S1} {B1}").summary == "nothing to do"
@@ -506,8 +506,8 @@ def test_a_run_without_progress_is_a_stall_with_its_reason(world: World) -> None
     world.on_branch(B1, stage="doing")
 
     def claims_then_dies(root: Path) -> agent.AgentRun:
-        target = root / S1
-        target.write_text(story.update(target.read_text(), claimed_at="2026-10-05T09:00:00Z"))
+        running = watch.read_running(root)
+        assert running is not None and running.path == S1  # the run file names the story
         (root / "src.py").write_text("half\n")
         return agent.AgentRun(
             ok=False, reason="error_during_execution", denials=["Bash: git push --force"]
@@ -518,12 +518,8 @@ def test_a_run_without_progress_is_a_stall_with_its_reason(world: World) -> None
     assert handled.ok and handled.run is not None
     text = world.read(S1, f"origin/{B1}")
     meta = watch.parse_frontmatter(text)
-    assert (meta["stage"], meta["attempts"], meta["claimed_at"], meta["comments_seen"]) == (
-        "doing",
-        1,
-        None,
-        1,
-    )
+    assert (meta["stage"], meta["attempts"], meta["comments_seen"]) == ("doing", 1, 1)
+    assert watch.read_running(world.root) is None
     assert story.last_entry(text) == (
         "stage doing stalled: error_during_execution; denied: Bash: git push --force; "
         "partial work committed"
