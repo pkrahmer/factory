@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from factory import preflight, tick, watch
+from factory import agent, dispatch, github, preflight, tick, watch
 
 S1 = "factory/features/F0001-thing/ongoing/F0001-S0001-thing.md"
 S2 = "factory/features/F0001-thing/ongoing/F0001-S0002-new.md"
@@ -20,32 +20,32 @@ def ticket(path: str, **meta: object) -> watch.Ticket:
     return watch.Ticket(Path(path), {"stage": "doing", **meta})
 
 
-# --- needs_model ----------------------------------------------------------------
+# --- needs_handling ----------------------------------------------------------------
 
 
 def test_idle_and_busy_never_need_the_model() -> None:
-    assert not tick.needs_model("idle", tick.Memo(), "abc", [])
-    assert not tick.needs_model(f"busy {S1}", tick.Memo(), "abc", [])
+    assert not tick.needs_handling("idle", tick.Memo(), "abc", [])
+    assert not tick.needs_handling(f"busy {S1}", tick.Memo(), "abc", [])
 
 
 def test_new_line_or_new_head_needs_the_model() -> None:
     memo = tick.Memo(line=RUN_CODER, head="abc")
-    assert tick.needs_model(f"run tester {S1} {B1}", memo, "abc", [])
-    assert tick.needs_model(RUN_CODER, memo, "def", [])
+    assert tick.needs_handling(f"run tester {S1} {B1}", memo, "abc", [])
+    assert tick.needs_handling(RUN_CODER, memo, "def", [])
 
 
 def test_same_line_on_same_head_was_already_handled() -> None:
-    assert not tick.needs_model(RUN_CODER, tick.Memo(line=RUN_CODER, head="abc"), "abc", [])
+    assert not tick.needs_handling(RUN_CODER, tick.Memo(line=RUN_CODER, head="abc"), "abc", [])
 
 
 def test_pull_request_line_needs_the_model_only_for_new_comments() -> None:
     tickets = [ticket(S1, pr=1, comments_seen=2)]
-    assert not tick.needs_model(f"pr {S1} OPEN 2", tick.Memo(), "abc", tickets)
-    assert tick.needs_model(f"pr {S1} OPEN 3", tick.Memo(), "abc", tickets)
+    assert not tick.needs_handling(f"pr {S1} OPEN 2", tick.Memo(), "abc", tickets)
+    assert tick.needs_handling(f"pr {S1} OPEN 3", tick.Memo(), "abc", tickets)
 
 
 def test_only_the_ticks_own_unseen_comments_need_no_dispatcher() -> None:
-    table = f"{tick.OWN_PREFIX} cost of this ticket so far"
+    table = f"Cost of this ticket so far\n\n{github.MARKER}"
     assert tick.unseen_are_own([table], seen=0)
     assert tick.unseen_are_own(["a question", "an answer", table], seen=2)
     assert not tick.unseen_are_own([table, "merge? not yet: rename it"], seen=0)
@@ -56,7 +56,7 @@ def test_a_pull_request_line_with_only_the_cost_table_unseen_is_skipped(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     tickets = [ticket(S1, stage="accept", pr=7, comments_seen=0)]
-    comments = [f"{tick.OWN_PREFIX} cost of this ticket so far"]
+    comments = ["factory: cost of this ticket so far"]  # posted before the marker existed
     monkeypatch.setattr(tick, "pr_comment_bodies", lambda _root, _number: comments)
     assert tick.only_own_comments(Path("."), f"pr {S1} OPEN 1", tickets)
     comments.append("please rename the module")
@@ -82,10 +82,12 @@ def test_the_machine_start_comes_from_the_entrypoint(monkeypatch: pytest.MonkeyP
 
 
 def test_failed_line_is_retried_until_the_tick_gives_up() -> None:
-    assert tick.needs_model(RUN_CODER, tick.Memo(line=RUN_CODER, head="abc", failures=1), "abc", [])
+    assert tick.needs_handling(
+        RUN_CODER, tick.Memo(line=RUN_CODER, head="abc", failures=1), "abc", []
+    )
     given_up = tick.Memo(line=RUN_CODER, head="abc", failures=tick.MAX_FAILURES)
-    assert not tick.needs_model(RUN_CODER, given_up, "abc", [])
-    assert tick.needs_model(RUN_CODER, given_up, "def", [])  # a new commit makes it try again
+    assert not tick.needs_handling(RUN_CODER, given_up, "abc", [])
+    assert tick.needs_handling(RUN_CODER, given_up, "def", [])  # a new commit makes it try again
 
 
 # --- small helpers ----------------------------------------------------------------
@@ -94,14 +96,6 @@ def test_failed_line_is_retried_until_the_tick_gives_up() -> None:
 def test_lock_staleness_uses_the_lease_plus_a_margin() -> None:
     assert not tick.lock_is_stale(written=1000.0, now=1000.0 + 60 * 60, lease_minutes=60)
     assert tick.lock_is_stale(written=1000.0, now=1000.0 + 71 * 60, lease_minutes=60)
-
-
-def test_claude_command_is_headless_and_asks_nobody() -> None:
-    cmd = tick.claude_command("claude", RUN_CODER, "sonnet")
-    assert cmd[:3] == ["claude", "-p", f"/factory {RUN_CODER}"]
-    assert "--permission-prompts" in cmd
-    assert cmd[cmd.index("--permission-prompts") + 1] == "none"
-    assert cmd[cmd.index("--output-format") + 1] == "json"
 
 
 # --- state under .git ---------------------------------------------------------------
@@ -168,56 +162,59 @@ def test_a_successful_dispatch_asks_for_an_immediate_next_tick(
     repo: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(tick, "fetch", lambda _root: None)
-    monkeypatch.setattr(tick, "run_dispatcher", lambda *_a: (True, "turns=1"))
-    assert tick.tick(repo, claude="claude", model="sonnet") == tick.DISPATCHED
+    monkeypatch.setattr(dispatch, "handle", lambda _ctx, _line: dispatch.Handled(True, "x"))
+    assert tick.tick(repo, claude="claude") == tick.DISPATCHED
     assert tick.read_memo(repo).line == f"run intake {S1} main"
     # nothing changed since: the same line on the same HEAD is not dispatched again
-    assert tick.tick(repo, claude="claude", model="sonnet") == 0
+    assert tick.tick(repo, claude="claude") == 0
 
 
 def test_a_failed_dispatch_counts_and_gives_up(repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(tick, "fetch", lambda _root: None)
-    monkeypatch.setattr(tick, "run_dispatcher", lambda *_a: (False, "claude exit 1"))
+    monkeypatch.setattr(dispatch, "handle", lambda _ctx, _line: dispatch.Handled(False, "x"))
     told: list[str] = []
     monkeypatch.setattr(tick, "give_up", lambda _r, line, _s: told.append(line))
     for expected in range(1, tick.MAX_FAILURES + 1):
-        assert tick.tick(repo, claude="claude", model="sonnet") == 1
+        assert tick.tick(repo, claude="claude") == 1
         assert tick.read_memo(repo).failures == expected
     assert told == [f"run intake {S1} main"]
-    assert tick.tick(repo, claude="claude", model="sonnet") == 0  # given up, no more retries
+    assert tick.tick(repo, claude="claude") == 0  # given up, no more retries
 
 
-def test_a_dispatch_that_should_commit_but_did_not_is_a_failure(
+def test_a_handler_that_raises_is_a_failure_and_an_agent_run_is_recorded(
     repo: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setattr(tick, "run_dispatcher", lambda *_a: (True, "nothing to do"))
-    memo = tick.Memo()
-    assert tick.dispatch(repo, ("claude", "sonnet"), f"expired {S1}", "abc", memo) == 1
-    assert tick.read_memo(repo).failures == 1  # retried on the next tick, not remembered as done
+    def broken(_ctx: dispatch.Context, _line: str) -> dispatch.Handled:
+        raise RuntimeError("main cannot fast-forward to origin/main")
 
+    ctx = tick.context(repo, "claude")
+    monkeypatch.setattr(dispatch, "handle", broken)
+    assert tick.handle_line(repo, ctx, f"expired {S1}", "abc", tick.Memo()) == 1
+    assert tick.read_memo(repo).failures == 1  # retried on the next tick
+    assert (
+        "RuntimeError: main cannot fast-forward" in (repo / ".git" / "factory-tick.log").read_text()
+    )
 
-def test_a_dispatch_that_committed_is_a_success(
-    repo: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    def commit(*_a: object) -> tuple[bool, str]:
-        git(repo, "commit", "-q", "--allow-empty", "-m", "ticket F0001-S0001: claim expired")
-        return True, "cleared the claim"
-
-    monkeypatch.setattr(tick, "run_dispatcher", commit)
-    line = f"expired {S1}"
-    assert tick.dispatch(repo, ("claude", "sonnet"), line, "abc", tick.Memo()) == tick.DISPATCHED
-    assert tick.read_memo(repo) == tick.Memo(line=line, head="abc", failures=0)
+    run = agent.AgentRun(ok=True, cost=0.4, turns=12, seconds=60)
+    ran = dispatch.Handled(True, "coder moved it on", run)
+    monkeypatch.setattr(dispatch, "handle", lambda _ctx, _line: ran)
+    assert tick.handle_line(repo, ctx, RUN_CODER, "abc", tick.Memo()) == tick.DISPATCHED
+    assert tick.read_memo(repo) == tick.Memo(line=RUN_CODER, head="abc", failures=0)
+    records = (repo / ".git" / "factory-dispatches.jsonl").read_text().splitlines()
+    assert '"turns": 12' in records[-1] and '"cost": 0.4' in records[-1]
 
 
 def test_cost_table_is_posted_once_the_story_reaches_the_gate(
     repo: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     posted: list[list[str]] = []
+    bodies: list[str] = []
     real_run = subprocess.run
 
     def fake_run(args: list[str], **kw: object) -> object:
         if args[0] == "gh":
             posted.append(args)
+            bodies.append(str(kw.get("input") or ""))
             return subprocess.CompletedProcess(args, 0, "", "")
         return real_run(args, **kw)  # type: ignore[call-overload]
 
@@ -231,7 +228,8 @@ def test_cost_table_is_posted_once_the_story_reaches_the_gate(
     tick.tell_cost_when_ready(repo, f"run demo {S1} {B1}")
     assert len(posted) == 1
     assert posted[0][:4] == ["gh", "pr", "comment", "7"]
-    assert posted[0][-1].startswith("factory: cost of this ticket so far")
+    assert bodies[0].startswith("Cost of this ticket so far")
+    assert bodies[0].endswith(github.MARKER)
 
 
 def test_leftovers_on_a_story_branch_are_committed_and_the_tick_goes_on(
@@ -240,7 +238,7 @@ def test_leftovers_on_a_story_branch_are_committed_and_the_tick_goes_on(
     monkeypatch.setattr(tick, "fetch", lambda _root: None)
     git(repo, "checkout", "-qb", B1)
     (repo / "half-done.txt").write_text("an agent was here\n")
-    assert tick.tick(repo, claude="claude", model="sonnet", dry_run=True) == 0
+    assert tick.tick(repo, claude="claude", dry_run=True) == 0
     subject = git(repo, "log", "-1", "--format=%s").strip()
     assert subject == "ticket F0001-S0001: work left uncommitted by an interrupted run"
     assert not git(repo, "status", "--porcelain").strip()
@@ -248,7 +246,7 @@ def test_leftovers_on_a_story_branch_are_committed_and_the_tick_goes_on(
 
 def test_leftovers_on_main_stop_the_tick(repo: Path) -> None:
     (repo / "stray.txt").write_text("not the loop's doing\n")
-    assert tick.tick(repo, claude="claude", model="sonnet", dry_run=True) == 1
+    assert tick.tick(repo, claude="claude", dry_run=True) == 1
     assert "dirty on main" in (repo / ".git" / "factory-tick.log").read_text()
 
 
@@ -266,13 +264,13 @@ def test_tick_fast_forwards_main_so_new_stories_reach_the_working_tree(
     git(other, "add", "-A")
     git(other, "commit", "-qm", "F0001: start S0002")
     git(other, "push", "-q", "origin", "main")
-    assert tick.tick(repo, claude="claude", model="sonnet", dry_run=True) == 0
+    assert tick.tick(repo, claude="claude", dry_run=True) == 0
     assert (repo / S2).exists()
     assert "main fast-forwarded to origin/main" in (repo / ".git" / "factory-tick.log").read_text()
 
 
 def test_dry_run_logs_the_decision_without_starting_anything(repo: Path) -> None:
-    assert tick.tick(repo, claude="/nonexistent/claude", model="sonnet", dry_run=True) == 0
+    assert tick.tick(repo, claude="/nonexistent/claude", dry_run=True) == 0
     log = (repo / ".git" / "factory-tick.log").read_text()
     assert f"would dispatch: run intake {S1} main" in log
     assert not (repo / ".git" / "factory-tick.lock").exists()

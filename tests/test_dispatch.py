@@ -1,5 +1,5 @@
 """The line handlers, against a throwaway repository with a bare `origin`, a fake GitHub and a
-fake agent. Every path of the former dispatcher skill is here, including the ones no live run
+fake agent. Every path the dispatcher skill described is here, including the ones no live run
 has walked: the attempts cap and its retry, `reject`, an intake run on an existing branch."""
 
 from __future__ import annotations

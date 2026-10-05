@@ -1,4 +1,4 @@
-"""Check that the machine can run the loop before the dispatcher starts it.
+"""Check that the machine can run the loop before the tick starts it.
 
 One line per check, in a fixed order: `ok <name>` or `missing <name>: <fix>`.
 Exit 0 when everything is present, 1 otherwise. The fix is a command the

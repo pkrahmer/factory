@@ -1,4 +1,4 @@
-"""What happens for each watcher line: the work the dispatcher skill described, in code.
+"""What happens for each watcher line, in code: until 2026-10-05 a model did this from a skill.
 
 The tick calls `handle` with the line it got from the watcher. `run` lines start the stage agent
 named in the line (through `Context.start`) after bringing its branch up to date; every other

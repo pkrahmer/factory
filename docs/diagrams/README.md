@@ -1,6 +1,6 @@
 # Diagrams
 
-How one story moves through a repository's build, how a finished feature is accepted, and the frame that drives both. Boxes say what happens, arrow labels say what triggers the move; read left to right. Each diagram carries its own legend: blue is an agent stage, amber the human, grey the dispatcher (a model), green deterministic code. The text under each heading holds what the picture leaves out. Click a diagram to open it at full size. The diagrams follow the viewer's light or dark mode (`prefers-color-scheme`) and bring their own background in both, so they stay readable even where a page's theme and the system's differ.
+How one story moves through a repository's build, how a finished feature is accepted, and the frame that drives both. Boxes say what happens, arrow labels say what triggers the move; read left to right. Each diagram carries its own legend: blue is an agent stage, amber the human, grey the dispatcher (the code that handles one line), green the rest of the deterministic code. The text under each heading holds what the picture leaves out. Click a diagram to open it at full size. The diagrams follow the viewer's light or dark mode (`prefers-color-scheme`) and bring their own background in both, so they stay readable even where a page's theme and the system's differ.
 
 The SVGs are generated: change `draw.py`, then run `uv run python docs/diagrams/draw.py`. Every position is set by hand, so a new box needs room made for it.
 
@@ -79,7 +79,7 @@ The SVGs are generated: change `draw.py`, then run `uv run python docs/diagrams/
 
 - State lives under `.git/`, never tracked: `factory-tick.lock`, `factory-tick.json` (last line, HEAD, failures), `factory-preflight-ok`, `factory-tick.log`, and `factory-dispatches.jsonl` (turns, tokens and dollars per dispatcher run).
 - The lock is released at the end of every tick. A lock older than lease + 10 minutes belongs to a dead tick and is removed.
-- The dispatcher runs as `claude -p "/factory <line>"`: Sonnet, permission mode `auto`, no permission prompts, at most 80 turns. Whatever would have prompted is denied, and the denial is reported on the pull request.
+- The dispatcher is code (`factory.dispatch`); a model runs only for a `run` line, as the stage agent: `claude -p` with the agent file's model, tools, effort and skills passed as flags, the lane guard as a hook, permission mode `auto`, no permission prompts, and the agent's budget as `--max-budget-usd`. A run stopped by its budget is resumed once to hand back. Whatever would have prompted is denied, and the denial is reported on the pull request.
 - Exit 3 makes the entrypoint tick again after 2 seconds instead of waiting out the interval: the next stage is probably due.
 - Leftovers of an interrupted run are committed on a `ticket/` or `acceptance/` branch; on `main` the tick stops and waits for a human.
 

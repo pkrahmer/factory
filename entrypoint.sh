@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Container entrypoint: own a checkout of every repository in REPOS and tick them in turn.
 # Settings come from the environment (see compose.yml): REPOS (owner/name, comma-separated),
-# GH_TOKEN, TICK_SECONDS (default 120), FACTORY_MODEL (default sonnet), GIT_USER_NAME, GIT_USER_EMAIL.
+# GH_TOKEN, TICK_SECONDS (default 120), GIT_USER_NAME, GIT_USER_EMAIL.
 set -euo pipefail
 
 : "${REPOS:?set REPOS to owner/name[,owner/name...]}"
@@ -72,8 +72,8 @@ for repo in "${repos[@]}"; do
   rm -f "$git_dir/factory-tick.lock" "$git_dir/index.lock" "$git_dir/factory-tick.json"
 done
 
-echo "factory ticking every ${TICK_SECONDS}s on ${REPOS} (model ${FACTORY_MODEL:-sonnet})"
-# Exit code 3 from a tick means the dispatcher just did something there; evaluate that
+echo "factory ticking every ${TICK_SECONDS}s on ${REPOS}"
+# Exit code 3 from a tick means a line was just handled there; evaluate that
 # repository again at once instead of waiting out the interval.
 while true; do
   again=0

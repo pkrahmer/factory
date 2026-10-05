@@ -12,8 +12,8 @@ This repository is the engine. A repository that wants to be built by it carries
 
 ## Parts
 
-- `src/factory/` — the deterministic side: `watch` (what should happen next, one line), `tick` (runs the watcher, starts the dispatcher when needed, records costs), `guard` (the write-lane hook), `costs`, `preflight`. Installed as `factory-watch`, `factory-tick`, `factory-guard`, `factory-costs`, `factory-preflight`.
-- `claude/` — the model side: the dispatcher skill (`factory`), the rules every agent is preloaded with (`factory-rules`), a stage skill per stage and a role skill per role, the seven agents (intake, tester, coder, reviewer, documenter, demo, acceptor), and the permission allow list. Installed at user level in the container, so every repository under it sees them.
+- `src/factory/` — the deterministic side: `watch` (what should happen next, one line), `tick` (runs the watcher, handles the line it gets, records costs), `dispatch` (what each line does: bookkeeping on the story and its pull request, or starting a stage agent), `agent` (starts an agent headless from its file), `guard` (the write-lane hook), `costs`, `preflight`. Installed as `factory-watch`, `factory-tick`, `factory-guard`, `factory-costs`, `factory-preflight`.
+- `claude/` — the model side: the rules every agent works by (`factory-rules`), a stage skill per stage and a role skill per role, the seven agents (intake, tester, coder, reviewer, documenter, demo, acceptor), and the permission allow list. Installed at user level in the container, so every repository under it sees them.
 - `docs/diagrams/` — how a story moves through the stages and lanes, how a finished feature is accepted, how the container, the tick, the watcher and the preflight drive it, and the branches, as SVG with a short explanation each.
 - `docs/branching.md` — one trunk, one short branch per ticket, merge commits only; `docs/github-settings.md` — the GitHub settings that keep it so, for the factory and for every repository it builds.
 - `docs/WATCH_CONTRACT.md` — what the watcher must do; `claude/skills/factory-rules/SKILL.md` — the rules.
@@ -31,7 +31,7 @@ docker compose up -d
 docker compose logs -f
 ```
 
-The checkouts live in the `work` volume, the login in `claude-home`; `docker compose down -v` forgets both. Tick records (minutes, turns, tokens, dollars per dispatcher run) are in each checkout's `.git/factory-tick.log` and `.git/factory-dispatches.jsonl`.
+The checkouts live in the `work` volume, the login in `claude-home`; `docker compose down -v` forgets both. Tick records (minutes, turns, tokens, dollars per agent run) are in each checkout's `.git/factory-tick.log` and `.git/factory-dispatches.jsonl`.
 
 ## What a repository needs
 

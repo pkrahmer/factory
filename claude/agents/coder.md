@@ -6,7 +6,7 @@ tools: Read, Grep, Glob, Edit, Write, Bash
 background: false
 permissionMode: auto   # unattended: the classifier reviews what the allow list does not cover
 effort: medium
-maxTurns: 60
+budget_usd: 4   # per run; one resume after a budget stop gets a quarter more
 skills: [factory-rules, role-coder, stage-doing]
 hooks:
   PreToolUse:

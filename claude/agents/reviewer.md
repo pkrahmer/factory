@@ -7,7 +7,7 @@ disallowedTools: Write
 background: false
 permissionMode: auto   # unattended: the classifier reviews what the allow list does not cover
 effort: high
-maxTurns: 30
+budget_usd: 3   # per run; one resume after a budget stop gets a quarter more
 skills: [factory-rules, role-reviewer, stage-review]
 hooks:
   PreToolUse:

@@ -19,7 +19,7 @@ factory-watch --follow    # block; print a line each time the evaluation changes
 factory-watch --board     # print the board, exit 0
 ```
 
-`--once` is what the scheduled tick (`factory-tick`) uses: it evaluates once and decides whether the line needs the dispatcher. `--follow` polls every 2 seconds for a human watching a terminal: a change is detected when `HEAD`, `git status --porcelain <root>` or any `ticket/*` ref differs from the last poll; pull request state is re-read every 15 polls. `--board` prints one row per feature (drafts, ongoing, done counts from the working tree) and one row per ongoing story.
+`--once` is what the scheduled tick (`factory-tick`) uses: it evaluates once and decides whether the line needs handling; the dispatcher (`factory.dispatch`, code) handles it, and only a `run` line starts a model, the stage agent. `--follow` polls every 2 seconds for a human watching a terminal: a change is detected when `HEAD`, `git status --porcelain <root>` or any `ticket/*` ref differs from the last poll; pull request state is re-read every 15 polls. `--board` prints one row per feature (drafts, ongoing, done counts from the working tree) and one row per ongoing story.
 
 ## Inputs
 

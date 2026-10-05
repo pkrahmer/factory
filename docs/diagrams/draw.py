@@ -1096,8 +1096,9 @@ def one_tick() -> Diagram:
         2930,
         690,
         "07 · One tick",
-        "factory-tick decides whether this repository needs a model right now, and starts the "
-        "dispatcher only then. Tokens are spent on events, not on time.",
+        "factory-tick decides whether this repository needs a hand right now and handles the "
+        "line in code; a model runs only as a stage agent. Tokens are spent on events, "
+        "not on time.",
     )
     top, h, row2, row3 = 140.0, 136.0, 360.0, 540.0
     mid = top + h / 2
@@ -1127,11 +1128,11 @@ def one_tick() -> Diagram:
     needs = step(
         1640,
         "code",
-        ("needs a model?", "tick"),
+        ("needs a hand?", "tick"),
         (
             "not for idle or busy, nor",
             "pr whose new comments",
-            "are all the tick's own,",
+            "are all the factory's own,",
             "nor a line already",
             "handled at this HEAD",
         ),
@@ -1139,8 +1140,8 @@ def one_tick() -> Diagram:
     disp = step(
         1930,
         "disp",
-        ("dispatcher", "model, headless"),
-        ('claude -p "/factory <line>"', "handles that one line;", "cost recorded"),
+        ("dispatcher", "code"),
+        ("handles that one line;", "a run line starts the", "agent; its cost recorded"),
     )
     ok = diamond(2230, mid, ("ok?",))
     keep = step(

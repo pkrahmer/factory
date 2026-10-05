@@ -1,17 +1,17 @@
 """One tick of the delivery loop, for a scheduler that runs it every couple of minutes.
 
 A tick evaluates the repository with the watcher and decides whether the line it got
-needs the dispatcher. `idle` and `busy` never do; `pr … OPEN n` only when `n` exceeds
-the ticket's `comments_seen` and one of the unseen comments is not the tick's own; every
-other line only when it, or `HEAD`, differs from what the previous tick handled. Only then
-is a model started: `claude -p "/factory <line>"`, headless, which handles that one line
-and exits. Tokens are spent on events, not on time.
+needs handling. `idle` and `busy` never do; `pr … OPEN n` only when `n` exceeds the ticket's
+`comments_seen` and one of the unseen comments is not the factory's own; every other line
+only when it, or `HEAD`, differs from what the previous tick handled. Then `factory.dispatch`
+handles the line in code; a `run` line starts the stage agent, headless, and that is the only
+time a model runs. Tokens are spent on events, not on time.
 
 State lives next to the repository's own, under `.git/`: a lock while a tick runs, the
 last handled (line, HEAD) pair with a failure count, a preflight stamp, and a log.
 
-Exit codes: 0 nothing to do, DISPATCHED (3) the dispatcher ran and changed the repository —
-evaluate again right away, the next stage is probably due — and 1 for a failure.
+Exit codes: 0 nothing to do, DISPATCHED (3) a line was handled — evaluate again right away,
+the next stage is probably due — and 1 for a failure.
 """
 
 from __future__ import annotations
@@ -29,17 +29,21 @@ from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-from factory import costs, preflight, watch
+from factory import agent, costs, dispatch, github, preflight, watch
 
-# Consecutive dispatcher failures on one (line, HEAD) before the tick gives up on it.
+# Consecutive failures on one (line, HEAD) before the tick gives up on it.
 MAX_FAILURES = 3
 DISPATCHED = 3  # exit code: something happened, do not wait for the next interval
 PREFLIGHT_EVERY_HOURS = 24
-MAX_TURNS = 80
-OWN_PREFIX = "factory:"  # the tick's own pull request comments; the dispatcher never copies them
-# Lines whose handling always ends in a commit. A run that reports success on one of them but
-# moved no branch did not handle it, and the tick would otherwise remember it as handled.
-MUST_COMMIT = ("expired", "merged", "closed", "reject")
+# What a handler raises when the situation is not one it knows; the tick retries, then reports.
+HANDLER_ERRORS = (
+    RuntimeError,
+    OSError,
+    ValueError,
+    KeyError,
+    subprocess.CalledProcessError,
+    github.GitHubError,
+)
 
 
 @dataclass(frozen=True)
@@ -60,8 +64,8 @@ def now_iso() -> str:
 # --- decisions (pure) ---------------------------------------------------------
 
 
-def needs_model(line: str, memo: Memo, head: str, tickets: list[watch.Ticket]) -> bool:
-    """Whether this line, in this repository state, needs the dispatcher."""
+def needs_handling(line: str, memo: Memo, head: str, tickets: list[watch.Ticket]) -> bool:
+    """Whether this line, in this repository state, needs a handler."""
     parts = line.split()
     kind = parts[0]
     if kind in ("idle", "busy"):
@@ -78,9 +82,9 @@ def needs_model(line: str, memo: Memo, head: str, tickets: list[watch.Ticket]) -
 
 
 def unseen_are_own(bodies: list[str], seen: int) -> bool:
-    """Whether the comments after the first `seen` are all the tick's own (and there are some)."""
+    """Whether the comments after the first `seen` are all the factory's own, and some exist."""
     unseen = bodies[seen:]
-    return bool(unseen) and all(body.startswith(OWN_PREFIX) for body in unseen)
+    return bool(unseen) and all(github.is_own(body) for body in unseen)
 
 
 def outlived_claim(line: str, tickets: list[watch.Ticket], started: datetime | None) -> str:
@@ -108,24 +112,6 @@ def machine_started() -> datetime | None:
 
 def lock_is_stale(written: float, now: float, lease_minutes: int) -> bool:
     return now - written > (lease_minutes + 10) * 60
-
-
-def claude_command(claude: str, line: str, model: str) -> list[str]:
-    return [
-        claude,
-        "-p",
-        f"/factory {line}",
-        "--permission-mode",
-        "auto",
-        "--permission-prompts",
-        "none",
-        "--model",
-        model,
-        "--output-format",
-        "json",
-        "--max-turns",
-        str(MAX_TURNS),
-    ]
 
 
 # --- state under .git ---------------------------------------------------------
@@ -254,54 +240,56 @@ def preflight_ok(root: Path) -> bool:
 # --- the tick -----------------------------------------------------------------
 
 
-def run_dispatcher(root: Path, claude: str, line: str, model: str) -> tuple[bool, str]:
-    """Start the headless dispatcher for one line. Returns (ok, one-line summary) and
-    records the run — turns, seconds, tokens, dollars — for `factory.costs`."""
-    started = time.time()
-    proc = subprocess.run(
-        claude_command(claude, line, model),
-        cwd=root,
-        capture_output=True,
-        encoding="utf-8",
-        check=False,
+def context(root: Path, claude: str) -> dispatch.Context:
+    """What the handlers work with: the repository, GitHub through `gh`, and a way to start an
+    agent from its file under `FACTORY_CLAUDE_HOME` (default `~/.claude`), with the lease as the
+    run's wall-clock limit."""
+    config = watch.load_config(root)
+    home = Path(os.environ.get("FACTORY_CLAUDE_HOME") or Path.home() / ".claude")
+    process = agent.subprocess_process(root)
+
+    def start(name: str, message: str) -> agent.AgentRun:
+        try:
+            spec = agent.load(name, home)
+        except agent.AgentMissingError as missing:
+            return agent.AgentRun(ok=False, reason=str(missing))
+        return agent.run(
+            spec,
+            message,
+            state=git_dir(root) / "factory-agent",
+            timeout=int(config["lease_minutes"]) * 60,
+            process=process,
+            claude=claude,
+            finish=dispatch.FINISH,
+        )
+
+    return dispatch.Context(
+        root=root,
+        config=config,
+        github=github.GitHub(github.gh_runner(root)),
+        start=start,
+        today=datetime.now(UTC).strftime("%Y-%m-%d"),
     )
-    seconds = int(time.time() - started)
-    try:
-        data = json.loads(proc.stdout)
-    except ValueError:
-        tail = (proc.stderr or proc.stdout).strip().splitlines()[-1:] or ["no output"]
-        record(root, line, ok=False, seconds=seconds)
-        return False, f"claude exit {proc.returncode} after {seconds}s: {tail[0][:200]}"
-    ok = proc.returncode == 0 and not data.get("is_error")
-    usage = data.get("usage") if isinstance(data.get("usage"), dict) else {}
-    fields = {
-        "turns": int(data.get("num_turns") or 0),
-        "cost": float(data.get("total_cost_usd") or 0),
-        "input": int(usage.get("input_tokens") or 0),
-        "cache_read": int(usage.get("cache_read_input_tokens") or 0),
-        "cache_write": int(usage.get("cache_creation_input_tokens") or 0),
-        "output": int(usage.get("output_tokens") or 0),
+
+
+def record(root: Path, line: str, run: agent.AgentRun) -> None:
+    """One JSON line per agent run; `factory.costs` sums them per ticket and stage."""
+    entry = {
+        "time": now_iso(),
+        "line": line,
+        "ok": run.ok,
+        "seconds": run.seconds,
+        "turns": run.turns,
+        "cost": run.cost,
+        **run.tokens,
     }
-    record(root, line, ok=ok, seconds=seconds, **fields)
-    summary = (
-        f"turns={fields['turns']} cost=${fields['cost']:.2f} seconds={seconds} "
-        f"tokens={fields['input'] + fields['cache_write']}+{fields['cache_read']}cached/"
-        f"{fields['output']}out result={str(data.get('result', ''))[:200]!r}"
-    )
-    return ok, summary
-
-
-def record(root: Path, line: str, *, ok: bool, seconds: int, **fields: float) -> None:
-    """One JSON line per dispatcher run; `factory.costs` sums them per ticket and stage."""
-    entry = {"time": now_iso(), "line": line, "ok": ok, "seconds": seconds, **fields}
     with (git_dir(root) / costs.RECORDS).open("a", encoding="utf-8") as fh:
         fh.write(json.dumps(entry) + "\n")
 
 
 def tell_cost_when_ready(root: Path, line: str) -> None:
     """After a run that left the story at the gate (its stage has no agent, the human leaves
-    it by merging), put the bill on the pull request, prefixed `factory:` so the dispatcher
-    never mistakes it for an answer."""
+    it by merging), put the bill on the pull request, as the factory's own comment."""
     if not line.startswith("run "):
         return
     path = costs.ticket_of(line)
@@ -311,13 +299,16 @@ def tell_cost_when_ready(root: Path, line: str) -> None:
         return
     if config["stages"].get(ticket.stage, {}).get("gate") is None:
         return
-    body = f"factory: cost of this ticket so far\n\n{costs.table(root, str(path))}"
-    args = ["gh", "pr", "comment", str(ticket.meta["pr"]), "--body", body]
-    subprocess.run(args, cwd=root, check=False, capture_output=True)
+    body = f"Cost of this ticket so far\n\n{costs.table(root, str(path))}"
+    try:
+        github.GitHub(github.gh_runner(root)).comment(int(ticket.meta["pr"]), body)
+    except github.GitHubError as failed:
+        log(root, f"could not post the cost table: {failed}")
+        return
     log(root, f"posted the cost table on pull request {ticket.meta['pr']}")
 
 
-def tick(root: Path, claude: str, model: str, *, dry_run: bool = False) -> int:
+def tick(root: Path, claude: str, *, dry_run: bool = False) -> int:
     config = watch.load_config(root)
     if not acquire_lock(root, int(config["lease_minutes"])):
         return 0  # a tick is still running; the scheduler will come back
@@ -335,61 +326,70 @@ def tick(root: Path, claude: str, model: str, *, dry_run: bool = False) -> int:
         line = outlived_claim(watch.evaluate_repo(root), tickets, machine_started())
         head = watch.git(root, "rev-parse", "HEAD").strip()
         memo = read_memo(root)
-        if not needs_model(line, memo, head, tickets) or only_own_comments(root, line, tickets):
+        if not needs_handling(line, memo, head, tickets) or only_own_comments(root, line, tickets):
             return 0
         if dry_run:
             log(root, f"would dispatch: {line}")
             return 0
-        return dispatch(root, (claude, model), line, head, memo)
+        return handle_line(root, context(root, claude), line, head, memo)
     finally:
         release_lock(root)
 
 
-def dispatch(root: Path, runner: tuple[str, str], line: str, head: str, memo: Memo) -> int:
-    """Start the dispatcher (claude binary, model) for the line and record how it went."""
-    claude, model = runner
+def handle_line(root: Path, ctx: dispatch.Context, line: str, head: str, memo: Memo) -> int:
+    """Handle the line and remember how it went: a handled line is not handled again on the
+    same HEAD; a failure is retried until `MAX_FAILURES`, then reported on the pull request."""
     log(root, f"dispatch: {line}")
-    before = branch_tips(root)
-    ok, summary = run_dispatcher(root, claude, line, model)
-    if ok and line.split(maxsplit=1)[0] in MUST_COMMIT and branch_tips(root) == before:
-        ok, summary = False, f"no commit for a line that needs one; {summary}"
-    if ok:
+    try:
+        handled = dispatch.handle(ctx, line)
+    except HANDLER_ERRORS as error:
+        handled = dispatch.Handled(False, f"{type(error).__name__}: {error}")
+    if handled.run is not None:
+        record(root, line, handled.run)
+    if handled.ok:
         write_memo(root, Memo(line=line, head=head, failures=0))
-        log(root, f"done: {summary}")
+        log(root, f"done: {handled.summary}{_cost(handled.run)}")
         tell_cost_when_ready(root, line)
         return DISPATCHED
     failures = memo.failures + 1 if (line, head) == (memo.line, memo.head) else 1
     write_memo(root, Memo(line=line, head=head, failures=failures))
-    log(root, f"failed ({failures}/{MAX_FAILURES}): {summary}")
+    log(root, f"failed ({failures}/{MAX_FAILURES}): {handled.summary}{_cost(handled.run)}")
     if failures >= MAX_FAILURES:
-        give_up(root, line, summary)
+        give_up(root, line, handled.summary)
     return 1
 
 
-def branch_tips(root: Path) -> str:
-    """Every local branch with its commit: changes whenever the dispatcher commits anything."""
-    return watch.git(root, "for-each-ref", "--format=%(refname) %(objectname)", "refs/heads/")
+def _cost(run: agent.AgentRun | None) -> str:
+    if run is None:
+        return ""
+    fresh = run.tokens["input"] + run.tokens["cache_write"]
+    return (
+        f" (turns={run.turns} cost=${run.cost:.2f} seconds={run.seconds} "
+        f"tokens={fresh}+{run.tokens['cache_read']}cached/{run.tokens['output']}out)"
+    )
 
 
 def give_up(root: Path, line: str, summary: str) -> None:
     """After repeated failures on one line, tell the pull request; the tick stops retrying."""
     pr = pr_of(root, line)
     message = (
-        f"The dispatcher failed {MAX_FAILURES} times on `{line}` and has stopped retrying it. "
+        f"The factory failed {MAX_FAILURES} times on `{line}` and has stopped retrying it. "
         f"Last failure: {summary}. A human needs to look at the machine; a new commit on the "
         f"branch makes the tick try again."
     )
     log(root, "giving up: " + ("posted on pull request" if pr else "no pull request to tell"))
     if pr:
-        args = ["gh", "pr", "comment", str(pr), "--body", message]
-        subprocess.run(args, cwd=root, check=False, capture_output=True)
+        try:
+            github.GitHub(github.gh_runner(root)).comment(pr, message)
+        except github.GitHubError as failed:
+            log(root, f"could not report on pull request {pr}: {failed}")
 
 
 def only_own_comments(root: Path, line: str, tickets: list[watch.Ticket]) -> bool:
-    """A `pr` line whose unseen comments are all the tick's own (the cost table) needs no
-    dispatcher: it would only raise `comments_seen`, and it would push to the branch just when
+    """A `pr` line whose unseen comments are all the factory's own (the cost table) needs no
+    handling: it would only raise `comments_seen`, and it would push to the branch just when
     the human is invited to merge. The count catches up with the human's next comment, which
-    the dispatcher reads together with the rest."""
+    is read together with the rest."""
     parts = line.split()
     if parts[0] != "pr":
         return False
@@ -428,11 +428,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--claude", default=os.environ.get("FACTORY_CLAUDE", "claude"))
-    parser.add_argument("--model", default=os.environ.get("FACTORY_MODEL", "sonnet"))
     parser.add_argument("--dry-run", action="store_true", help="decide and log, start nothing")
     args = parser.parse_args(argv)
     claude = shutil.which(args.claude) or args.claude
-    return tick(args.root.resolve(), claude, args.model, dry_run=args.dry_run)
+    return tick(args.root.resolve(), claude, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 """What a ticket cost: minutes, turns, tokens and dollars per stage, from the tick's records.
 
-The tick appends one JSON line per dispatcher run to `.git/factory-dispatches.jsonl`
+The tick appends one JSON line per agent run to `.git/factory-dispatches.jsonl`
 (see `tick.record`). This module sums them for one ticket. The tick posts the table on
 the pull request when the ticket becomes ready for the human; the dispatcher puts the
 one-line total into the ticket when it closes it (before the story moves to `done/`:
@@ -55,7 +55,8 @@ def _num(record: dict[str, object], key: str) -> int:
 
 
 def stage_of(line: str) -> str:
-    """`run <agent> …` is the agent's stage; every other line is the dispatcher's own work."""
+    """`run <agent> …` is the agent's stage; other lines are bookkeeping (in records written
+    while the dispatcher was a model, the dispatcher's own runs)."""
     parts = line.split()
     return parts[1] if parts and parts[0] == "run" and len(parts) > 1 else "dispatcher"
 
