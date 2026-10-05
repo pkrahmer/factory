@@ -74,7 +74,9 @@ def current(ctx: Context, path: str) -> tuple[watch.Ticket, str]:
     else:  # the line was evaluated against origin/main
         text = repo.show_ref(ctx.root, f"origin/{MAIN}", path)
     ticket = ops.ticket_of(path, text)
-    if text is None and ticket.is_acceptance:  # due, and the dispatcher writes the report's head
+    if ticket.is_acceptance and (text is None or ticket.stage == "done"):
+        # Due: no report yet, or one that covers fewer stories than are archived now. The
+        # dispatcher writes the new report's head; the old report stays in main's history.
         ticket = watch.Ticket(Path(path), {"stage": watch.FEATURE_STAGE})
     return ticket, branch
 

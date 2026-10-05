@@ -768,7 +768,7 @@ def test_demo_hands_over_with_the_pull_request_body_from_the_story(world: World)
         assert part in pr_body, part
 
 
-def test_the_acceptor_gets_its_branch_report_and_facts(world: World) -> None:
+def archive_s1(world: World) -> None:
     done = f"{FEATURE}/done/F0001-S0001-thing.md"
     (world.root / FEATURE / "done").mkdir()
     git(world.root, "mv", S1, done)
@@ -781,6 +781,10 @@ def test_the_acceptor_gets_its_branch_report_and_facts(world: World) -> None:
     world.write(done, story.render({"stage": "done"}, body))
     world.commit("ticket F0001-S0001: accept → done (pull request merged)")
     git(world.root, "push", "-q")
+
+
+def test_the_acceptor_gets_its_branch_report_and_facts(world: World) -> None:
+    archive_s1(world)
     report = (
         "---\nstage: feature\n---\n# Acceptance of Thing\n\n## Verdict\n\naccepted with drafts: "
         "one survivor\n\n## 1 Scope\n\nnone\n\n## Proposed stories\n\n- F0001-S0002 pin it\n"
@@ -811,6 +815,24 @@ def test_the_acceptor_gets_its_branch_report_and_facts(world: World) -> None:
     assert "## Proposed stories\n\n- F0001-S0002 pin it" in pr_body
     assert pr_body.endswith(stage.ACCEPTANCE_CLOSING)
     assert "ready 9" in world.gh.calls
+
+
+def test_a_story_archived_after_the_acceptance_starts_a_new_one(world: World) -> None:
+    old = story.render(
+        {"stage": "done", "pr": 4, "stories": ["F0001-S0000"], "outcome": "accepted"},
+        "# Acceptance of Thing\n\n## Verdict\n\naccepted\n",
+    )
+    world.write(ACCEPT, old)
+    world.commit("acceptance F0001-thing: accept → done (pull request merged)")
+    archive_s1(world)
+    world.agent = outcome("accept", "accepted", edits={ACCEPT: "# Acceptance of Thing\n"})
+    assert world.handle(f"run acceptor {ACCEPT} main").ok
+    assert len(world.started) == 1
+    assert "Archived stories: F0001-S0001\n" in world.started[0][1]
+    assert world.gh.created[0][:2] == (AB, "F0001-thing: acceptance")
+    meta = world.meta(ACCEPT, f"origin/{AB}")
+    assert (meta["stage"], meta["pr"], meta["stories"]) == ("accept", 9, ["F0001-S0001"])
+    assert "outcome" not in meta
 
 
 def test_a_stage_that_breaks_the_storys_form_is_held(world: World) -> None:
