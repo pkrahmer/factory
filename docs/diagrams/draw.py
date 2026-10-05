@@ -598,7 +598,7 @@ def stage_run() -> Diagram:
         ("check out", "dispatcher"),
         ("ticket branch, pull,", "merge main in; ready:", "main, or the branch", "after an answer"),
     )
-    claim = box(600, y, "agent", ("claim", "agent"), ("claimed_at = now,", "commit, push"))
+    claim = box(600, y, "agent", ("claim", "agent"), ("claimed_at = now,", "commit locally"))
     read = box(
         860,
         y,

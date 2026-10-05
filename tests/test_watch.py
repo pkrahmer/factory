@@ -486,6 +486,51 @@ def test_tickets_without_a_branch_are_read_from_origin_main(
     assert watch.evaluate_repo(repo) == f"run tester {S1} {B1}"
 
 
+def add_origin(repo: Path, tmp_path_factory: pytest.TempPathFactory) -> None:
+    origin = tmp_path_factory.mktemp("remote") / "origin.git"
+    git(repo, "init", "-q", "--bare", "-b", "main", str(origin))
+    git(repo, "remote", "add", "origin", str(origin))
+    git(repo, "push", "-q", "-u", "origin", "main")
+
+
+def claim_locally(repo: Path, stage: str) -> None:
+    """A claim as R6 makes it: committed on the story branch, not pushed."""
+    now = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    (repo / S1).write_text(f"---\nstage: {stage}\nclaimed_at: {now}\n---\n# Thing\n")
+    git(repo, "commit", "-qam", f"ticket F0001-S0001: claim for {stage}")
+
+
+def test_a_claim_committed_locally_and_not_pushed_is_busy(
+    repo: Path, tmp_path_factory: pytest.TempPathFactory
+) -> None:
+    add_origin(repo, tmp_path_factory)
+    git(repo, "checkout", "-qb", B1)
+    set_stage(repo, "tests", "ticket F0001-S0001: ready → tests")
+    git(repo, "push", "-q", "-u", "origin", B1)
+    claim_locally(repo, "tests")
+    # origin has the branch as the last stage pushed it; the watcher reads the local tip first
+    assert "claimed_at" not in git(repo, "show", f"origin/{B1}:{S1}")
+    assert watch.evaluate_repo(repo) == f"busy {S1}"
+
+
+def test_the_closing_commit_amends_the_claim_into_one_stage_change(
+    repo: Path, tmp_path_factory: pytest.TempPathFactory
+) -> None:
+    add_origin(repo, tmp_path_factory)
+    git(repo, "checkout", "-qb", B1)
+    set_stage(repo, "tests", "ticket F0001-S0001: ready → tests")
+    git(repo, "push", "-q", "-u", "origin", B1)
+    claim_locally(repo, "tests")
+    write_story(repo, S1, "doing")  # stage changed, claim cleared
+    git(repo, "add", "-A")
+    git(repo, "commit", "-q", "--amend", "-m", "ticket F0001-S0001: tests → doing")
+    git(repo, "push", "-q")  # no force: the amended claim never reached origin
+    assert watch.last_change(repo, watch.load_config(repo)) == (Path(S1), "tests", "doing")
+    pushed = watch.git(repo, "log", "--format=%s", f"origin/{B1}").splitlines()  # UTF-8: the arrow
+    assert pushed[:2] == ["ticket F0001-S0001: tests → doing", "ticket F0001-S0001: ready → tests"]
+    assert watch.evaluate_repo(repo) == f"run coder {S1} {B1}"
+
+
 def test_follow_remembers_its_last_line_across_restarts(
     repo: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:

@@ -128,6 +128,8 @@ The same demo, with one rule changed: **every defect is a factory defect until p
 
 It stops and asks the maintainer when a fix would change the model rather than a detail: a new stage, a new rule, a change to what the human does, or a change to `docs/WATCH_CONTRACT.md`.
 
+After every archived story, check its commits. Only intake and the coder leave a claim commit behind (R6): a story has eight commits plus the coder's work commits, so nine with one `feat` commit, and more only where the dispatcher merged `main` in or a stage asked, stalled or went back. Run `gh api repos/<owner>/<repo>/pulls/<n>/commits --jq '.[].commit.message' | grep 'claim for'`. It must list `claim for intake` and one `claim for doing` per coder run, nothing else. And every stage change from `ready → tests` to `demo → accept` must be there, in order.
+
 To walk the paths a clean run never takes, write stories with one deliberate defect each, marked `<!-- carries path N -->`:
 
 1. Intake asks: a behaviour without a criterion; a Demo without `Expect:`.
@@ -142,3 +144,4 @@ To walk the paths a clean run never takes, write stories with one deliberate def
 10. Two stories in `ongoing/` at once; WIP 1 holds.
 11. A close at `accept` with a comment asking for a change.
 12. Feature acceptance: one report refused, one merged with drafts that are then refined and promoted.
+13. A restart (`docker compose restart`) while the reviewer holds its claim. The claim exists only in the container's checkout, and the tick must still find it and expire it at once.
