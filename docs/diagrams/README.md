@@ -32,6 +32,7 @@ The SVGs are generated: change `draw.py`, then run `uv run python docs/diagrams/
 ![One stage run](03-stage-run.svg)
 
 - The acceptor (05) runs the same way: like intake it starts on `main` and creates its branch.
+- The claim is a commit that is not pushed. The commit that moves on, sends back or asks amends it and pushes, so the claim never reaches GitHub. Intake and the acceptor push their claim because the pull request needs the branch, and the coder's claim stays under its work commits (R6).
 - The agent's task message names the story, its stage, the allowed next stages, the branch and the pull request.
 - `make check` must be green before the stage changes. The only exception is `tests`, which leaves the new tests red on purpose.
 - An agent that runs out of turns is told once to commit what it has and hand back; only then does the run count as a stall.
