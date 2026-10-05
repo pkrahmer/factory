@@ -1059,7 +1059,7 @@ def machine() -> Diagram:
         "code",
         "wait",
         "entrypoint",
-        ("2 s if a tick dispatched", "(exit 3), otherwise", "TICK_SECONDS (120 s)"),
+        ("2 s if a tick dispatched", "(exit 3), then 15, 30,", "60, up to 120 s"),
     )
     waiting = Node(
         1180,

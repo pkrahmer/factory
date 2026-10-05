@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # Container entrypoint: own a checkout of every repository in REPOS and tick them in turn.
 # Settings come from the environment (see compose.yml): REPOS (owner/name, comma-separated),
-# GH_TOKEN, TICK_SECONDS (default 120), GIT_USER_NAME, GIT_USER_EMAIL.
+# GH_TOKEN, TICK_SECONDS (the longest pause, default 120), TICK_FIRST_SECONDS (the first pause
+# after a tick that did something, default 15), GIT_USER_NAME, GIT_USER_EMAIL.
 set -euo pipefail
 
 : "${REPOS:?set REPOS to owner/name[,owner/name...]}"
 : "${GH_TOKEN:?set GH_TOKEN to a token with repo access}"
 TICK_SECONDS="${TICK_SECONDS:-120}"
+TICK_FIRST_SECONDS="${TICK_FIRST_SECONDS:-15}"
 
 # The skills and agents live in the image; the volume mounted over ~/.claude starts empty,
 # so they are copied in on every start (the login token in the volume is left alone).
@@ -73,9 +75,13 @@ for repo in "${repos[@]}"; do
   rm -f "$git_dir/factory-tick.lock" "$git_dir/index.lock" "$git_dir/factory-tick.json"
 done
 
-echo "factory ticking every ${TICK_SECONDS}s on ${REPOS}"
-# Exit code 3 from a tick means a line was just handled there; evaluate that
-# repository again at once instead of waiting out the interval.
+echo "factory ticking on ${REPOS}: ${TICK_FIRST_SECONDS}s after activity, doubling to ${TICK_SECONDS}s"
+# Exit code 3 from a tick means a line was just handled there: tick again at once, the next stage
+# is probably due. After that the pause starts short and doubles up to TICK_SECONDS, because what
+# the loop waits for next is usually the human (a merge, an answer, the next promotion), and the
+# human tends to act right after the factory did; a quiet repository is back at the long pause
+# within minutes. An idle tick costs a fetch and a pull request lookup, no model.
+pause="$TICK_FIRST_SECONDS"
 while true; do
   again=0
   for repo in "${repos[@]}"; do
@@ -85,6 +91,12 @@ while true; do
     if [ "$rc" -eq 3 ]; then again=1; fi
   done
   # In the background and waited for, so `docker stop` ends the wait at once (see the trap).
-  if [ "$again" -eq 1 ]; then sleep 2 & else sleep "$TICK_SECONDS" & fi
+  if [ "$again" -eq 1 ]; then
+    pause="$TICK_FIRST_SECONDS"
+    sleep 2 &
+  else
+    sleep "$pause" &
+    pause=$(( pause * 2 < TICK_SECONDS ? pause * 2 : TICK_SECONDS ))
+  fi
   wait $!
 done
