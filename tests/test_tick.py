@@ -243,6 +243,11 @@ def test_leftovers_on_a_story_branch_are_committed_and_the_tick_goes_on(
     subject = git(repo, "log", "-1", "--format=%s").strip()
     assert subject == "ticket F0001-S0001: work left uncommitted by an interrupted run"
     assert not git(repo, "status", "--porcelain").strip()
+    git(repo, "checkout", "-qb", "acceptance/F0001-thing")
+    (repo / "report.md").write_text("half a report\n")
+    assert tick.tick(repo, claude="claude", dry_run=True) == 0
+    subject = git(repo, "log", "-1", "--format=%s").strip()
+    assert subject == "acceptance F0001-thing: work left uncommitted by an interrupted run"
 
 
 def test_leftovers_on_main_stop_the_tick(repo: Path) -> None:
@@ -293,3 +298,19 @@ def test_a_changed_stage_table_or_factory_version_invalidates_the_preflight_stam
     assert tick.preflight_ok(repo) and len(ran) == 1
     monkeypatch.setattr(importlib.metadata, "version", lambda _n: "9.9.9")
     assert tick.preflight_ok(repo) and len(ran) == 2  # new image: preflight ran again
+
+
+def test_any_exception_in_a_handler_is_a_counted_failure(
+    repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def surprising(_ctx: dispatch.Context, _line: str) -> dispatch.Handled:
+        raise LookupError("a kind of error nobody listed")
+
+    monkeypatch.setattr(dispatch, "handle", surprising)
+    ctx = tick.context(repo, "claude")
+    assert tick.handle_line(repo, ctx, RUN_CODER, "abc", tick.Memo()) == 1
+    assert tick.read_memo(repo).failures == 1
+    assert (
+        "LookupError: a kind of error nobody listed"
+        in (repo / ".git" / "factory-tick.log").read_text()
+    )

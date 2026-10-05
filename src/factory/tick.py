@@ -36,15 +36,6 @@ from factory import agent, costs, dispatch, github, preflight, stage, watch
 MAX_FAILURES = 3
 DISPATCHED = 3  # exit code: something happened, do not wait for the next interval
 PREFLIGHT_EVERY_HOURS = 24
-# What a handler raises when the situation is not one it knows; the tick retries, then reports.
-HANDLER_ERRORS = (
-    RuntimeError,
-    OSError,
-    ValueError,
-    KeyError,
-    subprocess.CalledProcessError,
-    github.GitHubError,
-)
 
 
 @dataclass(frozen=True)
@@ -166,13 +157,14 @@ def recover_dirty_tree(root: Path) -> bool:
     name = branch.split("/", 1)[1]
     match = watch.ID_PATTERN.match(name)
     ticket_id = match.group(1) if match else name
+    prefix = "acceptance" if branch.startswith("acceptance/") else "ticket"
     watch.git(root, "add", "-A")
     watch.git(
         root,
         "commit",
         "-q",
         "-m",
-        f"ticket {ticket_id}: work left uncommitted by an interrupted run",
+        f"{prefix} {ticket_id}: work left uncommitted by an interrupted run",
     )
     subprocess.run(["git", "push", "-q"], cwd=root, check=False, capture_output=True)
     log(root, f"committed leftovers of an interrupted run on {branch}")
@@ -368,8 +360,10 @@ def handle_line(root: Path, ctx: dispatch.Context, line: str, head: str, memo: M
     log(root, f"dispatch: {line}")
     try:
         handled = dispatch.handle(ctx, line)
-    except HANDLER_ERRORS as error:
-        handled = dispatch.Handled(False, f"{type(error).__name__}: {error}")
+    except Exception as error:  # noqa: BLE001 — whatever a handler raises is a counted failure
+        # A situation no handler knows must not crash the tick: a crash is neither counted nor
+        # reported, and the same line would fail on every tick (an invalid agent file did that).
+        handled = dispatch.Handled(False, f"{type(error).__name__}: {str(error)[:300]}")
     if handled.run is not None:
         record(root, line, handled.run)
     if handled.ok:

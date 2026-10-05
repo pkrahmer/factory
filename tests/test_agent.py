@@ -144,3 +144,19 @@ def test_a_second_budget_stop_or_a_timeout_fails(home: Path, tmp_path: Path) -> 
     assert not run.ok and run.reason == "timed out after 1 min"
     run = agent.run(spec, "task", state=tmp_path, timeout=60, process=lambda _a, _t: (1, "boom"))
     assert not run.ok and run.reason.startswith("no result from claude (exit 1)")
+
+
+def test_every_installed_agent_and_its_skills_load() -> None:
+    """The agent files and skills this repository ships, as the dispatcher reads them."""
+    shipped = Path(__file__).resolve().parent.parent / "claude"
+    names = sorted(p.stem for p in (shipped / "agents").glob("*.md"))
+    assert names == ["acceptor", "coder", "demo", "documenter", "intake", "reviewer", "tester"]
+    for name in names:
+        spec = agent.load(name, shipped)
+        assert spec.model and spec.tools and spec.budget > 0, name
+
+
+def test_an_agent_file_that_is_not_valid_yaml_is_missing_not_a_crash(home: Path) -> None:
+    (home / "agents" / "coder.md").write_text("---\nname: coder\ndescription: a: b: c\n---\nx\n")
+    with pytest.raises(agent.AgentMissingError, match="not valid YAML"):
+        agent.load("coder", home)

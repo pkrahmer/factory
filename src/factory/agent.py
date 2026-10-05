@@ -20,6 +20,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 from factory import watch
 
 Process = Callable[[list[str], int], tuple[int, str] | None]  # (args, timeout s) -> (exit, stdout)
@@ -72,7 +74,11 @@ def load(name: str, home: Path) -> AgentSpec:
     if not path.is_file():
         raise AgentMissingError(f"agent {name!r} is not installed ({path})")
     text = path.read_text(encoding="utf-8")
-    meta = watch.parse_frontmatter(text)
+    try:
+        meta = watch.parse_frontmatter(text)
+    except yaml.YAMLError as broken:
+        message = str(broken).split("\n", 1)[0]
+        raise AgentMissingError(f"agent {name!r}: its file is not valid YAML ({message})") from None
     parts = [_body(text)]
     for skill in meta.get("skills") or []:
         skill_file = home / "skills" / str(skill) / "SKILL.md"

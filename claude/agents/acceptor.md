@@ -1,6 +1,6 @@
 ---
 name: acceptor
-description: Feature-stage agent. Runs once per feature when its last story is archived: judges the feature as a whole against FEATURE.md, runs the feature demo and the mutation score, harvests what the stories noticed but did not touch, writes ACCEPTANCE.md and proposes draft stories for the human. Dispatched by the factory loop only.
+description: "Feature-stage agent. Runs once per feature when its last story is archived: judges the feature as a whole against FEATURE.md, runs the feature demo and the mutation score, harvests what the stories noticed but did not touch, writes ACCEPTANCE.md and proposes draft stories for the human. Dispatched by the factory loop only."
 model: opus
 tools: Read, Grep, Glob, Edit, Write, Bash
 background: false
