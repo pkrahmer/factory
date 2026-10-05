@@ -15,20 +15,23 @@ Everything to set on GitHub, in one place: for each repository the factory build
 | Always suggest updating pull request branches | either | "Update branch" merges `main` in, which the next stage pulls without harm |
 | Automatically delete head branches | either | the dispatcher deletes them anyway |
 
-**Settings → Rules → Rulesets → New branch ruleset**
+**Settings → Rules → Rulesets → New ruleset → New branch ruleset**, twice. GitHub preselects two rules in a new ruleset, *Restrict deletions* and *Block force pushes*; every other rule starts unchecked. "Checked" below means the box is ticked when you save. Every rule not named is left unchecked.
 
-- **Ruleset "main":**
-  - Target: the default branch. Enforcement: active. Bypass list: empty.
-  - Rules on: **Restrict deletions** and **Block force pushes**.
-  - Rules off:
-    - **Require a pull request before merging.** The dispatcher and the human commit to `main` directly. The container's token is the owner's, so a bypass for the dispatcher would cover everyone and the rule would protect nothing.
-    - **Require linear history.** It forbids merge commits.
-    - **Require status checks to pass.** There is no CI yet; GitHub Actions on ready pull requests is in the backlog.
-    - **Require signed commits.** The agents do not sign.
-- **Ruleset "tickets":**
-  - Target: `ticket/**` and `acceptance/**`.
-  - Rule on: **Block force pushes**.
-  - Deletion stays allowed: the dispatcher deletes these branches.
+1. **Ruleset `main`**
+   - Ruleset name: `main`. Enforcement status: **Active**. Bypass list: leave empty.
+   - Target branches: *Add target → Include default branch*.
+   - Checked: **Restrict deletions** and **Block force pushes**. Both are preselected, so leave them as they are.
+   - Unchecked, everything else. Four rules look tempting but break the factory:
+     - *Require a pull request before merging*: the dispatcher and the human commit to `main` directly (`docs/branching.md`). The container's token is the owner's, so a bypass for the dispatcher would cover everyone and protect nothing.
+     - *Require linear history*: it forbids merge commits, the only merge the watcher understands.
+     - *Require status checks to pass*: there is no CI yet.
+     - *Require signed commits*: the agents do not sign.
+2. **Ruleset `tickets`**
+   - Ruleset name: `tickets`. Enforcement status: **Active**. Bypass list: leave empty.
+   - Target branches: *Add target → Include by pattern*, twice: `ticket/**` and `acceptance/**`.
+   - Checked: **Block force pushes** (preselected).
+   - **Uncheck *Restrict deletions*** (preselected): the dispatcher deletes these branches once their pull request is merged or closed.
+   - Unchecked, everything else.
 
 **Settings → General**
 
@@ -42,7 +45,7 @@ Everything to set on GitHub, in one place: for each repository the factory build
 ## The factory's own repository
 
 - **Pull Requests:** merge commits on; squash allowed if wanted (no watcher reads this repository); auto-merge off.
-- **Ruleset "main":** Restrict deletions and Block force pushes. Nothing else: the maintainers and their Claude sessions commit to `main` directly or through pull requests.
+- **Ruleset `main`:** exactly as ruleset 1 above. Default branch, Active, empty bypass list. **Restrict deletions** and **Block force pushes** checked (both preselected), every other rule unchecked. The maintainers and their Claude sessions commit to `main` directly or through pull requests. There is no ruleset for other branches.
 - **Code security:**
   - secret scanning and push protection on;
   - Dependabot alerts on;

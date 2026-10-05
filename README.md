@@ -46,3 +46,7 @@ The checkouts live in the `work` volume, the login in `claude-home`; `docker com
 ## Developing the engine
 
 `uv sync`, then `make check` (ruff, mypy --strict, pytest). The watcher's routing is a pure function and is tested without git; the git-backed parts use throwaway repositories under `tmp_path`.
+
+## Licence
+
+MIT, see `LICENSE`.
