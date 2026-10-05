@@ -55,7 +55,11 @@ def schema(allowed: list[str]) -> dict[str, Any]:
         "type": "object",
         "properties": {
             "outcome": {"type": "string", "enum": allowed},
-            "entry": {"type": "string", "description": "your log entry, without its number"},
+            "entry": {
+                "type": "string",
+                "description": "your log entry, without its number or your name: everything "
+                "your stage skill says the entry contains",
+            },
         },
         "required": ["outcome", "entry"],
         "additionalProperties": False,
@@ -287,13 +291,22 @@ def _apply(
     outcome, entry, unkept = _outcome(ctx, ticket.stage, result)
     if unkept is not None:
         return _stalled(ctx, ticket, unkept)
-    text = f"{name}: {entry}"
+    text = f"{name}: {_unprefixed(entry, name, ticket.stage)}"
     if undone:
         text += f"\n\nThe factory undid changes outside the {name}'s lane: {', '.join(undone)}"
     broke = [f for f in _form(ctx, ticket) if f not in findings]
     if broke:
         return _stalled(ctx, ticket, "the story's form broke: " + "; ".join(broke), text)
     return _decide(ctx, ticket, outcome, text, findings)
+
+
+def _unprefixed(entry: str, name: str, stage: str) -> str:
+    """Agents tend to start their entry with their own name or their stage's; the dispatcher
+    writes that prefix itself."""
+    for prefix in (f"{name}:", f"{stage}:"):
+        if entry.lower().startswith(prefix):
+            return entry[len(prefix) :].strip()
+    return entry
 
 
 def _stalled(ctx: Context, ticket: watch.Ticket, reason: str, entry: str = "") -> Handled:
@@ -365,7 +378,10 @@ def _checks(ctx: Context, config: dict[str, Any]) -> tuple[str | None, list[str]
 
 
 def _last_line(text: str) -> str:
-    return next((line for line in reversed(text.split("\n")) if line.strip()), "").strip()
+    """The output's last line that is not make's own report of a failed recipe."""
+    lines = [line.strip() for line in text.split("\n") if line.strip()]
+    own = [line for line in lines if not line.startswith(("make: ***", "make["))]
+    return (own or lines or [""])[-1]
 
 
 def _move(ctx: Context, ticket: watch.Ticket, outcome: str, text: str) -> Handled:

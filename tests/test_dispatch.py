@@ -872,3 +872,30 @@ def test_a_conflict_with_main_is_a_stall(world: World) -> None:
 def test_lines_without_work_do_nothing(world: World) -> None:
     for line in ("idle", f"busy {S1}", f"duplicate F0001-S0001 {S1} {S1}", f"error pr-lookup {S1}"):
         assert world.handle(line).ok
+
+
+def test_an_entry_the_agent_already_prefixed_is_not_prefixed_twice(world: World) -> None:
+    world.on_branch(B1, stage="review")
+    world.agent = outcome("docs", "reviewer: no findings")
+    assert world.handle(f"run reviewer {S1} {B1}").ok
+    assert story.last_entry(world.read(S1, f"origin/{B1}")) == "reviewer: no findings"
+    world.write(S1, story.update(world.read(S1), stage="review"))
+    world.commit("ticket F0001-S0001: back to review")
+    git(world.root, "push", "-q")
+    world.agent = outcome("docs", "review: no findings")  # the stage's name, not the agent's
+    assert world.handle(f"run reviewer {S1} {B1}").ok
+    assert story.last_entry(world.read(S1, f"origin/{B1}")) == "reviewer: no findings"
+
+
+def test_a_red_make_is_recorded_by_its_last_own_line(world: World) -> None:
+    world.on_branch(B1, stage="tests")
+    world.gate_results["test"] = (
+        False,
+        "E   ModuleNotFoundError: No module named 'src.greet'\n"
+        "FAILED (errors=1)\nmake: *** [Makefile:8: test] Error 1",
+    )
+    world.agent = outcome("doing", "criterion 1: test_greets")
+    assert world.handle(f"run tester {S1} {B1}").ok
+    assert story.last_entry(world.read(S1, f"origin/{B1}")).endswith(
+        "`make test`: FAILED (errors=1)"
+    )
