@@ -119,7 +119,7 @@ def one_line(root: Path, ticket: str) -> str:
         total.merge(b)
     fresh = total.tokens["input"] + total.tokens["cache_write"]
     return (
-        f"cost: {total.runs} dispatcher runs, {total.seconds / 60:.1f} min, {total.turns} turns, "
+        f"cost: {total.runs} runs, {total.seconds / 60:.1f} min, {total.turns} turns, "
         f"{_k(fresh)} tokens in ({_k(total.tokens['cache_read'])} more from cache), "
         f"{_k(total.tokens['output'])} out, ${total.cost:.2f}"
     )

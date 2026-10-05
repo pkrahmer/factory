@@ -91,12 +91,11 @@ def test_table_has_a_row_per_stage_and_a_total(repo: Path) -> None:
 
 def test_one_line_total_for_the_ticket_log(repo: Path) -> None:
     assert costs.one_line(repo, TICKET) == (
-        "cost: 3 dispatcher runs, 2.0 min, 23 turns, 57k tokens in (410k more from cache), "
-        "5k out, $1.01"
+        "cost: 3 runs, 2.0 min, 23 turns, 57k tokens in (410k more from cache), 5k out, $1.01"
     )
 
 
 def test_no_records_means_an_empty_but_valid_summary(tmp_path: Path) -> None:
     subprocess.run(["git", "init", "-q", "-b", "main"], cwd=tmp_path, check=True)
-    assert costs.one_line(tmp_path, TICKET).startswith("cost: 0 dispatcher runs")
+    assert costs.one_line(tmp_path, TICKET).startswith("cost: 0 runs")
     assert costs.table(tmp_path, TICKET).endswith("| **total** | 0 | 0.0 | 0 | 0 | 0 | 0 | 0.00 |")
