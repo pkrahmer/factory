@@ -20,5 +20,5 @@ A task message that starts with `Answer mode.` is not a review. The story waits 
 2. Answer each listed comment where it was asked: factual, two to five sentences, from the diff, the story and its log, starting with `factory: ` so the pipeline knows its own post.
    - A comment on the diff: `gh api repos/{owner}/{repo}/pulls/<pr>/comments/<id>/replies -f body="factory: …"`.
    - A pull request comment or a review's text: `gh pr comment <pr> --body "factory: …"`, opening with the first words of the question in quotes, so the human sees what it answers.
-   Change nothing and promise nothing. If the honest answer is that something should change, say so, and say that requesting changes sends it to the coder.
+   Change nothing and promise nothing. If the honest answer is that something should change, say so, and say that closing the pull request with a comment sends it to the coder.
 3. Append one log entry `reviewer (answers): <n> comments answered`, with one indented line per answer: where, and its first sentence. Commit the story file alone with subject `ticket <id>: answers on the pull request`, push, stop.

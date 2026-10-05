@@ -72,9 +72,8 @@ You are the human in the loop, not a stage. Work in the target's checkout (`../<
 - **The pipeline asks** on a pull request: answer with a comment, as a sensible single-user to-do service would. The dispatcher copies the answer into the story, and the stage runs again. Add every product decision you take to the feature's `FEATURE.md` under *Decisions taken for the human*.
 - **A pull request is ready** (stage `accept`): read it.
   - Merge with a merge commit (`gh pr merge <n> --merge`) when the story does what it says.
-  - Request changes in a review, with comments on the lines that should change, to send it back to the coder. The coder addresses exactly those and replies to each.
-  - A plain comment, on a line or in the conversation, is a question. The reviewer answers it and changes nothing.
-  - Or close it with a comment saying what should change, which also sends it back to the coder.
+  - A comment, on a line or in the conversation, is a question. The reviewer answers it on the pull request and changes nothing.
+  - Close it with a comment saying what should change to send it back to the coder. Your comments on lines since the hand-over count as part of the reason, and the coder replies to each. "Request changes" is not available: the factory opens the pull requests under your own account.
 - **Never** edit the target's `src/`, `tests/`, `README.md` or `docs/`: they belong to the stages. Never touch `.claude/` in the target, never put the token into a commit, never rewrite pushed history, never run a stage's commands by hand to help a stuck story.
 
 ### Stop and report
@@ -95,9 +94,25 @@ docker compose logs -f --since 5m                    # the tick: "dispatch:" and
 gh pr list --repo <owner>/<repo>                     # what is open, and whether it is ready
 gh pr view <n> --repo <owner>/<repo> --comments      # a question, the cost table
 gh pr comment <n> --repo <owner>/<repo> --body "…"   # an answer; the dispatcher copies it into the story
-gh pr review <n> --repo <owner>/<repo> --request-changes --body "…"  # send back; line comments go through the web or gh api
 gh pr merge <n> --repo <owner>/<repo> --merge        # accept; the dispatcher archives the story
-gh pr close <n> --repo <owner>/<repo>                # at accept: send back (say why first); elsewhere: discard
+gh pr close <n> --repo <owner>/<repo> --comment "…"  # at accept: send back with the reason; elsewhere: discard
+```
+
+A comment on a line of the diff goes through the API (`gh pr comment` writes only to the conversation):
+
+```bash
+head=$(gh pr view <n> --repo <owner>/<repo> --json headRefOid --jq .headRefOid)
+gh api repos/<owner>/<repo>/pulls/<n>/comments -f body="…" -f commit_id="$head" -f path=<file> -F line=<line> -f side=RIGHT
+```
+
+Several at once, as one review whose text says what they are about:
+
+```bash
+gh api repos/<owner>/<repo>/pulls/<n>/reviews --input - <<'EOF'
+{"event": "COMMENT", "body": "…",
+ "comments": [{"path": "<file>", "line": <line>, "side": "RIGHT", "body": "…"},
+              {"path": "<file>", "line": <line>, "side": "RIGHT", "body": "…"}]}
+EOF
 ```
 
 The container keeps its own checkout in the `work` volume; do not edit there.
@@ -131,9 +146,12 @@ The same demo, with one rule changed: **every defect is a factory defect until p
 
 It stops and asks the maintainer when a fix would change the model rather than a detail: a new stage, a new rule, a change to what the human does, or a change to `docs/WATCH_CONTRACT.md`.
 
-After every archived story, check its commits. Only intake and the coder leave a claim commit behind (R6): a story has eight commits plus the coder's work commits, so nine with one `feat` commit, and more only where the dispatcher merged `main` in or a stage asked, stalled or went back. Run `gh api repos/<owner>/<repo>/pulls/<n>/commits --jq '.[].commit.message' | grep 'claim for'`. It must list `claim for intake` and one `claim for doing` per coder run, nothing else. And every stage change from `ready → tests` to `demo → accept` must be there, in order.
+After every archived story, check its commits (R6). Only intake and the coder leave a claim commit behind. A story has eight commits plus the coder's work commits, so nine with one `feat` commit. It has more only where the dispatcher merged `main` in or copied notes, or a stage asked, stalled or went back.
+- `gh api repos/<owner>/<repo>/pulls/<n>/commits --paginate --jq '.[].commit.message' | grep 'claim for'` lists `claim for intake` and one `claim for doing` per coder run, nothing else. That holds for stories that asked a question as well.
+- Every stage change from `ready → tests` to `demo → accept` is there, in order.
+- A feature acceptance's pull request has `acceptance <feature>: claim` and `feature → accept`.
 
-To walk the paths a clean run never takes, write stories with one deliberate defect each, marked `<!-- carries path N -->`:
+To walk the paths a clean run never takes: paths 1 to 7 need stories with one deliberate defect each, marked `<!-- carries path N -->`. Paths 8 to 16 are things you do, on stories that otherwise run clean. After each path, check what it lists; a check that fails is a factory defect.
 
 1. Intake asks: a behaviour without a criterion; a Demo without `Expect:`.
 2. Intake asks about a failing side: a limit with no rejecting criterion.
@@ -147,7 +165,26 @@ To walk the paths a clean run never takes, write stories with one deliberate def
 10. Two stories in `ongoing/` at once; WIP 1 holds.
 11. A close at `accept` with a comment asking for a change.
 12. Feature acceptance: one report refused, one merged with drafts that are then refined and promoted.
-13. A restart (`docker compose restart`) while the reviewer holds its claim. The claim exists only in the container's checkout, and the tick must still find it and expire it at once.
-14. A review requesting changes, with two comments on lines: one the coder fixes, one it keeps with a reason. Both get the coder's reply, the reviewer checks the replies, and you resolve the threads by hand. The pipeline never resolves one.
-15. A plain comment on a line at the gate, asking why. The reviewer answers it in its thread, and the story stays at `accept`.
-16. A comment on a line while the tester works. The coder gets it as *Notes from the human*, and the log has it before the coder's claim.
+13. **A restart while a claim is local.** Run `docker compose restart` as soon as the tick log shows `dispatch: run reviewer …`. The reviewer's claim exists only in the container's checkout.
+    Check:
+    - The next tick says `expired`, not `busy`.
+    - The story's log has "claim expired …" and `attempts: 1`.
+    - The reviewer runs again and the story goes on.
+14. **Sending a story back with comments on lines.** At `accept`, write two comments on lines as one review (*Watch and act*), and close the pull request with a comment right after, before the next tick. One comment asks for a change the story allows; the other asks for one its criteria rule out.
+    Check:
+    - The dispatcher reopens the pull request as a draft and copies both comments into the log as `human (review comment <id>, <path>:<line>)`, each with its line quoted.
+    - The coder fixes the first and keeps the second. It replies in each thread with `factory: fixed in <sha>: …` or `factory: kept: <reason>`, and its log entry names the reply ids.
+    - The reviewer's entry confirms the replies.
+    - No reply comes back into the log as yours.
+    - The threads stay open until you resolve them.
+15. **A question at the gate.** At `accept`, write a comment on a line asking why something is done the way it is, and one question in the conversation.
+    Check:
+    - Within one or two ticks, the reviewer answers the line comment in its thread, and the conversation question with a comment that quotes it. Both answers start with `factory:`.
+    - The log has `reviewer (answers): 2 comments answered`.
+    - The story stays at `accept`, the pull request stays ready, and no stage change was committed.
+    - The tick does not dispatch again for the reviewer's own answers.
+16. **Notes while the stages work.** While the tester runs, write two comments on lines of the diff: one settles a detail the story leaves open, the other contradicts the story.
+    Check:
+    - Before the coder starts, the log has both as `human (review comment <id> before doing, …)`, in a commit `notes from the human`.
+    - The coder follows the first, and its log entry says so.
+    - The second makes the coder ask (R8) instead of following it.

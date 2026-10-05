@@ -12,7 +12,7 @@ The SVGs are generated: change `draw.py`, then run `uv run python docs/diagrams/
 
 - Every arrow is one edit of the `stage` field. A move not listed under `next` in `stages.yml` is rejected by the watcher and moved back by the dispatcher.
 - Every way back ends in `doing`, and the story runs the main line again from there. `round` counts all returns together; once it passes `max_rounds` (2), the stage asks the human instead (04).
-- Closing the pull request at `accept` sends the story back with your comment as the coder's reason. Without a comment, the dispatcher asks first (04). Requesting changes in a review does the same without a close: your comments on the lines are the coder's findings, and it replies to each.
+- Closing the pull request at `accept` sends the story back with your comment as the coder's reason. Without a comment, the dispatcher asks first (04). Your comments on lines since the hand-over count as part of the reason, and the coder replies to each.
 - Closing it earlier discards the story: the dispatcher checks the pull request before every stage starts. A merge before `accept` counts as acceptance.
 - Failing sides are part of the story: intake asks when a rule in the Interface has no criterion for the input it rejects, the tester tests every stated limit on both sides, and the reviewer names a missing failing-side criterion as a finding against the story.
 - When the archived story was the feature's last (nothing left in `ongoing/` or `drafts/`), the feature's acceptance is due (05).
@@ -92,7 +92,7 @@ The SVGs are generated: change `draw.py`, then run `uv run python docs/diagrams/
 - One ticket at a time: a claimed story or acceptance answers `busy` before anything else can run. Ids sort feature by feature, story by story, then the feature's acceptance: `F0001-S0001 < F0001-S0002 < F0001-todo-service < F0002-S0001`.
 - A due acceptance is listed with stage `feature` before its `ACCEPTANCE.md` exists; `run acceptor <path> main` follows, and the acceptor creates the file.
 - A ticket is read from its branch (`ticket/…` or `acceptance/…`), else from `origin/main`, else from the working tree. A branch already merged into `main` counts as gone.
-- A pull request is read only while the human is expected to act. Its `pr` line counts everything written on it (conversation, comments on the diff, review texts) and carries the verdict of the reviews since the story reached `accept`. A change request stands until an approval.
+- A pull request is read only while the human is expected to act. Its `pr` line counts everything written on it: the conversation, comments on the diff, and review texts.
 - The watcher only reads: no fetch (the tick fetches), no commit, no checkout, no model. It looks into `drafts/` and `done/` only for the acceptance rule and to count them for the board.
 
 ### 09 · The preflight

@@ -39,7 +39,6 @@ MAX_TURNS = 80
 # The pipeline's own pull request posts (the tick's cost table, the agents' replies) start with
 # this; the dispatcher never copies them into a story.
 OWN_PREFIX = "factory:"
-GATE = "accept"  # the human's stage, where a change request sends a story back to the coder
 # Lines whose handling always ends in a commit. A run that reports success on one of them but
 # moved no branch did not handle it, and the tick would otherwise remember it as handled.
 MUST_COMMIT = ("expired", "merged", "closed", "reject")
@@ -70,31 +69,14 @@ def needs_model(line: str, memo: Memo, head: str, tickets: list[watch.Ticket]) -
     if kind in ("idle", "busy"):
         return False
     if kind == "pr":
-        ticket = _ticket(tickets, parts[1])
+        _, path, _state, count = parts
+        ticket = next((t for t in tickets if t.path.as_posix() == path), None)
         seen = int(ticket.meta.get("comments_seen") or 0) if ticket else 0
-        if int(parts[3]) > seen:
-            return True
-        if not changes_requested(line, tickets):
-            return False
-        # A change request may come without a word; it is handled once, like any other line.
+        return int(count) > seen
     if (line, head) == (memo.line, memo.head):
         # Seen before: handled (no retry), failed (retry), or given up (the pull request knows).
         return 0 < memo.failures < MAX_FAILURES
     return True
-
-
-def _ticket(tickets: list[watch.Ticket], path: str) -> watch.Ticket | None:
-    return next((t for t in tickets if t.path.as_posix() == path), None)
-
-
-def changes_requested(line: str, tickets: list[watch.Ticket]) -> bool:
-    """A `pr` line on which the human requested changes to a story at the gate: the rework
-    path. An acceptance has no rework; its review means nothing to the pipeline."""
-    parts = line.split()
-    if parts[0] != "pr" or parts[-1] != watch.CHANGES_REQUESTED:
-        return False
-    ticket = _ticket(tickets, parts[1])
-    return ticket is not None and ticket.stage == GATE and not ticket.is_acceptance
 
 
 def unseen_are_own(bodies: list[str], seen: int) -> bool:
@@ -410,12 +392,11 @@ def only_own_comments(root: Path, line: str, tickets: list[watch.Ticket]) -> boo
     """A `pr` line whose unseen writings are all the pipeline's own (the cost table, an agent's
     replies) needs no dispatcher: it would only raise `comments_seen`, and it would push to the
     branch just when the human is invited to merge. The count catches up with the human's next
-    comment, which the dispatcher reads together with the rest. A change request is the human's
-    act whatever was written with it."""
+    comment, which the dispatcher reads together with the rest."""
     parts = line.split()
-    if parts[0] != "pr" or changes_requested(line, tickets):
+    if parts[0] != "pr":
         return False
-    ticket = _ticket(tickets, parts[1])
+    ticket = next((t for t in tickets if t.path.as_posix() == parts[1]), None)
     number = ticket.meta.get("pr") if ticket else None
     if ticket is None or not number:
         return False
