@@ -12,6 +12,7 @@ factory-watch = "factory.watch:main"
 factory-guard = "factory.guard:cli"
 factory-costs = "factory.costs:main"
 factory-preflight = "factory.preflight:cli"
+factory-check-story = "factory.story:main"
 
 [dependency-groups]
 dev = ["mypy>=1.14", "pytest>=8.3", "ruff>=0.9", "types-pyyaml>=6.0"]

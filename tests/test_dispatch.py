@@ -33,7 +33,34 @@ S1 = f"{FEATURE}/ongoing/F0001-S0001-thing.md"
 B1 = "ticket/F0001-S0001-thing"
 ACCEPT = f"{FEATURE}/ACCEPTANCE.md"
 AB = "acceptance/F0001-thing"
-DRAFT = "# Thing\n\n## Assignment\n\nBuild it.\n\n## Log (append only)\n\n1. human: created.\n"
+DRAFT = """# Thing
+
+## Assignment
+
+Build it.
+
+## Interface
+
+`thing() -> None`
+
+## Acceptance criteria
+
+1. `thing()` returns.
+2. `make check` stays green.
+3. docs: none (internal).
+
+## Demo
+
+```bash
+uv run python -c "print('ok')"
+```
+Expect: `ok`.
+
+## Log (append only)
+
+1. human: created.
+"""
+FORM = "# <Title>\n\n## Assignment\n\n## Interface\n\n## Acceptance criteria\n\n## Demo\n\n## Log\n"
 
 
 def git(root: Path, *args: str) -> str:
@@ -151,6 +178,7 @@ def world(tmp_path: Path) -> World:
     git(root, "remote", "add", "origin", str(origin))
     w = World(root, FakeGitHub())
     w.write("factory/stages.yml", STAGES_YML)
+    w.write("factory/TICKET.md", FORM)
     w.write(f"{FEATURE}/FEATURE.md", "# Thing\n")
     w.write(S1, DRAFT)
     w.commit("F0001: start S0001")
@@ -430,6 +458,7 @@ def test_intake_runs_on_main_and_is_told_to_create_the_branch(world: World) -> N
     assert message == (
         f"Ticket: {S1}\nId: F0001-S0001\nStage: ready\nAllowed next stages: tests\n"
         f"Branch: main; create {B1}\nPull request: none yet\n"
+        "Format check: passed\n"
         "Follow your preloaded stage skill. End with a pushed commit that contains the ticket file."
     )
 
@@ -530,3 +559,20 @@ def test_a_conflict_with_main_is_a_stall(world: World) -> None:
 def test_lines_without_work_do_nothing(world: World) -> None:
     for line in ("idle", f"busy {S1}", f"duplicate F0001-S0001 {S1} {S1}", f"error pr-lookup {S1}"):
         assert world.handle(line).ok
+
+
+def test_intake_cannot_accept_a_story_the_format_check_refuses(world: World) -> None:
+    world.write(S1, DRAFT.replace("Expect: `ok`.\n", ""))
+    world.commit("F0001: a Demo without Expect")
+    git(world.root, "push", "-q")
+    world.agent = stage_agent("tests", create=True)
+    assert world.handle(f"run intake {S1} main").ok
+    message = world.started[0][1]
+    assert "Format check found: 1. Demo command block 1 has no `Expect:` line after it." in message
+    meta = world.meta(S1, f"origin/{B1}")
+    assert (meta["stage"], meta["blocked"]) == ("ready", "question")
+    assert story.last_entry(world.read(S1, f"origin/{B1}")) == (
+        "format check: the story cannot start until its form is right: "
+        "Demo command block 1 has no `Expect:` line after it."
+    )
+    assert watch.last_change(world.root, watch.load_config(world.root)) is None  # moved back

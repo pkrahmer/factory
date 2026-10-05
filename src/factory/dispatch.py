@@ -383,9 +383,13 @@ def _prepare(ctx: Context, current: watch.Ticket, where: str) -> tuple[str, str 
     return branch, None
 
 
-def _task(ctx: Context, current: watch.Ticket, branch_line: str) -> str:
+def _task(ctx: Context, current: watch.Ticket, branch_line: str, findings: list[str]) -> str:
     stage = ctx.config["stages"].get(current.stage, {})
     pr = current.meta.get("pr")
+    checked = ""
+    if current.stage == "ready":
+        listed = " ".join(f"{n}. {f}." for n, f in enumerate(findings, start=1))
+        checked = f"Format check found: {listed}\n" if findings else "Format check: passed\n"
     return (
         f"Ticket: {current.path.as_posix()}\n"
         f"Id: {current.ticket_id}\n"
@@ -393,8 +397,19 @@ def _task(ctx: Context, current: watch.Ticket, branch_line: str) -> str:
         f"Allowed next stages: {', '.join(stage.get('next') or [])}\n"
         f"Branch: {branch_line}\n"
         f"Pull request: {pr or 'none yet'}\n"
+        f"{checked}"
         "Follow your preloaded stage skill. End with a pushed commit that contains the ticket file."
     )
+
+
+def _refuse_format(ctx: Context, path: str, findings: list[str]) -> str:
+    """Intake moved on although the story's form is wrong: back to `ready`, and the findings are
+    the question. Code checks the form; no model can accept a story past it."""
+    entry = "format check: the story cannot start until its form is right: " + "; ".join(findings)
+    _edit(ctx, path, entry + ".", stage="ready", blocked="question", claimed_at=None)
+    subject = _subject(path, "ready → tests refused by the format check, moved back")
+    _commit_and_push(ctx, watch.Ticket(Path(path), {}).branch, subject)
+    return f"the format check refused {path}: {'; '.join(findings)}"
 
 
 def _progressed(before: watch.Ticket, after: dict[str, Any]) -> bool:
@@ -447,18 +462,33 @@ def run(ctx: Context, name: str, path: str, where: str) -> Handled:
     if blocked is not None:
         _stall(ctx, path, branch, blocked)
         return Handled(True, f"stage {current.stage} of {path} stalled: {blocked}")
+    findings = story.check_file(ctx.root, Path(path)) if current.stage == "ready" else []
     started_at = repo.head(ctx.root)
-    result = ctx.start(name, _task(ctx, current, branch_line))
+    result = ctx.start(name, _task(ctx, current, branch_line, findings))
+    return _after_run(ctx, current, findings, result, started_at)
+
+
+def _after_run(
+    ctx: Context,
+    current: watch.Ticket,
+    findings: list[str],
+    result: agent.AgentRun,
+    started_at: str,
+) -> Handled:
+    """Judge the run by what is on the branch now: a stage change or a question is progress;
+    anything else, whatever the agent said, is a stall."""
+    path, branch = current.path.as_posix(), current.branch
     if repo.current_branch(ctx.root) != branch:
         wrong = "; it committed on the wrong branch" if repo.head(ctx.root) != started_at else ""
-        return Handled(
-            False, f"{name} stalled before {branch} existed: {_reason(result)}{wrong}", result
-        )
+        summary = f"the agent stalled before {branch} existed: {_reason(result)}{wrong}"
+        return Handled(False, summary, result)
     after = _meta(ctx, path) if (ctx.root / path).is_file() else {}
-    if result.ok and _progressed(current, after):
-        return Handled(True, f"{name} moved {path} on: {result.result[:200]}", result)
-    _stall(ctx, path, branch, _reason(result))
-    return Handled(True, f"stage {current.stage} of {path} stalled: {_reason(result)}", result)
+    if not (result.ok and _progressed(current, after)):
+        _stall(ctx, path, branch, _reason(result))
+        return Handled(True, f"stage {current.stage} of {path} stalled: {_reason(result)}", result)
+    if findings and after.get("stage") != current.stage:
+        return Handled(True, _refuse_format(ctx, path, findings), result)
+    return Handled(True, f"{path} moved on: {result.result[:200]}", result)
 
 
 def _duplicate(_ctx: Context, story_id: str, first: str, second: str) -> Handled:
