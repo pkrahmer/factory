@@ -21,7 +21,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.9.2 /uv /uvx /usr/local/bin/
 RUN useradd --create-home --uid 1000 factory \
  && mkdir -p /work /home/factory/.claude \
  && chown -R factory:factory /work /home/factory
-USER factory
+USER 1000
 WORKDIR /home/factory
 ENV PATH="/home/factory/.local/bin:${PATH}" \
     UV_LINK_MODE=copy \
