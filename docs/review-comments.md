@@ -1,6 +1,6 @@
 # Review comments on the diff
 
-The plan for making the human's inline review comments count. Nothing here is done yet: it runs after `docs/fewer-commits.md`, and the end-to-end run that follows verifies it (a new path in run 3 part two, or run 4).
+The plan for making the human's inline review comments count. Built in one pull request after `docs/fewer-commits.md`; the next end-to-end run verifies it (paths 14 to 16 of the hardening mode in `demo/README.md`). Where the build had to differ from the plan, *As built* at the end says how and why.
 
 ## What is wrong today
 
@@ -57,3 +57,18 @@ All in this repository.
 
 - `make check` in the factory: the new `PrState` shape, the `needs_model` rule for `CHANGES_REQUESTED`, the line format.
 - The next end-to-end run: the three paths above, each once, with the log entries, the inline replies and the pull request's "conversations" counter checked by the human (resolve by hand, see that the pipeline never did it).
+
+## As built
+
+Where the build differs from the plan above, and why:
+
+1. **Review texts count too.** `comments_seen` counts the conversation, the comments on the diff, *and* the text of every submitted review. A "Comment" review with text but no line comment would otherwise never raise the count and would go unanswered.
+2. **The pipeline's own posts start with `factory:`.** That covers the coder's replies (`factory: fixed in <sha>: …`, `factory: kept: …`) and the reviewer's answers, like the tick's cost table. The dispatcher never copies them, and the tick ignores them when they are all that is unseen. Without a mark, the dispatcher would copy the agents' replies back into the log as the human's.
+3. **A change request stands until an approval.** The review verdict is not simply the newest review's state. A plain comment after "Request changes" does not lift the request (as on GitHub), while a comment after an approval does count as a question again. Dismissed and pending reviews count for nothing.
+4. **Only the story's own hand-over counts.** The hand-over is the last `… → accept` on the branch's first-parent line, so another story's hand-over, merged in with `main`, does not count.
+5. **A change request is dispatched once**, even without a comment, and only for a story at `accept`. It is remembered like any other line (line plus `HEAD`), so a failing dispatcher cannot loop. The cost table cannot hide it either. On an acceptance, a review means nothing.
+6. **A change request without any comment or text** is asked about, like a close without a comment, so the coder never guesses.
+7. **At the gate, a conversation comment is a question too.** The demo's closing paragraph promises that "a plain comment is answered by the reviewer". The reviewer answers a conversation comment or a review's text with `gh pr comment`, quoting the question's first words.
+8. **Mid-flight, every new writing becomes a note**, not only comments on the diff. `comments_seen` is one number, so what it counts must all be copied.
+9. **The log carries ids**: `human (review comment <id>, <path>:<line>)` and `human (review <id>, <state>)`. The dispatcher tells new from copied by them, and the coder replies to them.
+10. **The contract's version is now 5**, as `docs/WATCH_CONTRACT.md` asks for a change of the `pr` line (`template/stages.yml` too). A repository's own `factory/stages.yml` is the human's to change; nothing reads the field.

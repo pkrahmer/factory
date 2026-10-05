@@ -1291,7 +1291,7 @@ def watcher() -> Diagram:
             ("gh fails", "error pr-lookup", ("gh login missing?",), "disp"),
             ("MERGED", "merged", ("archived to done/",), "disp"),
             ("CLOSED", "closed", ("back to doing,", "or discarded"), "disp"),
-            ("OPEN", "pr OPEN n", ("only new comments", "start the dispatcher"), "disp"),
+            ("OPEN", "pr OPEN n review", ("new comments or", "changes requested"), "disp"),
         ],
         [("yes", "ask", ("question onto", "the PR (04)"), "disp")],
         [

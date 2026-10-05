@@ -40,8 +40,22 @@ def test_same_line_on_same_head_was_already_handled() -> None:
 
 def test_pull_request_line_needs_the_model_only_for_new_comments() -> None:
     tickets = [ticket(S1, pr=1, comments_seen=2)]
-    assert not tick.needs_model(f"pr {S1} OPEN 2", tick.Memo(), "abc", tickets)
-    assert tick.needs_model(f"pr {S1} OPEN 3", tick.Memo(), "abc", tickets)
+    assert not tick.needs_model(f"pr {S1} OPEN 2 NONE", tick.Memo(), "abc", tickets)
+    assert tick.needs_model(f"pr {S1} OPEN 3 NONE", tick.Memo(), "abc", tickets)
+    assert tick.needs_model(f"pr {S1} OPEN 3", tick.Memo(), "abc", tickets)  # a line from before
+
+
+def test_a_change_request_at_the_gate_needs_the_model_once_even_without_a_comment() -> None:
+    line = f"pr {S1} OPEN 2 CHANGES_REQUESTED"
+    at_gate = [ticket(S1, stage="accept", pr=1, comments_seen=2)]
+    assert tick.needs_model(line, tick.Memo(), "abc", at_gate)
+    assert not tick.needs_model(line, tick.Memo(line=line, head="abc"), "abc", at_gate)  # handled
+    asking = [ticket(S1, blocked="asked", pr=1, comments_seen=2)]  # no rework path outside the gate
+    assert not tick.needs_model(line, tick.Memo(), "abc", asking)
+    report = "factory/features/F0001-thing/ACCEPTANCE.md"  # an acceptance has no rework
+    acceptance = [ticket(report, stage="accept", pr=1, comments_seen=2)]
+    on_report = f"pr {report} OPEN 2 CHANGES_REQUESTED"
+    assert not tick.needs_model(on_report, tick.Memo(), "abc", acceptance)
 
 
 def test_only_the_ticks_own_unseen_comments_need_no_dispatcher() -> None:
@@ -50,6 +64,8 @@ def test_only_the_ticks_own_unseen_comments_need_no_dispatcher() -> None:
     assert tick.unseen_are_own(["a question", "an answer", table], seen=2)
     assert not tick.unseen_are_own([table, "merge? not yet: rename it"], seen=0)
     assert not tick.unseen_are_own([table], seen=1)  # nothing unseen
+    reply = f"{tick.OWN_PREFIX} fixed in 1a2b3c4: renamed"  # an agent's reply on the diff
+    assert tick.unseen_are_own(["rename this", reply], seen=1)
 
 
 def test_a_pull_request_line_with_only_the_cost_table_unseen_is_skipped(
@@ -58,9 +74,11 @@ def test_a_pull_request_line_with_only_the_cost_table_unseen_is_skipped(
     tickets = [ticket(S1, stage="accept", pr=7, comments_seen=0)]
     comments = [f"{tick.OWN_PREFIX} cost of this ticket so far"]
     monkeypatch.setattr(tick, "pr_comment_bodies", lambda _root, _number: comments)
-    assert tick.only_own_comments(Path("."), f"pr {S1} OPEN 1", tickets)
+    assert tick.only_own_comments(Path("."), f"pr {S1} OPEN 1 NONE", tickets)
+    # the human requested changes without a word: the cost table must not hide that
+    assert not tick.only_own_comments(Path("."), f"pr {S1} OPEN 1 CHANGES_REQUESTED", tickets)
     comments.append("please rename the module")
-    assert not tick.only_own_comments(Path("."), f"pr {S1} OPEN 2", tickets)
+    assert not tick.only_own_comments(Path("."), f"pr {S1} OPEN 2 NONE", tickets)
     assert not tick.only_own_comments(Path("."), RUN_CODER, tickets)
 
 

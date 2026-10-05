@@ -72,7 +72,9 @@ You are the human in the loop, not a stage. Work in the target's checkout (`../<
 - **The pipeline asks** on a pull request: answer with a comment, as a sensible single-user to-do service would. The dispatcher copies the answer into the story, and the stage runs again. Add every product decision you take to the feature's `FEATURE.md` under *Decisions taken for the human*.
 - **A pull request is ready** (stage `accept`): read it.
   - Merge with a merge commit (`gh pr merge <n> --merge`) when the story does what it says.
-  - Close it with a comment saying what should change to send it back to the coder.
+  - Request changes in a review, with comments on the lines that should change, to send it back to the coder. The coder addresses exactly those and replies to each.
+  - A plain comment, on a line or in the conversation, is a question. The reviewer answers it and changes nothing.
+  - Or close it with a comment saying what should change, which also sends it back to the coder.
 - **Never** edit the target's `src/`, `tests/`, `README.md` or `docs/`: they belong to the stages. Never touch `.claude/` in the target, never put the token into a commit, never rewrite pushed history, never run a stage's commands by hand to help a stuck story.
 
 ### Stop and report
@@ -93,6 +95,7 @@ docker compose logs -f --since 5m                    # the tick: "dispatch:" and
 gh pr list --repo <owner>/<repo>                     # what is open, and whether it is ready
 gh pr view <n> --repo <owner>/<repo> --comments      # a question, the cost table
 gh pr comment <n> --repo <owner>/<repo> --body "…"   # an answer; the dispatcher copies it into the story
+gh pr review <n> --repo <owner>/<repo> --request-changes --body "…"  # send back; line comments go through the web or gh api
 gh pr merge <n> --repo <owner>/<repo> --merge        # accept; the dispatcher archives the story
 gh pr close <n> --repo <owner>/<repo>                # at accept: send back (say why first); elsewhere: discard
 ```
@@ -145,3 +148,6 @@ To walk the paths a clean run never takes, write stories with one deliberate def
 11. A close at `accept` with a comment asking for a change.
 12. Feature acceptance: one report refused, one merged with drafts that are then refined and promoted.
 13. A restart (`docker compose restart`) while the reviewer holds its claim. The claim exists only in the container's checkout, and the tick must still find it and expire it at once.
+14. A review requesting changes, with two comments on lines: one the coder fixes, one it keeps with a reason. Both get the coder's reply, the reviewer checks the replies, and you resolve the threads by hand. The pipeline never resolves one.
+15. A plain comment on a line at the gate, asking why. The reviewer answers it in its thread, and the story stays at `accept`.
+16. A comment on a line while the tester works. The coder gets it as *Notes from the human*, and the log has it before the coder's claim.

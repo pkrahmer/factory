@@ -3,6 +3,7 @@ reading, branches and the last stage change use a throwaway repository under tmp
 
 from __future__ import annotations
 
+import os
 import subprocess
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -87,14 +88,14 @@ def test_gate_without_pull_request_is_an_ask() -> None:
 
 def test_open_pull_request_at_the_gate_reports_comment_count() -> None:
     tickets = [ticket("accept", "F0001-S0001", pr=7)]
-    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("OPEN", 3))
-    assert line == f"pr {S1} OPEN 3"
+    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("OPEN", 3, "NONE"))
+    assert line == f"pr {S1} OPEN 3 NONE"
 
 
 def test_posted_question_polls_the_pull_request_for_the_answer() -> None:
     tickets = [ticket("doing", "F0001-S0002", blocked="asked", pr=2, comments_seen=1)]
-    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("OPEN", 2))
-    assert line == f"pr {S2} OPEN 2"
+    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("OPEN", 2, "NONE"))
+    assert line == f"pr {S2} OPEN 2 NONE"
 
 
 def test_unposted_question_is_an_ask_and_does_not_poll() -> None:
@@ -103,7 +104,7 @@ def test_unposted_question_is_an_ask_and_does_not_poll() -> None:
 
     def lookup(t: watch.Ticket) -> watch.PrState | None:
         looked_up.append(t)
-        return ("OPEN", 1)
+        return ("OPEN", 1, "NONE")
 
     assert watch.evaluate(CONFIG, tickets, None, NOW, lookup) == f"ask {S2}"
     assert looked_up == []
@@ -111,19 +112,19 @@ def test_unposted_question_is_an_ask_and_does_not_poll() -> None:
 
 def test_running_stage_with_pull_request_is_not_polled() -> None:
     tickets = [ticket("doing", "F0001-S0002", pr=2, claimed_at=NOW.isoformat())]
-    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("OPEN", 5))
+    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("OPEN", 5, "NONE"))
     assert line == f"busy {S2}"
 
 
 def test_merged_pull_request_is_reported() -> None:
     tickets = [ticket("accept", "F0001-S0001", pr=7)]
-    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("MERGED", 0))
+    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("MERGED", 0, "NONE"))
     assert line == f"merged {S1} {B1}"
 
 
 def test_closed_pull_request_is_reported() -> None:
     tickets = [ticket("accept", "F0001-S0001", pr=7)]
-    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("CLOSED", 1))
+    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("CLOSED", 1, "NONE"))
     assert line == f"closed {S1} {B1}"
 
 
@@ -133,13 +134,13 @@ def test_closed_pull_request_is_reported() -> None:
 
 def test_a_second_close_while_the_question_is_open_is_a_discard() -> None:
     tickets = [ticket("doing", "F0001-S0001", blocked="asked", pr=7, comments_seen=2)]
-    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("CLOSED", 2))
+    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("CLOSED", 2, "NONE"))
     assert line == f"closed {S1} {B1}"  # not at accept: the dispatcher discards to drafts
 
 
 def test_a_merge_while_the_question_is_open_is_accepted() -> None:
     tickets = [ticket("doing", "F0001-S0001", blocked="asked", pr=7, comments_seen=2)]
-    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("MERGED", 2))
+    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("MERGED", 2, "NONE"))
     assert line == f"merged {S1} {B1}"
 
 
@@ -147,13 +148,55 @@ def test_a_question_behind_a_closed_pull_request_is_never_asked() -> None:
     # Why the dispatcher reopens before it asks: a closed pull request wins over the question,
     # so a question left at accept behind it would come back as `closed` on every tick.
     tickets = [ticket("accept", "F0001-S0001", blocked="question", pr=7)]
-    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("CLOSED", 1))
+    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: ("CLOSED", 1, "NONE"))
     assert line == f"closed {S1} {B1}"
 
 
 def test_failed_pull_request_lookup_is_an_error_line() -> None:
     tickets = [ticket("accept", "F0001-S0001", pr=7)]
     assert watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: None) == f"error pr-lookup {S1}"
+
+
+# Review comments: what the human writes on the diff and how they review count as well.
+
+
+def test_the_review_verdict_rides_on_the_pull_request_line() -> None:
+    tickets = [ticket("accept", "F0001-S0001", pr=7, comments_seen=1)]
+    review: watch.PrState = ("OPEN", 3, "CHANGES_REQUESTED")
+    line = watch.evaluate(CONFIG, tickets, None, NOW, lambda _t: review)
+    assert line == f"pr {S1} OPEN 3 CHANGES_REQUESTED"
+
+
+def at(minute: int) -> datetime:
+    return NOW + timedelta(minutes=minute)
+
+
+def test_a_change_request_stands_until_an_approval() -> None:
+    assert watch.review_verdict([], None) == "NONE"
+    asked = [(at(1), "CHANGES_REQUESTED"), (at(2), "COMMENTED")]
+    assert watch.review_verdict(asked, None) == "CHANGES_REQUESTED"  # a comment does not lift it
+    assert watch.review_verdict([*asked, (at(3), "APPROVED")], None) == "APPROVED"
+    assert watch.review_verdict([(at(1), "APPROVED"), (at(2), "COMMENTED")], None) == "COMMENTED"
+
+
+def test_reviews_from_before_the_hand_over_and_dismissed_ones_count_for_nothing() -> None:
+    reviews = [(at(1), "CHANGES_REQUESTED"), (at(5), "DISMISSED")]
+    assert watch.review_verdict(reviews, since=at(2)) == "NONE"  # last round's request
+    assert watch.review_verdict(reviews, since=None) == "CHANGES_REQUESTED"
+
+
+def test_everything_written_on_the_pull_request_counts_once_oldest_first() -> None:
+    view = {"state": "OPEN", "comments": [{"createdAt": "2026-10-03T12:05:00Z", "body": "why?"}]}
+    on_the_diff = [{"created_at": "2026-10-03T12:01:00Z", "body": "rename this"}]
+    reviews: list[dict[str, object]] = [
+        {"submitted_at": "2026-10-03T12:02:00Z", "state": "CHANGES_REQUESTED", "body": "two"},
+        {"submitted_at": "2026-10-03T12:03:00Z", "state": "COMMENTED", "body": ""},  # no text
+        {"submitted_at": None, "state": "PENDING", "body": "a draft nobody else sees"},
+    ]
+    pull = watch.pull_request(view, on_the_diff, reviews)
+    assert pull.state == "OPEN"
+    assert [body for _, body in pull.writings] == ["rename this", "two", "why?"]
+    assert [state for _, state in pull.reviews] == ["CHANGES_REQUESTED", "COMMENTED"]
 
 
 def test_live_claim_blocks_everything_else() -> None:
@@ -366,9 +409,9 @@ def test_running_acceptance_is_read_from_its_branch_and_waits_at_the_gate(repo: 
     tickets = watch.scan_tickets(repo, watch.load_config(repo))
     assert [(t.ticket_id, t.stage, t.branch) for t in tickets] == [("F0001-thing", "accept", AB)]
     config = watch.load_config(repo)
-    line = watch.evaluate(config, tickets, None, NOW, lambda _t: ("OPEN", 1))
-    assert line == f"pr {ACCEPT} OPEN 1"
-    line = watch.evaluate(config, tickets, None, NOW, lambda _t: ("MERGED", 1))
+    line = watch.evaluate(config, tickets, None, NOW, lambda _t: ("OPEN", 1, "NONE"))
+    assert line == f"pr {ACCEPT} OPEN 1 NONE"
+    line = watch.evaluate(config, tickets, None, NOW, lambda _t: ("MERGED", 1, "NONE"))
     assert line == f"merged {ACCEPT} {AB}"
 
 
@@ -387,7 +430,7 @@ def test_a_merged_acceptance_with_drafts_is_reported_until_it_is_booked(repo: Pa
     config = watch.load_config(repo)
     tickets = watch.scan_tickets(repo, config)
     assert [(t.ticket_id, t.stage) for t in tickets] == [("F0001-thing", "accept")]
-    line = watch.evaluate(config, tickets, None, NOW, lambda _t: ("MERGED", 1))
+    line = watch.evaluate(config, tickets, None, NOW, lambda _t: ("MERGED", 1, "NONE"))
     assert line == f"merged {ACCEPT} {AB}"
     write_report(repo, "done", ["F0001-S0001"], pr=9)  # the dispatcher's bookkeeping
     git(repo, "commit", "-qam", "acceptance F0001-thing: accept → done (pull request merged)")
@@ -529,6 +572,40 @@ def test_the_closing_commit_amends_the_claim_into_one_stage_change(
     pushed = watch.git(repo, "log", "--format=%s", f"origin/{B1}").splitlines()  # UTF-8: the arrow
     assert pushed[:2] == ["ticket F0001-S0001: tests → doing", "ticket F0001-S0001: ready → tests"]
     assert watch.evaluate_repo(repo) == f"run coder {S1} {B1}"
+
+
+def commit_at(repo: Path, subject: str, when: datetime) -> None:
+    stamp = when.isoformat()
+    env = {**os.environ, "GIT_AUTHOR_DATE": stamp, "GIT_COMMITTER_DATE": stamp}
+    subprocess.run(
+        ["git", "commit", "-qam", subject], cwd=repo, check=True, capture_output=True, env=env
+    )
+
+
+def test_the_hand_over_is_the_last_accept_on_the_story_s_own_line(repo: Path) -> None:
+    story = watch.Ticket(Path(S1), {})
+    git(repo, "checkout", "-qb", B1)
+    assert watch.handed_over_at(repo, story) is None  # never at the gate yet
+    write_story(repo, S1, "accept")
+    commit_at(repo, "ticket F0001-S0001: demo → accept", at(0))
+    assert watch.handed_over_at(repo, story) == at(0)
+    # another story reaches its gate later and is merged into main, which comes in here
+    git(repo, "checkout", "-q", "main")
+    git(repo, "checkout", "-qb", B2)
+    write_story(repo, S2, "accept")
+    git(repo, "add", "-A")
+    commit_at(repo, "ticket F0001-S0002: demo → accept", at(30))
+    git(repo, "checkout", "-q", "main")
+    git(repo, "merge", "-q", "--no-ff", "-m", "Merge pull request #2", B2)
+    git(repo, "checkout", "-q", B1)
+    git(repo, "merge", "-q", "--no-edit", "-m", "ticket F0001-S0001: merge main", "main")
+    assert watch.handed_over_at(repo, story) == at(0)
+    # sent back and handed over again: the new round starts there
+    write_story(repo, S1, "doing")
+    commit_at(repo, "ticket F0001-S0001: accept → doing (changes requested)", at(40))
+    write_story(repo, S1, "accept")
+    commit_at(repo, "ticket F0001-S0001: demo → accept", at(60))
+    assert watch.handed_over_at(repo, story) == at(60)
 
 
 def test_follow_remembers_its_last_line_across_restarts(

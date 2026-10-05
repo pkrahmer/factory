@@ -30,8 +30,17 @@ import yaml
 
 Config = dict[str, Any]  # parsed stages.yml; our own file, validated loosely
 Change = tuple[Path, str, str]  # (ticket path, stage before, stage after) in the last commit
-PrState = tuple[str, int]  # (OPEN | MERGED | CLOSED, number of comments)
+PrState = tuple[str, int, str]  # (OPEN | MERGED | CLOSED, writings on it, review verdict)
 PrLookup = Callable[["Ticket"], PrState | None]
+Writing = tuple[datetime, str]  # (when, text) of one thing written on a pull request
+
+NO_REVIEW = "NONE"
+CHANGES_REQUESTED = "CHANGES_REQUESTED"
+REVIEW_STATES = (
+    "COMMENTED",
+    CHANGES_REQUESTED,
+    "APPROVED",
+)  # submitted; DISMISSED counts for nothing
 
 CORRECTION_MARKER = "moved back"  # commit subjects with this are exempt from reject
 ID_PATTERN = re.compile(r"^(F\d{4}-S\d{4})(?:-[a-z0-9]+)*$")  # a story's file stem
@@ -300,23 +309,91 @@ def _is_merge(root: Path) -> bool:
     return subprocess.run(args, cwd=root, check=False, capture_output=True).returncode == 0
 
 
-def gh_pr_state(root: Path, ticket: Ticket) -> PrState | None:
-    """Ask GitHub about the ticket's pull request. None when gh fails or no PR is recorded."""
-    number = ticket.meta.get("pr")
-    if not number:
-        return None
+@dataclass(frozen=True)
+class PullRequest:
+    state: str  # OPEN | MERGED | CLOSED
+    writings: list[Writing]  # everything `comments_seen` counts, oldest first
+    reviews: list[tuple[datetime, str]]  # (submitted, state) of the submitted reviews, oldest first
+
+
+def pull_request(
+    view: dict[str, Any], diff_comments: list[dict[str, Any]], reviews: list[dict[str, Any]]
+) -> PullRequest:
+    """Pure: the pull request from what `gh` returned. Its writings are the conversation's
+    comments, the comments on lines of the diff and the text of submitted reviews. A review
+    still pending is the human's draft: GitHub shows it to the token's owner only."""
+    submitted = [r for r in reviews if r.get("submitted_at") and r.get("state") != "PENDING"]
+    writings = [
+        (parse_timestamp(c["createdAt"]), str(c["body"])) for c in view.get("comments") or []
+    ]
+    writings += [(parse_timestamp(c["created_at"]), str(c["body"])) for c in diff_comments]
+    writings += [
+        (parse_timestamp(r["submitted_at"]), str(r["body"])) for r in submitted if r["body"]
+    ]
+    return PullRequest(
+        str(view["state"]),
+        sorted(writings, key=lambda w: w[0]),
+        sorted((parse_timestamp(r["submitted_at"]), str(r["state"])) for r in submitted),
+    )
+
+
+def _gh(root: Path, *args: str) -> str | None:
     try:
-        out = subprocess.run(
-            ["gh", "pr", "view", str(number), "--json", "state,comments"],
-            cwd=root,
-            check=True,
-            capture_output=True,
-            encoding="utf-8",
+        return subprocess.run(
+            ["gh", *args], cwd=root, check=True, capture_output=True, encoding="utf-8"
         ).stdout
     except (subprocess.CalledProcessError, FileNotFoundError):
         return None
-    data = json.loads(out)
-    return str(data["state"]), len(data.get("comments") or [])
+
+
+def read_pull_request(root: Path, number: int) -> PullRequest | None:
+    """Ask GitHub: state and conversation, comments on the diff, reviews. None when gh fails."""
+    api = f"repos/{{owner}}/{{repo}}/pulls/{number}"
+    view = _gh(root, "pr", "view", str(number), "--json", "state,comments")
+    diff = _gh(root, "api", "--paginate", f"{api}/comments", "--jq", ".[] | {created_at, body}")
+    reviews = _gh(
+        root, "api", "--paginate", f"{api}/reviews", "--jq", ".[] | {submitted_at, state, body}"
+    )
+    if view is None or diff is None or reviews is None:
+        return None
+    diff_comments = [json.loads(line) for line in diff.splitlines() if line.strip()]
+    review_items = [json.loads(line) for line in reviews.splitlines() if line.strip()]
+    return pull_request(json.loads(view), diff_comments, review_items)
+
+
+def review_verdict(reviews: list[tuple[datetime, str]], since: datetime | None) -> str:
+    """What the reviews submitted after `since` ask for. A change request stands until an
+    approval, as on GitHub: a plain comment after it does not lift it. Otherwise the newest
+    review counts, so a comment after an approval is a question again."""
+    verdict = NO_REVIEW
+    for submitted, state in reviews:
+        if state not in REVIEW_STATES or (since is not None and submitted <= since):
+            continue
+        if state != "COMMENTED" or verdict != CHANGES_REQUESTED:
+            verdict = state
+    return verdict
+
+
+def handed_over_at(root: Path, ticket: Ticket) -> datetime | None:
+    """When the story last reached the human: the commit time of the last `… → accept` on its
+    branch's own line (`--first-parent`, so not another story's, brought in with main).
+    Reviews from before it belong to an earlier round."""
+    for ref in (f"refs/heads/{ticket.branch}", f"refs/remotes/origin/{ticket.branch}"):
+        if _ref_exists(root, ref):
+            args = ("log", "-1", "--first-parent", "--format=%cI", "-E", "--grep= accept$", ref)
+            out = git(root, *args).strip()
+            return parse_timestamp(out) if out else None
+    return None
+
+
+def gh_pr_state(root: Path, ticket: Ticket) -> PrState | None:
+    """Ask GitHub about the ticket's pull request. None when gh fails or no PR is recorded."""
+    number = ticket.meta.get("pr")
+    pull = read_pull_request(root, int(number)) if number else None
+    if pull is None:
+        return None
+    verdict = review_verdict(pull.reviews, handed_over_at(root, ticket))
+    return pull.state, len(pull.writings), verdict
 
 
 # --- deciding --------------------------------------------------------------
@@ -363,12 +440,12 @@ def _pull_requests(config: Config, tickets: list[Ticket], lookup: PrLookup) -> s
         state = lookup(ticket)
         if state is None:
             return f"error pr-lookup {ticket.path.as_posix()}"
-        verdict, comments = state
+        verdict, writings, review = state
         if verdict == "MERGED":
             return f"merged {ticket.path.as_posix()} {ticket.branch}"
         if verdict == "CLOSED":
             return f"closed {ticket.path.as_posix()} {ticket.branch}"
-        return f"pr {ticket.path.as_posix()} OPEN {comments}"
+        return f"pr {ticket.path.as_posix()} OPEN {writings} {review}"
     return None
 
 

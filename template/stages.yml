@@ -1,6 +1,6 @@
 # The pipeline's configuration for this repository. The engine reads this file; the agents
 # are told the transitions in their task message, so targets are declared here and nowhere else.
-version: 4
+version: 5
 root: factory/features   # <F0001-slug>/{FEATURE.md, drafts/, ongoing/, done/}; the watcher reads ongoing/
 lease_minutes: 60
 max_attempts: 2          # stage runs that ended without a commit before the watcher asks the human

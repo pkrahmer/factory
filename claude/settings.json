@@ -31,6 +31,7 @@
       "Bash(git for-each-ref*)",
       "Bash(git rev-parse*)",
       "Bash(gh pr *)",
+      "Bash(gh api repos/*)",
       "Bash(gh auth status*)",
       "Bash(ls *)",
       "Bash(cat *)",

@@ -21,7 +21,7 @@ R6. Claim before work: set `claimed_at` (from `date -u +%Y-%m-%dT%H:%M:%SZ`, nev
 
 R7. A stage change is one edit of the `stage` field, only to a stage listed under `next` for the current one. The watcher rejects anything else. A stage agent never moves the file: the human moves a story from `drafts/` to `ongoing/`, the dispatcher moves it to `done/` when the pull request is merged.
 
-R8. To ask the human, write the question as a log entry, set `blocked: question`, clear your claim, commit as R6 says (an amend of the claim when it is still `HEAD` and unpushed), push, and stop. The dispatcher posts it on the pull request and sets `blocked: asked`; the answer comes back as a log entry and `blocked` is cleared. Do not guess on anything listed under "Not without asking" in `CLAUDE.md`.
+R8. To ask the human, write the question as a log entry, set `blocked: question`, clear your claim, commit as R6 says (an amend of the claim when it is still `HEAD` and unpushed), push, and stop. The dispatcher posts it on the pull request and sets `blocked: asked`; the answer comes back as a log entry and `blocked` is cleared. The human's comments on the diff and their reviews are answers and instructions just like their pull request comments, and the dispatcher copies them into the log the same way. A note that contradicts the story is a question, not an order. Do not guess on anything listed under "Not without asking" in `CLAUDE.md`.
 
 R9. Tests are written by the tester stage from the acceptance criteria. The coder never edits tests. A wrong test is a question (R8), not a fix; when the human's answer calls for a test change, the coder sends the ticket back to `tests` and the tester makes exactly that change.
 
