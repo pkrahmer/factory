@@ -1,0 +1,20 @@
+# One factory container serving the repositories in REPOS. See README.md for the one-time login.
+services:
+  factory:
+    build: .
+    image: factory
+    environment:
+      REPOS: ${REPOS:?comma-separated owner/name list, e.g. owner/repo}
+      GH_TOKEN: ${GH_TOKEN:?a GitHub token with repo access, e.g. in a .env file}
+      TICK_SECONDS: ${TICK_SECONDS:-120}
+      FACTORY_MODEL: ${FACTORY_MODEL:-sonnet}
+      GIT_USER_NAME: ${GIT_USER_NAME:-factory}
+      GIT_USER_EMAIL: ${GIT_USER_EMAIL:-factory@users.noreply.github.com}
+    volumes:
+      - claude-home:/home/factory/.claude
+      - work:/work
+    restart: unless-stopped
+
+volumes:
+  claude-home:
+  work:

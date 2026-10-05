@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2540" height="640" viewBox="0 0 2540 640" font-family="Helvetica, Arial, sans-serif">
+<title>01 · One story through the stages</title>
+<style>
+.bg { fill: #ffffff; }
+.title { font: 600 22px Helvetica, Arial, sans-serif; fill: #1d1f24; }
+.subtitle { font: 14px Helvetica, Arial, sans-serif; fill: #5b606b; }
+.node rect, .node polygon { stroke-width: 1.6; }
+.node .t { font: 700 15px Helvetica, Arial, sans-serif; fill: #1d1f24; }
+.node .s { font: 600 11px Helvetica, Arial, sans-serif; letter-spacing: 0.06em; }
+.node .l { font: 12.5px Helvetica, Arial, sans-serif; fill: #30333a; }
+.agent rect, .agent polygon, .agent circle { fill: #eaf2fb; stroke: #2f6db5; }
+.agent .s { fill: #2f6db5; }
+.human rect, .human polygon, .human circle { fill: #fff3dc; stroke: #c27400; }
+.human .s { fill: #a86400; }
+.disp rect, .disp polygon, .disp circle { fill: #f0f1f3; stroke: #6b6f7a; }
+.disp .s { fill: #5b606b; }
+.ask rect, .ask polygon, .ask circle { fill: #f3edfb; stroke: #7a4fb5; }
+.ask .s { fill: #7a4fb5; }
+.stall rect, .stall polygon, .stall circle { fill: #fcebeb; stroke: #b53a3a; }
+.stall .s { fill: #b53a3a; }
+.back rect, .back polygon, .back circle { fill: #fdf0e6; stroke: #d0661a; }
+.back .s { fill: #b5560f; }
+.end rect { fill: #ffffff; stroke: #8a8f99; stroke-dasharray: 5 3; }
+.code rect, .code polygon, .code circle { fill: #e8f5f0; stroke: #2a8a6e; }
+.code .s { fill: #22775e; }
+.quiet rect { fill: #f7f8fa; stroke: #a3a8b2; } .quiet .s { fill: #6b6f7a; }
+.lane { fill: #f7f8fa; stroke: #dfe2e7; }
+.lane-alt { fill: #ffffff; stroke: #dfe2e7; }
+.lane-head { font: 700 13.5px Helvetica, Arial, sans-serif; fill: #1d1f24; }
+.lane-note { font: 12px Helvetica, Arial, sans-serif; fill: #5b606b; }
+.e { fill: none; stroke-width: 1.8; }
+.e-flow { stroke: #3a3d44; }
+.e-back { stroke: #d0661a; }
+.e-ask { stroke: #7a4fb5; stroke-dasharray: 6 4; }
+.e-stall { stroke: #b53a3a; stroke-dasharray: 6 4; }
+.lbl { font: 12px Helvetica, Arial, sans-serif; paint-order: stroke; stroke: #ffffff;
+       stroke-width: 5px; stroke-linejoin: round; }
+.lbl-flow { fill: #1d1f24; } .lbl-back { fill: #a84f0e; }
+.lbl-ask { fill: #6a3fa5; } .lbl-stall { fill: #a32f2f; }
+.note { font: 12.5px Helvetica, Arial, sans-serif; fill: #4a4e57; }
+.note-b { font: 700 12.5px Helvetica, Arial, sans-serif; fill: #1d1f24; }
+.mono { font-family: Menlo, Consolas, monospace; }
+.trunk { stroke: #3a3d44; } .twig { stroke: #8a8f99; }
+.pr-draft { fill: #f7f8fa; stroke: #a3a8b2; } .pr-ready { fill: #fff3dc; stroke: #c27400; }
+.band-main { fill: #e7e9ed; } .band-ticket { fill: #dbe8f7; }
+.m-flow { fill: #3a3d44; } .m-back { fill: #d0661a; } .m-ask { fill: #7a4fb5; }
+.m-stall { fill: #b53a3a; }
+@media (prefers-color-scheme: dark) {
+  .bg { fill: #0f141a; }
+  .title, .node .t, .lane-head, .note-b { fill: #e6edf3; }
+  .subtitle, .lane-note { fill: #9da7b3; }
+  .node .l, .note { fill: #c9d1d9; }
+  .agent rect, .agent polygon, .agent circle { fill: #132a45; stroke: #5b9be6; }
+  .agent .s { fill: #7fb2f0; }
+  .human rect, .human polygon, .human circle { fill: #3a2a0e; stroke: #e0a33a; }
+  .human .s { fill: #f0b85a; }
+  .disp rect, .disp polygon, .disp circle { fill: #23282f; stroke: #8b939e; }
+  .disp .s { fill: #a8b0bb; }
+  .ask rect, .ask polygon, .ask circle { fill: #2a1f40; stroke: #a98be0; }
+  .ask .s { fill: #c0a8f0; }
+  .stall rect, .stall polygon, .stall circle { fill: #3d1a1c; stroke: #e06c6c; }
+  .stall .s { fill: #f08a8a; }
+  .back rect, .back polygon, .back circle { fill: #3d2414; stroke: #ef8a3c; }
+  .back .s { fill: #f5a466; }
+  .code rect, .code polygon, .code circle { fill: #10322a; stroke: #3fb68f; }
+  .code .s { fill: #6fd0ad; }
+  .quiet rect { fill: #181e26; stroke: #6b7380; } .quiet .s { fill: #9da7b3; }
+  .end rect { fill: #0f141a; stroke: #8b939e; }
+  .lane { fill: #151b23; stroke: #2a313b; } .lane-alt { fill: #0f141a; stroke: #2a313b; }
+  .e-flow { stroke: #c9d1d9; } .e-back { stroke: #ef8a3c; }
+  .e-ask { stroke: #a98be0; } .e-stall { stroke: #e06c6c; }
+  .m-flow { fill: #c9d1d9; } .m-back { fill: #ef8a3c; } .m-ask { fill: #a98be0; }
+  .m-stall { fill: #e06c6c; }
+  .lbl { stroke: #0f141a; }
+  .lbl-flow { fill: #e6edf3; } .lbl-back { fill: #f5a466; }
+  .lbl-ask { fill: #c0a8f0; } .lbl-stall { fill: #f08a8a; }
+  .trunk { stroke: #c9d1d9; } .twig { stroke: #6b7380; }
+  .pr-draft { fill: #181e26; stroke: #6b7380; } .pr-ready { fill: #3a2a0e; stroke: #e0a33a; }
+  .band-main { fill: #23282f; } .band-ticket { fill: #132a45; }
+}
+</style><defs><marker id="a-flow" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-flow" d="M0,0 L10,5 L0,10 z"/></marker><marker id="a-back" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-back" d="M0,0 L10,5 L0,10 z"/></marker><marker id="a-ask" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-ask" d="M0,0 L10,5 L0,10 z"/></marker><marker id="a-stall" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-stall" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="bg" width="2540" height="640"/>
+<text class="title" x="40" y="46">01 · One story through the stages</text>
+<text class="subtitle" x="40" y="70">Boxes: what happens in the stage. Arrows: what moves the story on. Every move is one edit of the stage field, committed and pushed.</text>
+<path d="M 296 528 L 296 540 L 1932 540 L 1932 528" class="e e-stall"/>
+<g class="node agent"><rect x="40" y="610" width="26" height="16" rx="4"/></g>
+<text class="note" x="74" y="622">agent stage</text>
+<g class="node human"><rect x="163" y="610" width="26" height="16" rx="4"/></g>
+<text class="note" x="197" y="622">human</text>
+<g class="node disp"><rect x="244" y="610" width="26" height="16" rx="4"/></g>
+<text class="note" x="278" y="622">dispatcher</text>
+<path class="e e-flow" d="M 360 618 L 386 618" marker-end="url(#a-flow)"/>
+<text class="note" x="394" y="622">moves on</text>
+<path class="e e-back" d="M 462 618 L 488 618" marker-end="url(#a-back)"/>
+<text class="note" x="496" y="622">goes back</text>
+<path class="e e-stall" d="M 571 618 L 597 618" marker-end="url(#a-stall)"/>
+<text class="note" x="605" y="622">discarded</text>
+<path class="e e-flow" d="M 2415 292 L 2415 372" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 180 226 L 296 226" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 472 226 L 588 226" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 764 226 L 880 226" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 1056 226 L 1172 226" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 1348 226 L 1464 226" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 1640 226 L 1756 226" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 1932 226 L 2048 226" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 2224 226 L 2340 226" marker-end="url(#a-flow)"/>
+<path class="e e-back" d="M 1260 292 L 1260 348 Q 1260 358 1250 358 L 1034.32 358 Q 1024.32 358 1024.32 348 L 1024.32 292" marker-end="url(#a-back)"/>
+<path class="e e-back" d="M 1552 292 L 1552 392 Q 1552 402 1542 402 L 999.12 402 Q 989.12 402 989.12 392 L 989.12 292" marker-end="url(#a-back)"/>
+<path class="e e-back" d="M 1844 292 L 1844 436 Q 1844 446 1834 446 L 963.92 446 Q 953.92 446 953.92 436 L 953.92 292" marker-end="url(#a-back)"/>
+<path class="e e-back" d="M 2136 292 L 2136 480 Q 2136 490 2126 490 L 928.72 490 Q 918.72 490 918.72 480 L 918.72 292" marker-end="url(#a-back)"/>
+<path class="e e-back" d="M 932.8 160 L 932.8 124 Q 932.8 114 922.8 114 L 721.2 114 Q 711.2 114 711.2 124 L 711.2 160" marker-end="url(#a-back)"/>
+<path class="e e-stall" d="M 296 540 L 120 540 Q 110 540 110 530 L 110 292" marker-end="url(#a-stall)"/>
+<g class="node human"><rect x="40" y="160" width="140" height="132" rx="10"/><text class="t" x="110" y="188.5" text-anchor="middle">drafts/</text><text class="s" x="110" y="205.5" text-anchor="middle">HUMAN</text><text class="l" x="110" y="226.5" text-anchor="middle">Story written</text><text class="l" x="110" y="242.5" text-anchor="middle">from TICKET.md;</text><text class="l" x="110" y="258.5" text-anchor="middle">the pipeline</text><text class="l" x="110" y="274.5" text-anchor="middle">ignores it</text></g>
+<g class="node agent"><rect x="296" y="160" width="176" height="132" rx="10"/><text class="t" x="384" y="188.5" text-anchor="middle">ready</text><text class="s" x="384" y="205.5" text-anchor="middle">INTAKE</text><text class="l" x="384" y="226.5" text-anchor="middle">Opens the branch</text><text class="l" x="384" y="242.5" text-anchor="middle">and a draft PR;</text><text class="l" x="384" y="258.5" text-anchor="middle">checks the story</text><text class="l" x="384" y="274.5" text-anchor="middle">is buildable</text></g>
+<g class="node agent"><rect x="588" y="160" width="176" height="132" rx="10"/><text class="t" x="676" y="188.5" text-anchor="middle">tests</text><text class="s" x="676" y="205.5" text-anchor="middle">TESTER</text><text class="l" x="676" y="226.5" text-anchor="middle">One test per</text><text class="l" x="676" y="242.5" text-anchor="middle">acceptance</text><text class="l" x="676" y="258.5" text-anchor="middle">criterion, red</text><text class="l" x="676" y="274.5" text-anchor="middle">on purpose</text></g>
+<g class="node agent"><rect x="880" y="160" width="176" height="132" rx="10"/><text class="t" x="968" y="188.5" text-anchor="middle">doing</text><text class="s" x="968" y="205.5" text-anchor="middle">CODER</text><text class="l" x="968" y="226.5" text-anchor="middle">Makes the tests</text><text class="l" x="968" y="242.5" text-anchor="middle">pass, refactors</text><text class="l" x="968" y="258.5" text-anchor="middle">once, make check</text><text class="l" x="968" y="274.5" text-anchor="middle">green</text></g>
+<g class="node agent"><rect x="1172" y="160" width="176" height="132" rx="10"/><text class="t" x="1260" y="188.5" text-anchor="middle">review</text><text class="s" x="1260" y="205.5" text-anchor="middle">REVIEWER</text><text class="l" x="1260" y="226.5" text-anchor="middle">Reads the diff</text><text class="l" x="1260" y="242.5" text-anchor="middle">against criteria,</text><text class="l" x="1260" y="258.5" text-anchor="middle">architecture and</text><text class="l" x="1260" y="274.5" text-anchor="middle">security</text></g>
+<g class="node agent"><rect x="1464" y="160" width="176" height="132" rx="10"/><text class="t" x="1552" y="188.5" text-anchor="middle">docs</text><text class="s" x="1552" y="205.5" text-anchor="middle">DOCUMENTER</text><text class="l" x="1552" y="226.5" text-anchor="middle">Writes what the</text><text class="l" x="1552" y="242.5" text-anchor="middle">reader needs into</text><text class="l" x="1552" y="258.5" text-anchor="middle">README and docs/;</text><text class="l" x="1552" y="274.5" text-anchor="middle">fixes stale prose</text></g>
+<g class="node agent"><rect x="1756" y="160" width="176" height="132" rx="10"/><text class="t" x="1844" y="188.5" text-anchor="middle">demo</text><text class="s" x="1844" y="205.5" text-anchor="middle">DEMO</text><text class="l" x="1844" y="226.5" text-anchor="middle">Runs the demo</text><text class="l" x="1844" y="242.5" text-anchor="middle">commands, judges</text><text class="l" x="1844" y="258.5" text-anchor="middle">the output, writes</text><text class="l" x="1844" y="274.5" text-anchor="middle">the PR body</text></g>
+<g class="node human"><rect x="2048" y="160" width="176" height="132" rx="10"/><text class="t" x="2136" y="188.5" text-anchor="middle">accept</text><text class="s" x="2136" y="205.5" text-anchor="middle">HUMAN</text><text class="l" x="2136" y="226.5" text-anchor="middle">Reads the PR,</text><text class="l" x="2136" y="242.5" text-anchor="middle">wherever they are;</text><text class="l" x="2136" y="258.5" text-anchor="middle">then merges or</text><text class="l" x="2136" y="274.5" text-anchor="middle">closes it</text></g>
+<g class="node disp"><rect x="2340" y="160" width="150" height="132" rx="10"/><text class="t" x="2415" y="188.5" text-anchor="middle">done</text><text class="s" x="2415" y="205.5" text-anchor="middle">DISPATCHER</text><text class="l" x="2415" y="226.5" text-anchor="middle">Story moved to</text><text class="l" x="2415" y="242.5" text-anchor="middle">done/ on main,</text><text class="l" x="2415" y="258.5" text-anchor="middle">branch deleted,</text><text class="l" x="2415" y="274.5" text-anchor="middle">cost logged</text></g>
+<g class="node agent"><rect x="2320" y="372" width="190" height="64" rx="10"/><text class="t" x="2415" y="399" text-anchor="middle">feature acceptance</text><text class="l" x="2415" y="420" text-anchor="middle">acceptor, see 05</text></g>
+<text class="lbl lbl-flow" text-anchor="start"><tspan x="2424" y="321">the feature&#x27;s</tspan><tspan x="2424" y="336">last story</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="238" y="202">human moves it</tspan><tspan x="238" y="217">into ongoing/</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="530" y="202">story is</tspan><tspan x="530" y="217">complete</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="822" y="202">tests</tspan><tspan x="822" y="217">committed</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1114" y="202">make check</tspan><tspan x="1114" y="217">green</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1406" y="202">verdict:</tspan><tspan x="1406" y="217">pass</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1698" y="202">docs written,</tspan><tspan x="1698" y="217">no findings</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1990" y="202">all as expected,</tspan><tspan x="1990" y="217">PR marked ready</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="2282" y="202">human merges</tspan><tspan x="2282" y="217">the PR</tspan></text>
+<text class="lbl lbl-back" text-anchor="middle"><tspan x="1158" y="351">verdict: rework · round + 1</tspan></text>
+<text class="lbl lbl-back" text-anchor="middle"><tspan x="1304" y="395">docs and code disagree · round + 1</tspan></text>
+<text class="lbl lbl-back" text-anchor="middle"><tspan x="1450" y="439">output differs from Expect · round + 1</tspan></text>
+<text class="lbl lbl-back" text-anchor="middle"><tspan x="1596" y="483">human closes the PR · round + 1</tspan></text>
+<text class="lbl lbl-back" text-anchor="middle"><tspan x="822" y="106">human approved a test change</tspan></text>
+<text class="lbl lbl-stall" text-anchor="middle"><tspan x="1114" y="532">human closes the PR while ready … demo work on it: story discarded, branch deleted</tspan></text>
+</svg>

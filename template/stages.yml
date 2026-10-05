@@ -1,0 +1,52 @@
+# The pipeline's configuration for this repository. The engine reads this file; the agents
+# are told the transitions in their task message, so targets are declared here and nowhere else.
+version: 4
+root: factory/features   # <F0001-slug>/{FEATURE.md, drafts/, ongoing/, done/}; the watcher reads ongoing/
+lease_minutes: 60
+max_attempts: 2          # stage runs that ended without a commit before the watcher asks the human
+
+# Glob patterns over repository paths each agent may write to; the guard hook refuses the
+# rest (`*` also crosses `/`). This is where the project's layout meets the pipeline: every
+# agent may write the story it works on, the tester the tests, the coder the code and the
+# files generated from it, the documenter the prose.
+lanes:
+  intake:     ["factory/features/*/ongoing/*.md"]
+  tester:     ["factory/features/*/ongoing/*.md", "tests/*"]
+  coder:      ["factory/features/*/ongoing/*.md", "src/*", "docs/openapi.json"]
+  reviewer:   ["factory/features/*/ongoing/*.md"]
+  documenter: ["factory/features/*/ongoing/*.md", "README.md", "docs/*"]
+  demo:       ["factory/features/*/ongoing/*.md"]
+  acceptor:   ["factory/features/*/ACCEPTANCE.md", "factory/features/*/drafts/*.md"]   # the report, and proposed stories for the human
+
+stages:
+  ready:
+    agent: intake     # runs on main; creates the branch and the draft pull request
+    next: [tests]
+  tests:
+    agent: tester
+    next: [doing]
+  doing:
+    agent: coder
+    next: [review, tests]   # tests: the human approved a test change; the tester makes it
+  review:
+    agent: reviewer
+    next: [docs, doing]
+    max_rounds: 2
+  docs:
+    agent: documenter # writes what the reader needs, cross-reads the rest for staleness
+    next: [demo, doing]
+    max_rounds: 2
+  demo:
+    agent: demo       # runs the demo and marks the pull request ready
+    next: [accept, doing]
+    max_rounds: 2
+  accept:
+    agent: null       # the human's stage: merging the pull request accepts, closing it sends back
+    gate: human
+    next: [done, doing]
+  feature:
+    agent: acceptor   # once per feature, when its last story is archived: the acceptance report
+    next: [accept]    # on main, like intake; its pull request carries the report and draft stories
+  done:
+    agent: null
+    next: []

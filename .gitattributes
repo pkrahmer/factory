@@ -1,0 +1,8 @@
+# Line endings: text files normalised in the repository; the files Linux executes stay LF on every checkout.
+* text=auto
+*.sh text eol=lf
+Dockerfile text eol=lf
+Makefile text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.md text eol=lf

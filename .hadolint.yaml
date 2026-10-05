@@ -1,0 +1,5 @@
+# hadolint: Dockerfile lint, part of `make check` in this repository.
+ignored:
+  # Pinning Debian package versions breaks the build whenever the mirror drops the old version,
+  # which is often; the image is rebuilt deliberately and the base image tag is pinned instead.
+  - DL3008

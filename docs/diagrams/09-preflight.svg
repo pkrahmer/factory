@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2720" height="520" viewBox="0 0 2720 520" font-family="Helvetica, Arial, sans-serif">
+<title>09 · The preflight: can this machine run the loop?</title>
+<style>
+.bg { fill: #ffffff; }
+.title { font: 600 22px Helvetica, Arial, sans-serif; fill: #1d1f24; }
+.subtitle { font: 14px Helvetica, Arial, sans-serif; fill: #5b606b; }
+.node rect, .node polygon { stroke-width: 1.6; }
+.node .t { font: 700 15px Helvetica, Arial, sans-serif; fill: #1d1f24; }
+.node .s { font: 600 11px Helvetica, Arial, sans-serif; letter-spacing: 0.06em; }
+.node .l { font: 12.5px Helvetica, Arial, sans-serif; fill: #30333a; }
+.agent rect, .agent polygon, .agent circle { fill: #eaf2fb; stroke: #2f6db5; }
+.agent .s { fill: #2f6db5; }
+.human rect, .human polygon, .human circle { fill: #fff3dc; stroke: #c27400; }
+.human .s { fill: #a86400; }
+.disp rect, .disp polygon, .disp circle { fill: #f0f1f3; stroke: #6b6f7a; }
+.disp .s { fill: #5b606b; }
+.ask rect, .ask polygon, .ask circle { fill: #f3edfb; stroke: #7a4fb5; }
+.ask .s { fill: #7a4fb5; }
+.stall rect, .stall polygon, .stall circle { fill: #fcebeb; stroke: #b53a3a; }
+.stall .s { fill: #b53a3a; }
+.back rect, .back polygon, .back circle { fill: #fdf0e6; stroke: #d0661a; }
+.back .s { fill: #b5560f; }
+.end rect { fill: #ffffff; stroke: #8a8f99; stroke-dasharray: 5 3; }
+.code rect, .code polygon, .code circle { fill: #e8f5f0; stroke: #2a8a6e; }
+.code .s { fill: #22775e; }
+.quiet rect { fill: #f7f8fa; stroke: #a3a8b2; } .quiet .s { fill: #6b6f7a; }
+.lane { fill: #f7f8fa; stroke: #dfe2e7; }
+.lane-alt { fill: #ffffff; stroke: #dfe2e7; }
+.lane-head { font: 700 13.5px Helvetica, Arial, sans-serif; fill: #1d1f24; }
+.lane-note { font: 12px Helvetica, Arial, sans-serif; fill: #5b606b; }
+.e { fill: none; stroke-width: 1.8; }
+.e-flow { stroke: #3a3d44; }
+.e-back { stroke: #d0661a; }
+.e-ask { stroke: #7a4fb5; stroke-dasharray: 6 4; }
+.e-stall { stroke: #b53a3a; stroke-dasharray: 6 4; }
+.lbl { font: 12px Helvetica, Arial, sans-serif; paint-order: stroke; stroke: #ffffff;
+       stroke-width: 5px; stroke-linejoin: round; }
+.lbl-flow { fill: #1d1f24; } .lbl-back { fill: #a84f0e; }
+.lbl-ask { fill: #6a3fa5; } .lbl-stall { fill: #a32f2f; }
+.note { font: 12.5px Helvetica, Arial, sans-serif; fill: #4a4e57; }
+.note-b { font: 700 12.5px Helvetica, Arial, sans-serif; fill: #1d1f24; }
+.mono { font-family: Menlo, Consolas, monospace; }
+.trunk { stroke: #3a3d44; } .twig { stroke: #8a8f99; }
+.pr-draft { fill: #f7f8fa; stroke: #a3a8b2; } .pr-ready { fill: #fff3dc; stroke: #c27400; }
+.band-main { fill: #e7e9ed; } .band-ticket { fill: #dbe8f7; }
+.m-flow { fill: #3a3d44; } .m-back { fill: #d0661a; } .m-ask { fill: #7a4fb5; }
+.m-stall { fill: #b53a3a; }
+@media (prefers-color-scheme: dark) {
+  .bg { fill: #0f141a; }
+  .title, .node .t, .lane-head, .note-b { fill: #e6edf3; }
+  .subtitle, .lane-note { fill: #9da7b3; }
+  .node .l, .note { fill: #c9d1d9; }
+  .agent rect, .agent polygon, .agent circle { fill: #132a45; stroke: #5b9be6; }
+  .agent .s { fill: #7fb2f0; }
+  .human rect, .human polygon, .human circle { fill: #3a2a0e; stroke: #e0a33a; }
+  .human .s { fill: #f0b85a; }
+  .disp rect, .disp polygon, .disp circle { fill: #23282f; stroke: #8b939e; }
+  .disp .s { fill: #a8b0bb; }
+  .ask rect, .ask polygon, .ask circle { fill: #2a1f40; stroke: #a98be0; }
+  .ask .s { fill: #c0a8f0; }
+  .stall rect, .stall polygon, .stall circle { fill: #3d1a1c; stroke: #e06c6c; }
+  .stall .s { fill: #f08a8a; }
+  .back rect, .back polygon, .back circle { fill: #3d2414; stroke: #ef8a3c; }
+  .back .s { fill: #f5a466; }
+  .code rect, .code polygon, .code circle { fill: #10322a; stroke: #3fb68f; }
+  .code .s { fill: #6fd0ad; }
+  .quiet rect { fill: #181e26; stroke: #6b7380; } .quiet .s { fill: #9da7b3; }
+  .end rect { fill: #0f141a; stroke: #8b939e; }
+  .lane { fill: #151b23; stroke: #2a313b; } .lane-alt { fill: #0f141a; stroke: #2a313b; }
+  .e-flow { stroke: #c9d1d9; } .e-back { stroke: #ef8a3c; }
+  .e-ask { stroke: #a98be0; } .e-stall { stroke: #e06c6c; }
+  .m-flow { fill: #c9d1d9; } .m-back { fill: #ef8a3c; } .m-ask { fill: #a98be0; }
+  .m-stall { fill: #e06c6c; }
+  .lbl { stroke: #0f141a; }
+  .lbl-flow { fill: #e6edf3; } .lbl-back { fill: #f5a466; }
+  .lbl-ask { fill: #c0a8f0; } .lbl-stall { fill: #f08a8a; }
+  .trunk { stroke: #c9d1d9; } .twig { stroke: #6b7380; }
+  .pr-draft { fill: #181e26; stroke: #6b7380; } .pr-ready { fill: #3a2a0e; stroke: #e0a33a; }
+  .band-main { fill: #23282f; } .band-ticket { fill: #132a45; }
+}
+</style><defs><marker id="a-flow" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-flow" d="M0,0 L10,5 L0,10 z"/></marker><marker id="a-back" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-back" d="M0,0 L10,5 L0,10 z"/></marker><marker id="a-ask" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-ask" d="M0,0 L10,5 L0,10 z"/></marker><marker id="a-stall" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-stall" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="bg" width="2720" height="520"/>
+<text class="title" x="40" y="46">09 · The preflight: can this machine run the loop?</text>
+<text class="subtitle" x="40" y="70">Run by the tick before anything else. It checks the machine, not the code, and never installs anything itself.</text>
+<g class="node code"><rect x="40" y="486" width="26" height="16" rx="4"/></g>
+<text class="note" x="74" y="498">deterministic code</text>
+<g class="node quiet"><rect x="212" y="486" width="26" height="16" rx="4"/></g>
+<text class="note" x="246" y="498">nothing to do</text>
+<path class="e e-flow" d="M 349 494 L 375 494" marker-end="url(#a-flow)"/>
+<text class="note" x="383" y="498">moves on</text>
+<path class="e e-stall" d="M 451 494 L 477 494" marker-end="url(#a-stall)"/>
+<text class="note" x="485" y="498">fails</text>
+<path class="e e-flow" d="M 20 195 L 110 195" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 320 195 L 400 195" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 580 195 L 610 195" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 790 195 L 820 195" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 1000 195 L 1030 195" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 1210 195 L 1240 195" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 1420 195 L 1450 195" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 1630 195 L 1680 195" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 1810 195 L 1880 195" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 2070 195 L 2140 195" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 2260 195 L 2330 195" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 2510 195 L 2570 195" marker-end="url(#a-flow)"/>
+<path class="e e-flow" d="M 215 260 L 215 360" marker-end="url(#a-flow)"/>
+<path class="e e-stall" d="M 1745 250 L 1745 380 Q 1745 390 1755 390 L 2110 390" marker-end="url(#a-stall)"/>
+<path class="e e-stall" d="M 2200 250 L 2200 340" marker-end="url(#a-stall)"/>
+<path class="e e-stall" d="M 2310 390 L 2400 390" marker-end="url(#a-stall)"/>
+<g class="node code"><rect x="110" y="130" width="210" height="130" rx="10"/><text class="t" x="215" y="165.5" text-anchor="middle">stamp current?</text><text class="s" x="215" y="182.5" text-anchor="middle">TICK</text><text class="l" x="215" y="203.5" text-anchor="middle">written in the last 24 h</text><text class="l" x="215" y="219.5" text-anchor="middle">for this factory version</text><text class="l" x="215" y="235.5" text-anchor="middle">and this stages.yml</text></g>
+<g class="node code"><rect x="400" y="130" width="180" height="130" rx="10"/><text class="t" x="490" y="165.5" text-anchor="middle">tools</text><text class="s" x="490" y="182.5" text-anchor="middle">CHECK 1</text><text class="l" x="490" y="203.5" text-anchor="middle">git, gh, uv, make</text><text class="l" x="490" y="219.5" text-anchor="middle">on the PATH</text><text class="l" x="490" y="235.5" text-anchor="middle">fix: install them</text></g>
+<g class="node code"><rect x="610" y="130" width="180" height="130" rx="10"/><text class="t" x="700" y="165.5" text-anchor="middle">git identity</text><text class="s" x="700" y="182.5" text-anchor="middle">CHECK 2</text><text class="l" x="700" y="203.5" text-anchor="middle">user.name and</text><text class="l" x="700" y="219.5" text-anchor="middle">user.email set</text><text class="l" x="700" y="235.5" text-anchor="middle">fix: git config</text></g>
+<g class="node code"><rect x="820" y="130" width="180" height="130" rx="10"/><text class="t" x="910" y="165.5" text-anchor="middle">gh auth</text><text class="s" x="910" y="182.5" text-anchor="middle">CHECK 3</text><text class="l" x="910" y="203.5" text-anchor="middle">gh auth status</text><text class="l" x="910" y="219.5" text-anchor="middle">succeeds</text><text class="l" x="910" y="235.5" text-anchor="middle">fix: gh auth login</text></g>
+<g class="node code"><rect x="1030" y="130" width="180" height="130" rx="10"/><text class="t" x="1120" y="165.5" text-anchor="middle">venv</text><text class="s" x="1120" y="182.5" text-anchor="middle">CHECK 4</text><text class="l" x="1120" y="203.5" text-anchor="middle">the project&#x27;s</text><text class="l" x="1120" y="219.5" text-anchor="middle">.venv exists</text><text class="l" x="1120" y="235.5" text-anchor="middle">fix: uv sync</text></g>
+<g class="node code"><rect x="1240" y="130" width="180" height="130" rx="10"/><text class="t" x="1330" y="165.5" text-anchor="middle">shell tools</text><text class="s" x="1330" y="182.5" text-anchor="middle">CHECK 5</text><text class="l" x="1330" y="203.5" text-anchor="middle">sh, grep, rm, touch</text><text class="l" x="1330" y="219.5" text-anchor="middle">for make&#x27;s recipes</text><text class="l" x="1330" y="235.5" text-anchor="middle">fix: coreutils</text></g>
+<g class="node code"><rect x="1450" y="130" width="180" height="130" rx="10"/><text class="t" x="1540" y="165.5" text-anchor="middle">agents</text><text class="s" x="1540" y="182.5" text-anchor="middle">CHECK 6</text><text class="l" x="1540" y="203.5" text-anchor="middle">every agent named</text><text class="l" x="1540" y="219.5" text-anchor="middle">in stages.yml installed</text><text class="l" x="1540" y="235.5" text-anchor="middle">fix: rebuild the image</text></g>
+<g class="node code"><polygon points="1745.0,140.0 1810,195.0 1745.0,250.0 1680,195.0"/><text class="l" x="1745" y="193.5" text-anchor="middle">all six</text><text class="l" x="1745" y="209.5" text-anchor="middle">ok?</text></g>
+<g class="node code"><rect x="1880" y="130" width="190" height="130" rx="10"/><text class="t" x="1975" y="165.5" text-anchor="middle">make lint</text><text class="s" x="1975" y="182.5" text-anchor="middle">CHECK 7</text><text class="l" x="1975" y="203.5" text-anchor="middle">make, its shell and</text><text class="l" x="1975" y="219.5" text-anchor="middle">uv run work together;</text><text class="l" x="1975" y="235.5" text-anchor="middle">a probe, not the gate</text></g>
+<g class="node code"><polygon points="2200.0,140.0 2260,195.0 2200.0,250.0 2140,195.0"/><text class="l" x="2200" y="201.5" text-anchor="middle">green?</text></g>
+<g class="node code"><rect x="2330" y="130" width="180" height="130" rx="10"/><text class="t" x="2420" y="173.5" text-anchor="middle">write stamp</text><text class="s" x="2420" y="190.5" text-anchor="middle">TICK</text><text class="l" x="2420" y="211.5" text-anchor="middle">version and</text><text class="l" x="2420" y="227.5" text-anchor="middle">stages.yml hash</text></g>
+<g class="node end"><rect x="2570" y="165" width="130" height="60" rx="30"/><text class="t" x="2635" y="200.5" text-anchor="middle">tick goes on</text></g>
+<g class="node quiet"><rect x="125" y="360" width="180" height="64" rx="10"/><text class="t" x="215" y="387" text-anchor="middle">skip</text><text class="l" x="215" y="408" text-anchor="middle">the tick goes on</text></g>
+<g class="node stall"><rect x="2110" y="340" width="200" height="100" rx="10"/><text class="t" x="2210" y="377" text-anchor="middle">preflight failed</text><text class="l" x="2210" y="398" text-anchor="middle">every missing line with</text><text class="l" x="2210" y="414" text-anchor="middle">its fix in the tick log</text></g>
+<g class="node stall"><rect x="2400" y="356" width="200" height="68" rx="10"/><text class="t" x="2500" y="377" text-anchor="middle">exit 1</text><text class="l" x="2500" y="398" text-anchor="middle">next tick runs the</text><text class="l" x="2500" y="414" text-anchor="middle">preflight again</text></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="65" y="170">tick</tspan><tspan x="65" y="185">(07)</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="360" y="186">no</tspan></text>
+
+
+
+
+
+
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1845" y="186">yes</tspan></text>
+
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="2295" y="186">yes</tspan></text>
+
+<text class="lbl lbl-flow" text-anchor="start"><tspan x="224" y="314">yes</tspan></text>
+<text class="lbl lbl-stall" text-anchor="start"><tspan x="1757" y="381">no: make lint is not run</tspan></text>
+<text class="lbl lbl-stall" text-anchor="start"><tspan x="2209" y="299">no</tspan></text>
+
+</svg>

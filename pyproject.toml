@@ -1,0 +1,55 @@
+[project]
+name = "factory"
+version = "4.0.0"
+description = "A file-based delivery pipeline: tickets in Git, one stage agent at a time, acceptance by pull request"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["pyyaml>=6.0"]
+
+[project.scripts]
+factory-tick = "factory.tick:main"
+factory-watch = "factory.watch:main"
+factory-guard = "factory.guard:cli"
+factory-costs = "factory.costs:main"
+factory-preflight = "factory.preflight:cli"
+
+[dependency-groups]
+dev = ["mypy>=1.14", "pytest>=8.3", "ruff>=0.9", "types-pyyaml>=6.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/factory"]
+
+[tool.ruff]
+target-version = "py312"
+extend-exclude = ["demo"]   # the demo's project and stories: their own code, checked where they run
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "RET", "ARG", "PL", "C90", "S"]
+ignore = ["PLR2004", "S603", "S607"]   # magic values; the pipeline shells out to git, gh and claude with fixed arguments
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "PLR0913"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["factory"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 8
+
+[tool.ruff.lint.pylint]
+max-args = 5
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers -p no:cacheprovider"

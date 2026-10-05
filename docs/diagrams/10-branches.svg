@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2100" height="640" viewBox="0 0 2100 640" font-family="Helvetica, Arial, sans-serif">
+<title>10 · Branches: one trunk, one short branch per ticket</title>
+<style>
+.bg { fill: #ffffff; }
+.title { font: 600 22px Helvetica, Arial, sans-serif; fill: #1d1f24; }
+.subtitle { font: 14px Helvetica, Arial, sans-serif; fill: #5b606b; }
+.node rect, .node polygon { stroke-width: 1.6; }
+.node .t { font: 700 15px Helvetica, Arial, sans-serif; fill: #1d1f24; }
+.node .s { font: 600 11px Helvetica, Arial, sans-serif; letter-spacing: 0.06em; }
+.node .l { font: 12.5px Helvetica, Arial, sans-serif; fill: #30333a; }
+.agent rect, .agent polygon, .agent circle { fill: #eaf2fb; stroke: #2f6db5; }
+.agent .s { fill: #2f6db5; }
+.human rect, .human polygon, .human circle { fill: #fff3dc; stroke: #c27400; }
+.human .s { fill: #a86400; }
+.disp rect, .disp polygon, .disp circle { fill: #f0f1f3; stroke: #6b6f7a; }
+.disp .s { fill: #5b606b; }
+.ask rect, .ask polygon, .ask circle { fill: #f3edfb; stroke: #7a4fb5; }
+.ask .s { fill: #7a4fb5; }
+.stall rect, .stall polygon, .stall circle { fill: #fcebeb; stroke: #b53a3a; }
+.stall .s { fill: #b53a3a; }
+.back rect, .back polygon, .back circle { fill: #fdf0e6; stroke: #d0661a; }
+.back .s { fill: #b5560f; }
+.end rect { fill: #ffffff; stroke: #8a8f99; stroke-dasharray: 5 3; }
+.code rect, .code polygon, .code circle { fill: #e8f5f0; stroke: #2a8a6e; }
+.code .s { fill: #22775e; }
+.quiet rect { fill: #f7f8fa; stroke: #a3a8b2; } .quiet .s { fill: #6b6f7a; }
+.lane { fill: #f7f8fa; stroke: #dfe2e7; }
+.lane-alt { fill: #ffffff; stroke: #dfe2e7; }
+.lane-head { font: 700 13.5px Helvetica, Arial, sans-serif; fill: #1d1f24; }
+.lane-note { font: 12px Helvetica, Arial, sans-serif; fill: #5b606b; }
+.e { fill: none; stroke-width: 1.8; }
+.e-flow { stroke: #3a3d44; }
+.e-back { stroke: #d0661a; }
+.e-ask { stroke: #7a4fb5; stroke-dasharray: 6 4; }
+.e-stall { stroke: #b53a3a; stroke-dasharray: 6 4; }
+.lbl { font: 12px Helvetica, Arial, sans-serif; paint-order: stroke; stroke: #ffffff;
+       stroke-width: 5px; stroke-linejoin: round; }
+.lbl-flow { fill: #1d1f24; } .lbl-back { fill: #a84f0e; }
+.lbl-ask { fill: #6a3fa5; } .lbl-stall { fill: #a32f2f; }
+.note { font: 12.5px Helvetica, Arial, sans-serif; fill: #4a4e57; }
+.note-b { font: 700 12.5px Helvetica, Arial, sans-serif; fill: #1d1f24; }
+.mono { font-family: Menlo, Consolas, monospace; }
+.trunk { stroke: #3a3d44; } .twig { stroke: #8a8f99; }
+.pr-draft { fill: #f7f8fa; stroke: #a3a8b2; } .pr-ready { fill: #fff3dc; stroke: #c27400; }
+.band-main { fill: #e7e9ed; } .band-ticket { fill: #dbe8f7; }
+.m-flow { fill: #3a3d44; } .m-back { fill: #d0661a; } .m-ask { fill: #7a4fb5; }
+.m-stall { fill: #b53a3a; }
+@media (prefers-color-scheme: dark) {
+  .bg { fill: #0f141a; }
+  .title, .node .t, .lane-head, .note-b { fill: #e6edf3; }
+  .subtitle, .lane-note { fill: #9da7b3; }
+  .node .l, .note { fill: #c9d1d9; }
+  .agent rect, .agent polygon, .agent circle { fill: #132a45; stroke: #5b9be6; }
+  .agent .s { fill: #7fb2f0; }
+  .human rect, .human polygon, .human circle { fill: #3a2a0e; stroke: #e0a33a; }
+  .human .s { fill: #f0b85a; }
+  .disp rect, .disp polygon, .disp circle { fill: #23282f; stroke: #8b939e; }
+  .disp .s { fill: #a8b0bb; }
+  .ask rect, .ask polygon, .ask circle { fill: #2a1f40; stroke: #a98be0; }
+  .ask .s { fill: #c0a8f0; }
+  .stall rect, .stall polygon, .stall circle { fill: #3d1a1c; stroke: #e06c6c; }
+  .stall .s { fill: #f08a8a; }
+  .back rect, .back polygon, .back circle { fill: #3d2414; stroke: #ef8a3c; }
+  .back .s { fill: #f5a466; }
+  .code rect, .code polygon, .code circle { fill: #10322a; stroke: #3fb68f; }
+  .code .s { fill: #6fd0ad; }
+  .quiet rect { fill: #181e26; stroke: #6b7380; } .quiet .s { fill: #9da7b3; }
+  .end rect { fill: #0f141a; stroke: #8b939e; }
+  .lane { fill: #151b23; stroke: #2a313b; } .lane-alt { fill: #0f141a; stroke: #2a313b; }
+  .e-flow { stroke: #c9d1d9; } .e-back { stroke: #ef8a3c; }
+  .e-ask { stroke: #a98be0; } .e-stall { stroke: #e06c6c; }
+  .m-flow { fill: #c9d1d9; } .m-back { fill: #ef8a3c; } .m-ask { fill: #a98be0; }
+  .m-stall { fill: #e06c6c; }
+  .lbl { stroke: #0f141a; }
+  .lbl-flow { fill: #e6edf3; } .lbl-back { fill: #f5a466; }
+  .lbl-ask { fill: #c0a8f0; } .lbl-stall { fill: #f08a8a; }
+  .trunk { stroke: #c9d1d9; } .twig { stroke: #6b7380; }
+  .pr-draft { fill: #181e26; stroke: #6b7380; } .pr-ready { fill: #3a2a0e; stroke: #e0a33a; }
+  .band-main { fill: #23282f; } .band-ticket { fill: #132a45; }
+}
+</style><defs><marker id="a-flow" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-flow" d="M0,0 L10,5 L0,10 z"/></marker><marker id="a-back" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-back" d="M0,0 L10,5 L0,10 z"/></marker><marker id="a-ask" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-ask" d="M0,0 L10,5 L0,10 z"/></marker><marker id="a-stall" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-stall" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="bg" width="2100" height="640"/>
+<text class="title" x="40" y="46">10 · Branches: one trunk, one short branch per ticket</text>
+<text class="subtitle" x="40" y="70">Time runs left to right. main is the trunk; every story and every feature acceptance lives on a branch of its own for as long as it runs, and comes back by a merge commit.</text>
+<text class="lane-head" x="40" y="235">ticket/&lt;stem&gt;</text>
+<text class="lane-head" x="40" y="375">main</text>
+<text class="lane-head" x="40" y="515">acceptance/&lt;feature&gt;</text>
+<path d="M 200 370 L 2060 370" class="trunk" stroke-width="5" fill="none" stroke-linecap="round"/>
+<path d="M 330 370 L 390 230 L 1290 230 L 1390 370" class="twig" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<path d="M 630 370 L 710 230" class="twig" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<path d="M 1570 370 L 1630 510 L 1750 510 L 1870 370" class="twig" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<rect class="pr-draft" x="390" y="138" width="900" height="24" rx="5" stroke-dasharray="5 3"/>
+<text class="note" x="400" y="154">pull request: draft, opened by intake</text>
+<rect class="pr-ready" x="1290" y="138" width="100" height="24" rx="5" stroke-dasharray="5 3"/>
+<text class="note" x="1300" y="154">ready</text>
+<rect class="pr-draft" x="1630" y="566" width="120" height="24" rx="5" stroke-dasharray="5 3"/>
+<text class="note" x="1640" y="582">draft</text>
+<rect class="pr-ready" x="1750" y="566" width="120" height="24" rx="5" stroke-dasharray="5 3"/>
+<text class="note" x="1760" y="582">ready</text>
+<text class="lane-note" x="1312" y="235">branch deleted</text>
+<text class="lane-note" x="1772" y="515">branch deleted</text>
+<g class="node human"><circle cx="250" cy="370" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="250" y="400">drafts and</tspan><tspan x="250" y="415">FEATURE.md</tspan></text>
+<g class="node human"><circle cx="330" cy="370" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="330" y="400">git mv into</tspan><tspan x="330" y="415">ongoing/</tspan></text>
+<g class="node agent"><circle cx="390" cy="230" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="390" y="197">intake: claim,</tspan><tspan x="390" y="212">draft PR</tspan></text>
+<g class="node agent"><circle cx="490" cy="230" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="490" y="197">ready</tspan><tspan x="490" y="212">→ tests</tspan></text>
+<g class="node agent"><circle cx="590" cy="230" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="590" y="197">tests</tspan><tspan x="590" y="212">→ doing</tspan></text>
+<g class="node human"><circle cx="630" cy="370" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="630" y="400">another</tspan><tspan x="630" y="415">draft</tspan></text>
+<g class="node disp"><circle cx="710" cy="230" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="710" y="197">merge main in,</tspan><tspan x="710" y="212">every stage</tspan></text>
+<g class="node agent"><circle cx="810" cy="230" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="810" y="197">feat:</tspan><tspan x="810" y="212">…</tspan></text>
+<g class="node agent"><circle cx="900" cy="230" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="900" y="197">refactor:</tspan><tspan x="900" y="212">…</tspan></text>
+<g class="node agent"><circle cx="990" cy="230" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="990" y="197">doing</tspan><tspan x="990" y="212">→ review</tspan></text>
+<g class="node agent"><circle cx="1090" cy="230" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1090" y="197">review</tspan><tspan x="1090" y="212">→ docs</tspan></text>
+<g class="node agent"><circle cx="1190" cy="230" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1190" y="197">docs</tspan><tspan x="1190" y="212">→ demo</tspan></text>
+<g class="node agent"><circle cx="1290" cy="230" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1290" y="197">demo</tspan><tspan x="1290" y="212">→ accept</tspan></text>
+<g class="node human"><circle cx="1390" cy="370" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1390" y="400">human merges:</tspan><tspan x="1390" y="415">a merge commit,</tspan><tspan x="1390" y="430">never a squash</tspan></text>
+<g class="node disp"><circle cx="1490" cy="370" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1490" y="400">archive: done/,</tspan><tspan x="1490" y="415">branch deleted</tspan></text>
+<g class="node agent"><circle cx="1630" cy="510" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1630" y="540">acceptor: claim,</tspan><tspan x="1630" y="555">draft PR</tspan></text>
+<g class="node agent"><circle cx="1750" cy="510" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1750" y="540">feature</tspan><tspan x="1750" y="555">→ accept</tspan></text>
+<g class="node human"><circle cx="1870" cy="370" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1870" y="337">human merges</tspan><tspan x="1870" y="352">the report</tspan></text>
+<g class="node disp"><circle cx="1970" cy="370" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1970" y="337">outcome:</tspan><tspan x="1970" y="352">accepted</tspan></text>
+<g class="node human"><rect x="40" y="608" width="26" height="16" rx="4"/></g>
+<text class="note" x="74" y="620">the human</text>
+<g class="node agent"><rect x="149" y="608" width="26" height="16" rx="4"/></g>
+<text class="note" x="183" y="620">an agent</text>
+<g class="node disp"><rect x="251" y="608" width="26" height="16" rx="4"/></g>
+<text class="note" x="285" y="620">the dispatcher</text>
+</svg>
