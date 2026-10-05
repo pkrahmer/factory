@@ -20,5 +20,5 @@
 ## Checks
 - `make check` must be green before any stage reports done. It runs <tools: lint, types, sast (semgrep + bandit), secrets (detect-secrets), licenses (pip-licenses allow list), tests with coverage and, for an HTTP API, the schemathesis contract test>. `make lint` and `make test` run <subset>; the pipeline knows only these three targets.
 
-## Not without asking (set `blocked: question` in the ticket)
+## Not without asking (end the stage with `question`)
 - New dependency, new top-level package, change to `factory/`, change to a test you did not write, a new entry in `.secrets.baseline` or a `pragma: allowlist secret`, a `nosemgrep` or `nosec` marker, a licence outside the allow list.

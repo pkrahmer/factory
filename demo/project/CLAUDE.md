@@ -31,5 +31,5 @@ Single-user to-do service (FastAPI) built by the factory (github.com/pkrahmer/fa
 - `make check` must be green before any stage reports done. It runs ruff (including the docstring rules), mypy --strict, import-linter, bandit, pip-audit and pytest with coverage (90 % branch coverage of `src/app`). `make lint` and `make test` run the first and the last of these alone; the pipeline knows only these three targets. `make openapi` regenerates `docs/openapi.json`.
 - Run Python through `uv run`. The dependencies for the whole to-do service are already in `pyproject.toml`: FastAPI, Pydantic, SQLAlchemy 2.0 (Core), uvicorn; httpx for the test client.
 
-## Not without asking (set `blocked: question` in the ticket)
+## Not without asking (end the stage with `question`)
 - New dependency, new top-level package, change to `factory/`, change to a test you did not write.
