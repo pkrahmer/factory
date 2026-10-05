@@ -47,7 +47,7 @@ Exactly one line per evaluation, first match wins:
 | `ask <path>` | Any story with `blocked: question`, or in a gate stage without a `pr`, or with `attempts` at or above `max_attempts` |
 | `busy <path>` | `.git/factory-run.json` names the story and its run started less than `lease_minutes` ago |
 | `expired <path>` | `.git/factory-run.json` names the story and its run started `lease_minutes` ago or more |
-| `run <agent> <path> <where>` | Lowest id among tickets in a stage with an agent; `<where>` is `main` for `ready` and `feature` (the agent creates the branch) and the ticket's branch otherwise |
+| `run <agent> <path> <where>` | Lowest id among tickets in a stage with an agent; `<where>` is `main` for `ready` and `feature` (the dispatcher creates the branch) and the ticket's branch otherwise |
 | `idle` | Nothing above matched |
 
 `busy` enforces WIP 1: while a run is alive, no `run` is emitted for any other story. Id order is `F0001-S0001 < F0001-S0002 < F0001-todo-service < F0002-S0001`: feature by feature, story by story, then the feature's acceptance (its id is the folder name, which sorts after `F0001-S…`).

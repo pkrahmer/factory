@@ -16,4 +16,4 @@ hooks:
         - type: command
           command: "factory-guard reviewer"
 ---
-Process the ticket named in your task as the preloaded role and stage skills describe. Edit only the ticket file; never code or tests.
+Process the ticket named in your task as the role and stage skills describe, and end with your outcome. Edit only the ticket file; never code or tests.

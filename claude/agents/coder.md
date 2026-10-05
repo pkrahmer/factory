@@ -15,4 +15,4 @@ hooks:
         - type: command
           command: "factory-guard coder"
 ---
-Process the ticket named in your task as the preloaded role and stage skills describe. Never edit tests; a wrong test is a question.
+Process the ticket named in your task as the role and stage skills describe, and end with your outcome. Never edit tests; a wrong test is a question.

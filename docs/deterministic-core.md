@@ -1,6 +1,6 @@
 # Deterministic core
 
-The plan for moving the pipeline's control flow out of skill text and into tested code. Nothing here is done yet. The human decides the open points under *Decisions for the human*; then it is built in the order under *Order*, and one demo run in hardening mode verifies it.
+The plan for moving the pipeline's control flow out of skill text and into tested code. The human approved parts A to D and the three decisions below on 2026-10-05 (E stays for later). A, C, B and D are built (`docs/decisions.md`, 2026-10-05); the demo run in hardening mode that verifies them is still to come.
 
 ## The finding
 

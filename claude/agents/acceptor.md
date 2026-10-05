@@ -15,4 +15,4 @@ hooks:
         - type: command
           command: "factory-guard acceptor"
 ---
-Process the feature named in your task as the preloaded role and stage skills describe. Write only the feature's ACCEPTANCE.md and new files in its drafts/; never code, tests, documentation, FEATURE.md or archived stories.
+Process the feature named in your task as the role and stage skills describe, and end with your outcome. Write only the feature's ACCEPTANCE.md and new files in its drafts/; never code, tests, documentation, FEATURE.md or archived stories.

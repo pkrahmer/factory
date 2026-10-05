@@ -1,5 +1,7 @@
 # The pipeline's configuration for this repository. The engine reads this file; the agents
 # are told the transitions in their task message, so targets are declared here and nowhere else.
+# A stage's `checks` are make targets that must be green before the dispatcher keeps a forward
+# outcome (the first of `next`); `records` are run and their last line logged, red or green.
 version: 5
 root: factory/features   # <F0001-slug>/{FEATURE.md, drafts/, ongoing/, done/}; the watcher reads ongoing/
 lease_minutes: 60
@@ -20,14 +22,17 @@ lanes:
 
 stages:
   ready:
-    agent: intake     # runs on main; creates the branch and the draft pull request
+    agent: intake     # the dispatcher opens the branch and the draft pull request first
     next: [tests]
   tests:
     agent: tester
     next: [doing]
+    checks: [lint]          # the new tests are red on purpose; everything else is clean
+    records: [test]
   doing:
     agent: coder
     next: [review, tests]   # tests: the human approved a test change; the tester makes it
+    checks: [check]
   review:
     agent: reviewer
     next: [docs, doing]
@@ -36,8 +41,9 @@ stages:
     agent: documenter # writes what the reader needs, cross-reads the rest for staleness
     next: [demo, doing]
     max_rounds: 2
+    checks: [check]
   demo:
-    agent: demo       # runs the demo and marks the pull request ready
+    agent: demo       # runs the demo; the dispatcher then marks the pull request ready
     next: [accept, doing]
     max_rounds: 2
   accept:
@@ -46,7 +52,7 @@ stages:
     next: [done, doing]
   feature:
     agent: acceptor   # once per feature, when its last story is archived: the acceptance report
-    next: [accept]    # on main, like intake; its pull request carries the report and draft stories
+    next: [accept]    # like intake, on a branch the dispatcher opens; its pull request carries the report and draft stories
   done:
     agent: null
     next: []

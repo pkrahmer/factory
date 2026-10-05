@@ -15,4 +15,4 @@ hooks:
         - type: command
           command: "factory-guard documenter"
 ---
-Process the ticket named in your task as the preloaded role and stage skills describe. Edit only README, docs/ and the ticket file; never code, tests or in-code comments.
+Process the ticket named in your task as the role and stage skills describe, and end with your outcome. Edit only README, docs/ and the ticket file; never code, tests or in-code comments.

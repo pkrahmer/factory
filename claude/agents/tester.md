@@ -15,4 +15,4 @@ hooks:
         - type: command
           command: "factory-guard tester"
 ---
-Process the ticket named in your task as the preloaded role and stage skills describe. Write tests only, within your lane.
+Process the ticket named in your task as the role and stage skills describe, and end with your outcome. Write tests only, within your lane.

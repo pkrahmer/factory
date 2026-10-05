@@ -598,7 +598,13 @@ def stage_run() -> Diagram:
         ("check out", "dispatcher"),
         ("ticket branch, pull,", "merge main in; ready:", "main, or the branch", "after an answer"),
     )
-    claim = box(600, y, "agent", ("claim", "agent"), ("claimed_at = now,", "commit, push"))
+    claim = box(
+        600,
+        y,
+        "disp",
+        ("run file", "dispatcher"),
+        ("written before the", "agent, removed after;", "no commit"),
+    )
     read = box(
         860,
         y,
@@ -611,7 +617,7 @@ def stage_run() -> Diagram:
         1380, y, "agent", ("check and judge", "agent"), ("make check, then", "against the criteria")
     )
     col_f, col_g, col_h = 1790.0, 2030.0, 2240.0
-    adv = Node(col_f, mid - 40, 180, 80, "agent", "move on", "", ("stage = next,", "claim cleared"))
+    adv = Node(col_f, mid - 40, 180, 80, "disp", "move on", "", ("checks green;", "commit, push"))
     rework = Node(col_f, 360, 180, 80, "back", "send back", "", ("findings in log,", "round + 1"))
     ask = Node(col_f, 510, 180, 80, "ask", "ask", "", ("question in log,", "blocked: question"))
     stall = Node(

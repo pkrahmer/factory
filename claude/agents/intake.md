@@ -1,6 +1,6 @@
 ---
 name: intake
-description: Ready-stage gatekeeper. Creates the ticket branch and draft pull request, checks the ticket is complete and buildable, or sends questions back. Dispatched by the factory loop only.
+description: Ready-stage gatekeeper. Checks the ticket is complete and buildable, or sends questions back; the factory has opened the branch and the draft pull request. Dispatched by the factory loop only.
 model: sonnet
 tools: Read, Grep, Glob, Edit, Bash
 background: false
@@ -15,4 +15,4 @@ hooks:
         - type: command
           command: "factory-guard intake"
 ---
-Process the ticket named in your task exactly as the preloaded stage skill describes. Do not improve the ticket; accept it or ask.
+Process the ticket named in your task exactly as the stage skill describes. Do not improve the ticket; accept it or ask. End with your outcome.

@@ -3,11 +3,8 @@ name: stage-review
 description: Stage instructions for `review`. Preloaded into the reviewer agent; not invoked directly.
 ---
 
-1. Claim the ticket (R6), commit.
-2. Review `git diff main...HEAD -- . ':!factory'` as the role skill describes; the ticket is the only other input. Run `make check` yourself; do not rely on the log.
-3. Write the findings and verdict as a log entry.
-4. `verdict: pass`: set `stage: docs`.
-   `verdict: rework`: add 1 to `round`. If `round` is now above `max_rounds` for this stage, keep the stage, set `blocked: question` with a one-paragraph summary of what keeps failing and stop (R12). Otherwise set `stage: doing`.
-5. Clear the claim, commit with subject `ticket <id>: review → <stage>`, push.
+1. Review `git diff main...HEAD -- . ':!factory'` as the role skill describes; the ticket is the only other input. The factory ran `make check` after the coder and logged its result in the coder's entry; run it yourself when you need more than that line.
+2. Your entry is the findings as a numbered list (location, what is wrong, what would fix it, one line each), or "no findings".
+3. No findings: end with `docs`. Findings: end with `doing`. The factory counts the round and asks the human when the cap is passed.
 
-You do not edit code, and you do not write any: no scratch copies, no seeded defects, no experiments. Judging the tests means reading them against the criteria and running `make check`. If the fix is a one-character change, it is still the coder's.
+You do not edit code, and you do not write any: no scratch copies, no seeded defects, no experiments. Judging the tests means reading them against the criteria and the factory's `make check`. If the fix is a one-character change, it is still the coder's.

@@ -21,19 +21,19 @@ One ticket is in flight at a time (WIP 1). At most one `ticket/` or `acceptance/
 | `main` | the human | `FEATURE.md`, stories in `drafts/`, the `git mv` that promotes one into `ongoing/`, an answer as a log entry when no pull request exists yet |
 | `main` | the human, on GitHub | the merge commit of a pull request: accepting a story or an acceptance report |
 | `main` | the dispatcher | one commit per event: archiving a merged story into `done/`, discarding a story back to `drafts/`, recording an acceptance's `outcome` |
-| `ticket/…`, `acceptance/…` | the stage agents | every stage's work: the story file and the agent's lane, committed together and pushed before the stage ends |
-| `ticket/…`, `acceptance/…` | the dispatcher | merging `main` in before every stage; bookkeeping (a stall, an expired claim, copied pull request comments) |
+| `ticket/…`, `acceptance/…` | the coder | its work commits, as it goes (`ticket <id>: feat(…): …`) |
+| `ticket/…`, `acceptance/…` | the dispatcher | the branch's first commit (the story's frontmatter, or the report's head); merging `main` in before every stage; after every stage one commit with the agent's work, the story and its log entry, and the push; bookkeeping (a stall, an expired run, copied pull request comments) |
 | `ticket/…`, `acceptance/…` | the tick | the leftovers of an interrupted run, committed as they are |
 
-Nothing else writes to `main`. In particular no agent commits there: intake and the acceptor start on `main` only to branch off.
+Nothing else writes to `main`. No agent commits there, and no agent pushes anywhere.
 
 ## How a story's branch runs
 
 1. The human promotes the story on `main`.
-2. Intake branches `ticket/<stem>` off `main`, claims the story, pushes and opens a draft pull request.
+2. The dispatcher branches `ticket/<stem>` off `main`, writes the story's frontmatter, pushes and opens a draft pull request; then intake checks the story.
 3. Before every later stage, the dispatcher pulls the branch (fast-forward only) and merges `origin/main` into it, so each stage builds on the current trunk. If that merge conflicts, it is aborted and the stage counts as stalled.
-4. The stages commit and push on the branch. `make check` is green before every stage change, except at `tests`, which leaves the new tests red on purpose.
-5. The demo stage marks the pull request ready. At `accept` the human merges it, which is the acceptance, or closes it, which sends the story back to the coder on the same branch and the same pull request.
+4. After each stage the dispatcher commits and pushes. A forward move waits for the stage's checks in `stages.yml` (`make check`; at `tests` only `make lint`, because the new tests are red on purpose).
+5. When the demo passes, the dispatcher writes the pull request body from the story and marks it ready. At `accept` the human merges it, which is the acceptance, or closes it, which sends the story back to the coder on the same branch and the same pull request.
 6. After the merge, the dispatcher archives the story on `main` and deletes the branch, locally and on GitHub.
 
 A pull request closed before `accept` discards the story: its file goes back to `drafts/` on `main`, untouched by the pipeline, and the branch is deleted. The feature acceptance follows the same path on `acceptance/<feature>`; its outcome is recorded on `main` either way.

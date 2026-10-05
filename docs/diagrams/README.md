@@ -31,10 +31,11 @@ The SVGs are generated: change `draw.py`, then run `uv run python docs/diagrams/
 
 ![One stage run](03-stage-run.svg)
 
-- The acceptor (05) runs the same way: like intake it starts on `main` and creates its branch.
-- The agent's task message names the story, its stage, the allowed next stages, the branch and the pull request.
-- `make check` must be green before the stage changes. The only exception is `tests`, which leaves the new tests red on purpose.
-- An agent that runs out of turns is told once to commit what it has and hand back; only then does the run count as a stall.
+- The acceptor (05) runs the same way: like intake its branch and draft pull request are opened by the dispatcher first.
+- The agent's task names the story, its stage, the allowed outcomes, the branch, the pull request and the round, plus what the stage needs: the format check's result for intake, the mode for an approved test change, the archived stories and their cost for the acceptor.
+- The agent ends with an outcome (a stage from `next`, `question` or `stuck`) and its log entry; it never commits the stage change, pushes or calls `gh`. The dispatcher undoes writes outside the lane, keeps the frontmatter and the log its own, and commits and pushes.
+- A forward outcome waits for the stage's `checks` in `stages.yml`: `make check` after `doing` and `docs`, `make lint` after `tests` (whose new tests are red on purpose). Red holds the story and counts as a stall.
+- An agent that hits its budget is resumed once to give its outcome; a run that ends without a kept outcome is a stall.
 - Stalls and rework rounds have separate counters: `attempts` (cap `max_attempts`, 2) and `round` (cap `max_rounds`, 2). Every stall is also a comment on the pull request.
 
 ### 04 · Asking the human
@@ -70,7 +71,7 @@ The SVGs are generated: change `draw.py`, then run `uv run python docs/diagrams/
 ![The machine](06-machine.svg)
 
 - A single container (`compose.yml`): checkouts live in the `work` volume, the Claude login in `claude-home`.
-- After a restart, whatever ran before was killed. Its locks would idle the repository for lease + 10 minutes, so they go; the start time lets the tick expire claims made before it (07).
+- After a restart, whatever ran before was killed. Its locks would idle the repository for lease + 10 minutes, so they go; the start time lets the tick expire a run started before it (07).
 - Repositories are ticked one after another, never in parallel. `docker stop` ends the wait at once; a running tick finishes first.
 
 ### 07 · One tick
@@ -88,7 +89,7 @@ The SVGs are generated: change `draw.py`, then run `uv run python docs/diagrams/
 ![The watcher](08-watcher.svg)
 
 - The order of the checks is the contract in `docs/WATCH_CONTRACT.md`. `evaluate()` is a pure function, tested without git or GitHub.
-- One ticket at a time: a claimed story or acceptance answers `busy` before anything else can run. Ids sort feature by feature, story by story, then the feature's acceptance: `F0001-S0001 < F0001-S0002 < F0001-todo-service < F0002-S0001`.
+- One ticket at a time: while `.git/factory-run.json` names a story or acceptance, the line is `busy` before anything else can run. Ids sort feature by feature, story by story, then the feature's acceptance: `F0001-S0001 < F0001-S0002 < F0001-todo-service < F0002-S0001`.
 - A due acceptance is listed with stage `feature` before its `ACCEPTANCE.md` exists; `run acceptor <path> main` follows, and the acceptor creates the file.
 - A ticket is read from its branch (`ticket/…` or `acceptance/…`), else from `origin/main`, else from the working tree. A branch already merged into `main` counts as gone.
 - The watcher only reads: no fetch (the tick fetches), no commit, no checkout, no model. It looks into `drafts/` and `done/` only for the acceptance rule and to count them for the board.

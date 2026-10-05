@@ -3,10 +3,9 @@ name: stage-tests
 description: Stage instructions for `tests`. Preloaded into the tester agent; not invoked directly.
 ---
 
-0. If the ticket comes from `doing` (the log ends with a question about a test, the human's answer, and the coder's hand-back), your job is only that change: claim, edit exactly the named test as the answer says, run `make test` once, log what you changed and why in one entry, set `stage: doing`, clear the claim, commit `ticket <id>: tests → doing (test changed as approved)`, push. Skip the steps below.
-1. Claim the ticket (R6), commit.
-2. Read the ticket and the files `CLAUDE.md` names under *Tests* and *Architecture*. Nothing else: not other tickets, not `FEATURE.md`, not `factory/`, not `.claude/`. Write the tests for every acceptance criterion as the role skill describes, where `CLAUDE.md` says tests live.
-3. Run `make test 2>&1 | tail -5` once. The expected result is red in one of two shapes: failures, or collection errors because the modules under test do not exist yet. Record the last line verbatim and the names of the modules the test runner could not import. Do not run the tests again, not on a subset and not with other flags, to get counts for the log; the coder's run will produce them.
-4. Run `make lint`; it must be green. Skip the type check in this stage: it cannot pass while the modules under test do not exist, and the coder's `make check` covers the tests afterwards.
-5. Append a log entry: which criteria map to which test functions, and the files you created. If you had to interpret a criterion, that is a question (R8): stop there instead of moving on.
-6. Set `stage: doing`, clear the claim, commit tests and ticket together with subject `ticket <id>: tests → doing`, push. The branch now has red tests on purpose; that is the coder's specification.
+0. If the task says `Mode: a test change the human approved`, your job is only that change: edit exactly the named test as the human's answer says, run `make test` once, and end with `doing` and an entry saying what you changed and why. Skip the steps below.
+1. Read the ticket and the files `CLAUDE.md` names under *Tests* and *Architecture*. Nothing else: not other tickets, not `FEATURE.md`, not `factory/`, not `.claude/`. Write the tests for every acceptance criterion as the role skill describes, where `CLAUDE.md` says tests live.
+2. Run `make test 2>&1 | tail -5` once, to see the tests fail for the right reason: failures, or collection errors because the modules under test do not exist yet. Do not run the tests again, not on a subset and not with other flags, to get counts; the factory runs `make test` after you and logs its last line.
+3. Run `make lint`; it must be green, and the factory checks it again. Skip the type check in this stage: it cannot pass while the modules under test do not exist, and the coder's `make check` covers the tests afterwards.
+4. If you had to interpret a criterion, that is a question (R8): end with `question` instead of moving on.
+5. End with `doing` and an entry: which criterion maps to which test function, one line each (`criterion 3: tests/…::test_name`), the files you created, and the modules the test runner could not import. The branch now has red tests on purpose; that is the coder's specification.
