@@ -11,3 +11,5 @@ htmlcov/
 .audit-requirements.txt
 .audit-stamp
 .env
+mutants/
+.mutmut.log

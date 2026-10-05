@@ -6,7 +6,7 @@ A clean run takes about an hour and a half and roughly 15 USD of API usage (see 
 
 ## What is in this folder
 
-- `project/`: the empty project the factory builds into. Its `CLAUDE.md` (architecture, tests, docs), `Makefile` (`check`, `lint`, `test`), `pyproject.toml` with its lock file, and a README for the service's readers.
+- `project/`: the empty project the factory builds into. Its `CLAUDE.md` (architecture, tests, docs), `Makefile` (`check`, `lint`, `test`, and `mutants` for the feature acceptance), `pyproject.toml` with its lock file, and a README for the service's readers.
 - `features/`: the three features with their stories, ready to promote.
   - `F0001-todo-service`: domain model, service layer, HTTP API, SQLite storage.
   - `F0002-operations`: health endpoint, version command, statistics.

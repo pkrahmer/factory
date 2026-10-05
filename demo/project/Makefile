@@ -1,7 +1,7 @@
 # The contract between this repository and the factory is three targets: `check`, `lint`, `test`.
 # `check` is the gate every stage must pass; `lint` and `test` are what the tests stage runs on
 # its own (the type check is skipped there, because the modules under test do not exist yet).
-.PHONY: sync check lint types layers sast audit test openapi
+.PHONY: sync check lint types layers sast audit test openapi mutants
 
 # Quiet by default: agents read this output on every run, so a green check
 # should be a handful of lines and a red one should name the problem once.
@@ -54,3 +54,11 @@ openapi:
 	mkdir -p docs
 	uv run python -c "import json; from app.api.main import app; print(json.dumps(app.openapi(), indent=2, sort_keys=True))" > docs/openapi.json
 	echo "openapi: docs/openapi.json written"
+
+# Outside the gate: how well the tests notice a broken line. The feature acceptance runs it
+# and reads the survivors as missing criteria; it takes minutes, so no stage runs it.
+mutants:
+	rm -rf mutants
+	# Its progress is a spinner on one line; keep only the final counts, and the exit status.
+	uv run mutmut run > .mutmut.log 2>&1; status=$$?; tr '\r' '\n' < .mutmut.log | tail -2; rm -f .mutmut.log; exit $$status
+	uv run mutmut results

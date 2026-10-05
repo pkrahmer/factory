@@ -48,5 +48,6 @@ test:
 # kill is counted as a timeout.
 mutants:
 	rm -rf mutants
-	uv run mutmut run
+	# Its progress is a spinner on one line; keep only the final counts, and the exit status.
+	uv run mutmut run > .mutmut.log 2>&1; status=$$?; tr '\r' '\n' < .mutmut.log | tail -2; rm -f .mutmut.log; exit $$status
 	uv run mutmut results
