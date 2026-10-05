@@ -80,3 +80,42 @@ def test_reopen_reports_success_and_ready_undo_is_a_draft() -> None:
     ]
     _, failing = recorder(code=1)
     assert not github.GitHub(failing).reopen(7)
+
+
+def test_a_draft_is_created_for_the_branch_and_its_number_read_from_the_url() -> None:
+    calls, run = recorder("https://github.com/o/r/pull/12\n")
+    assert github.GitHub(run).create_draft("ticket/F0001-S0001-x", "F0001-S0001: X", "body") == 12
+    args, stdin = calls[0]
+    assert args == [
+        "gh",
+        "pr",
+        "create",
+        "--draft",
+        "--head",
+        "ticket/F0001-S0001-x",
+        "--title",
+        "F0001-S0001: X",
+        "--body-file",
+        "-",
+    ]
+    assert stdin == "body"
+
+
+def test_an_open_pull_request_is_found_by_its_branch_a_closed_one_is_not() -> None:
+    _, run = recorder(json.dumps({"number": 5, "state": "OPEN"}))
+    assert github.GitHub(run).find("ticket/x") == 5
+    _, closed = recorder(json.dumps({"number": 4, "state": "CLOSED"}))
+    assert github.GitHub(closed).find("ticket/x") is None  # a discarded story came back
+    _, none = recorder(code=1)
+    assert github.GitHub(none).find("ticket/x") is None
+
+
+def test_the_body_is_replaced_and_the_pull_request_marked_ready() -> None:
+    calls, run = recorder()
+    gh = github.GitHub(run)
+    gh.edit_body(7, "## Assignment")
+    gh.ready(7)
+    assert calls == [
+        (["gh", "pr", "edit", "7", "--body-file", "-"], "## Assignment"),
+        (["gh", "pr", "ready", "7"], None),
+    ]

@@ -113,6 +113,21 @@ def entries(body: str) -> list[tuple[int, str]]:
     return [(number, "\n".join(text).strip()) for number, text in found]
 
 
+def with_log(body: str, source: str) -> str:
+    """`body` with the log section of `source` in place of its own."""
+    src = source.split("\n")
+    found = _log_bounds(src)
+    log = src[found[0] : found[1]] if found else []
+    while log and not log[-1].strip():
+        log.pop()
+    lines = body.split("\n")
+    bounds = _log_bounds(lines)
+    if bounds is None:
+        return body if not log else body.rstrip("\n") + "\n\n" + "\n".join(log) + "\n"
+    start, end = bounds
+    return "\n".join([*lines[:start], *log, "", *lines[end:]]).rstrip("\n") + "\n"
+
+
 def last_entry(body: str) -> str:
     found = entries(body)
     return found[-1][1] if found else ""

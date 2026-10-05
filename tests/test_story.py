@@ -92,3 +92,14 @@ def test_section_and_insert_under_a_heading() -> None:
     assert story.insert_under(report, "Verdict", "Refused: no.") == (
         "## Verdict\n\nRefused: no.\n\naccepted with drafts\n\n## 1 Scope\n"
     )
+
+
+def test_with_log_keeps_the_sections_and_takes_the_log_from_the_source() -> None:
+    worked = "# T\n\n## Assignment\n\nnew\n\n## Log (append only)\n\n1. a\n2. mine\n"
+    source = "# T\n\n## Assignment\n\nold\n\n## Log (append only)\n\n1. a\n"
+    assert story.with_log(worked, source) == (
+        "# T\n\n## Assignment\n\nnew\n\n## Log (append only)\n\n1. a\n"
+    )
+    later = "## Log (append only)\n\n1. x\n\n## After\n\ntext\n"
+    assert story.with_log(later, source) == ("## Log (append only)\n\n1. a\n\n## After\n\ntext\n")
+    assert story.with_log("# T\n", source) == "# T\n\n## Log (append only)\n\n1. a\n"

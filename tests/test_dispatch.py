@@ -8,21 +8,30 @@ import subprocess
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 import pytest
 
-from factory import agent, dispatch, github, story, watch
+from factory import agent, dispatch, github, stage, story, watch
 
-STAGES_YML = """version: 4
+STAGES_YML = """version: 5
 root: factory/features
 lease_minutes: 60
 max_attempts: 2
+lanes:
+  intake:     ["factory/features/*/ongoing/*.md"]
+  tester:     ["factory/features/*/ongoing/*.md", "tests/*"]
+  coder:      ["factory/features/*/ongoing/*.md", "src/*"]
+  reviewer:   ["factory/features/*/ongoing/*.md"]
+  documenter: ["factory/features/*/ongoing/*.md", "README.md", "docs/*"]
+  demo:       ["factory/features/*/ongoing/*.md"]
+  acceptor:   ["factory/features/*/ACCEPTANCE.md", "factory/features/*/drafts/*.md"]
 stages:
   ready: {agent: intake, next: [tests]}
-  tests: {agent: tester, next: [doing]}
-  doing: {agent: coder, next: [review, tests]}
+  tests: {agent: tester, next: [doing], checks: [lint], records: [test]}
+  doing: {agent: coder, next: [review, tests], checks: [check]}
   review: {agent: reviewer, next: [docs, doing], max_rounds: 2}
-  docs: {agent: documenter, next: [demo, doing], max_rounds: 2}
+  docs: {agent: documenter, next: [demo, doing], max_rounds: 2, checks: [check]}
   demo: {agent: demo, next: [accept, doing], max_rounds: 2}
   accept: {agent: null, gate: human, next: [done, doing]}
   feature: {agent: acceptor, next: [accept]}
@@ -75,6 +84,21 @@ class FakeGitHub:
     comments: dict[int, list[github.Comment]] = field(default_factory=dict)
     reopen_works: bool = True
     calls: list[str] = field(default_factory=list)
+    created: list[tuple[str, str, str]] = field(default_factory=list)
+    bodies: dict[int, str] = field(default_factory=dict)
+
+    def create_draft(self, head: str, title: str, body: str) -> int:
+        self.created.append((head, title, body))
+        return 8 + len(self.created)
+
+    def find(self, head: str) -> int | None:
+        return next((8 + n for n, c in enumerate(self.created, 1) if c[0] == head), None)
+
+    def edit_body(self, pr: int, body: str) -> None:
+        self.bodies[pr] = body
+
+    def ready(self, pr: int) -> None:
+        self.calls.append(f"ready {pr}")
 
     def view(self, pr: int) -> github.PullRequest:
         return github.PullRequest(self.states.get(pr, "OPEN"), list(self.comments.get(pr, [])))
@@ -106,12 +130,26 @@ class World:
     root: Path
     gh: FakeGitHub
     started: list[tuple[str, str]] = field(default_factory=list)
+    schemas: list[dict[str, Any]] = field(default_factory=list)
     agent: Callable[[Path], agent.AgentRun] = lambda _root: agent.AgentRun(ok=True)
+    gate_results: dict[str, tuple[bool, str]] = field(
+        default_factory=lambda: {
+            "check": (True, "check: green"),
+            "lint": (True, "lint: green"),
+            "test": (False, "1 failed, 3 passed"),
+        }
+    )
+    gated: list[str] = field(default_factory=list)
 
     def context(self) -> dispatch.Context:
-        def start(name: str, message: str) -> agent.AgentRun:
+        def start(name: str, message: str, schema: dict[str, Any]) -> agent.AgentRun:
             self.started.append((name, message))
+            self.schemas.append(schema)
             return self.agent(self.root)
+
+        def gate(target: str) -> tuple[bool, str]:
+            self.gated.append(target)
+            return self.gate_results[target]
 
         return dispatch.Context(
             root=self.root,
@@ -119,6 +157,7 @@ class World:
             github=self.gh,
             start=start,
             today="2026-10-05",
+            gate=gate,
         )
 
     def handle(self, line: str) -> dispatch.Handled:
@@ -421,56 +460,371 @@ def test_an_expired_run_is_cleared_and_counted(world: World) -> None:
 # --- run -------------------------------------------------------------------------------------
 
 
-def stage_agent(
-    stage: str, path: str = S1, branch: str = B1, *, create: bool = False, **extra: object
+def outcome(
+    result: str | None,
+    entry: str = "done",
+    *,
+    edits: dict[str, str] | None = None,
+    commit: str | None = None,
+    ok: bool = True,
 ) -> Callable[[Path], agent.AgentRun]:
-    """A fake agent that moves the story to `stage` on `branch` and pushes."""
+    """A fake agent: it edits files, maybe commits, and ends with an outcome."""
 
     def act(root: Path) -> agent.AgentRun:
-        if create:
-            git(root, "checkout", "-q", "-b", branch)
-        target = root / path
-        meta, body = story.split(target.read_text(encoding="utf-8"))
-        fields = {
-            "stage": stage,
-            "pr": meta.get("pr") or 7,
-            "blocked": None,
-            "comments_seen": 0,
-            "round": 0,
-            "attempts": 0,
-        }
-        target.write_text(
-            story.render({**meta, **fields, **extra}, body), encoding="utf-8", newline=""
-        )
-        git(root, "add", "-A")
-        git(root, "commit", "-q", "-m", f"ticket F0001-S0001: → {stage}")
-        git(root, "push", "-q", "-u", "origin", branch)
-        return agent.AgentRun(ok=True, cost=0.2, turns=7)
+        for path, text in (edits or {}).items():
+            target = root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(text, encoding="utf-8", newline="")
+        if commit:
+            git(root, "add", "-A")
+            git(root, "commit", "-q", "-m", commit)
+        structured = {"outcome": result, "entry": entry} if result else None
+        return agent.AgentRun(ok=ok, structured=structured, cost=0.2, turns=7, result="handed back")
 
     return act
 
 
-def test_intake_runs_on_main_and_is_told_to_create_the_branch(world: World) -> None:
-    world.agent = stage_agent("tests", create=True)
+def subjects(world: World, ref: str, n: int) -> list[str]:
+    return git(world.root, "log", f"-{n}", "--format=%s", ref).split("\n")[:n]
+
+
+def test_intake_gets_a_branch_a_pull_request_and_its_task(world: World) -> None:
+    world.agent = outcome("tests", "accepted; the Interface names `thing()`")
     handled = world.handle(f"run intake {S1} main")
     assert handled.ok and handled.run is not None and handled.run.cost == 0.2
     name, message = world.started[0]
     assert name == "intake"
     assert message == (
-        f"Ticket: {S1}\nId: F0001-S0001\nStage: ready\nAllowed next stages: tests\n"
-        f"Branch: main; create {B1}\nPull request: none yet\n"
+        f"Ticket: {S1}\nId: F0001-S0001\nStage: ready\n"
+        "Allowed outcomes: tests, question, stuck\n"
+        f"Branch: {B1}\nPull request: 9\nRound: 0\n"
         "Format check: passed\n"
-        "Follow your preloaded stage skill. End with a pushed commit that contains the ticket file."
+        "End with your outcome and your log entry; the factory commits, pushes and moves the story."
     )
+    assert world.schemas[0]["properties"]["outcome"]["enum"] == ["tests", "question", "stuck"]
+    head, title, body = world.gh.created[0]
+    assert (head, title) == (B1, "F0001-S0001: Thing")
+    assert body.startswith("## Assignment\n\nBuild it.\n\n## Acceptance criteria\n\n1. `thing()`")
+    meta = world.meta(S1, f"origin/{B1}")
+    assert meta == {
+        "stage": "tests",
+        "pr": 9,
+        "blocked": None,
+        "comments_seen": 0,
+        "round": 0,
+        "attempts": 0,
+    }
+    assert story.last_entry(world.read(S1, f"origin/{B1}")) == (
+        "intake: accepted; the Interface names `thing()`"
+    )
+    assert subjects(world, f"origin/{B1}", 2) == [
+        "ticket F0001-S0001: ready → tests",
+        "ticket F0001-S0001: intake starts",
+    ]
+    assert world.read(S1, "origin/main") == DRAFT  # main keeps the human's text
 
 
 def test_intake_after_an_answer_continues_on_the_existing_branch(world: World) -> None:
-    world.on_branch(B1, stage="ready", blocked=None)
+    world.on_branch(B1, stage="ready")
     git(world.root, "checkout", "-q", "main")
-    world.agent = stage_agent("tests")
+    world.agent = outcome("tests", "accepted with the answer of entry 2")
     assert world.handle(f"run intake {S1} main").ok
-    assert f"Branch: {B1} (exists; intake asked before)" in world.started[0][1]
+    assert f"Branch: {B1} (exists; intake asked before)\nPull request: 7\n" in world.started[0][1]
+    assert world.gh.created == []
     assert world.meta(S1, f"origin/{B1}")["stage"] == "tests"
+
+
+def test_a_branch_without_a_pull_request_gets_one_or_finds_its_own(world: World) -> None:
+    world.on_branch(B1, stage="ready", pr=None)
+    world.agent = outcome("tests", "accepted")
+    assert world.handle(f"run intake {S1} main").ok
+    assert world.meta(S1, f"origin/{B1}")["pr"] == 9
+    assert len(world.gh.created) == 1
+
+
+def test_intake_cannot_accept_a_story_the_format_check_refuses(world: World) -> None:
+    world.write(S1, DRAFT.replace("Expect: `ok`.\n", ""))
+    world.commit("F0001: a Demo without Expect")
+    git(world.root, "push", "-q")
+    world.agent = outcome("tests", "accepted")
+    assert world.handle(f"run intake {S1} main").ok
+    message = world.started[0][1]
+    assert "Format check found: 1. Demo command block 1 has no `Expect:` line after it." in message
+    text = world.read(S1, f"origin/{B1}")
+    meta = watch.parse_frontmatter(text)
+    assert (meta["stage"], meta["blocked"]) == ("ready", "question")
+    assert story.last_entry(text) == (
+        "intake: accepted\n\n"
+        "The format check found what has to change before the story can start: "
+        "Demo command block 1 has no `Expect:` line after it."
+    )
+    assert subjects(world, f"origin/{B1}", 1) == ["ticket F0001-S0001: ready asks"]
+
+
+def test_the_coder_moves_on_when_the_gate_is_green(world: World) -> None:
+    world.on_branch(B1, stage="doing")
+    world.agent = outcome(
+        "review",
+        "built `thing()` in src/app.py; rejected a class",
+        edits={"src/app.py": "def thing() -> None: ...\n"},
+        commit="ticket F0001-S0001: feat(app): thing",
+    )
+    assert world.handle(f"run coder {S1} {B1}").ok
+    assert world.gated == ["check"]
+    assert world.meta(S1, f"origin/{B1}")["stage"] == "review"
+    assert story.last_entry(world.read(S1, f"origin/{B1}")) == (
+        "coder: built `thing()` in src/app.py; rejected a class\n\n`make check`: check: green"
+    )
+    assert subjects(world, f"origin/{B1}", 2) == [
+        "ticket F0001-S0001: doing → review",
+        "ticket F0001-S0001: feat(app): thing",
+    ]
+    assert world.read("src/app.py", f"origin/{B1}") == "def thing() -> None: ...\n"
+
+
+def test_a_red_gate_holds_the_stage_and_counts_a_stall(world: World) -> None:
+    world.on_branch(B1, stage="doing")
+    world.gate_results["check"] = (False, "FAILED tests/test_app.py::test_thing\n1 failed")
+    world.agent = outcome("review", "done", edits={"src/app.py": "broken\n"})
+    assert world.handle(f"run coder {S1} {B1}").ok
+    text = world.read(S1, f"origin/{B1}")
+    meta = watch.parse_frontmatter(text)
+    assert (meta["stage"], meta["attempts"]) == ("doing", 1)
+    assert story.entries(story.split(text)[1])[-2][1] == "coder: done"
+    assert story.last_entry(text) == (
+        "stage doing stalled: `make check` is red after the stage:\n"
+        "FAILED tests/test_app.py::test_thing\n1 failed; partial work committed"
+    )
+    assert world.read("src/app.py", f"origin/{B1}") == "broken\n"
+    assert world.gh.posts(7)[0].startswith("Stage doing stalled (attempt 1 of 2)")
+
+
+def test_a_rework_counts_a_round_and_the_cap_asks(world: World) -> None:
+    world.on_branch(B1, stage="review")
+    world.agent = outcome("doing", "1. src/app.py:1 no docstring; add one")
+    assert world.handle(f"run reviewer {S1} {B1}").ok
+    meta = world.meta(S1, f"origin/{B1}")
+    assert (meta["stage"], meta["round"], meta["blocked"]) == ("doing", 1, None)
+    assert subjects(world, f"origin/{B1}", 1) == ["ticket F0001-S0001: review → doing"]
+    assert world.gated == []
+    world.write(S1, story.update(world.read(S1), stage="review", round=2))
+    world.commit("ticket F0001-S0001: doing → review")
+    git(world.root, "push", "-q")
+    assert world.handle(f"run reviewer {S1} {B1}").ok
+    text = world.read(S1, f"origin/{B1}")
+    meta = watch.parse_frontmatter(text)
+    assert (meta["stage"], meta["round"], meta["blocked"]) == ("review", 3, "question")
+    assert story.last_entry(text) == (
+        "reviewer: 1. src/app.py:1 no docstring; add one\n\n"
+        "This story has now been sent back 3 times, more than 2. What should happen? "
+        "Answer with a comment; close the pull request to discard the story."
+    )
+    assert subjects(world, f"origin/{B1}", 1) == ["ticket F0001-S0001: review asks (round cap)"]
+
+
+def test_a_question_blocks_the_story_at_its_stage(world: World) -> None:
+    world.on_branch(B1, stage="tests")
+    world.agent = outcome("question", "Criterion 1 names `thing()`, the Interface `thing(x)`?")
+    assert world.handle(f"run tester {S1} {B1}").ok
+    meta = world.meta(S1, f"origin/{B1}")
+    assert (meta["stage"], meta["blocked"]) == ("tests", "question")
+    assert subjects(world, f"origin/{B1}", 1) == ["ticket F0001-S0001: tests asks"]
+    assert world.gated == []
+
+
+@pytest.mark.parametrize(
+    ("result", "ok", "reason"),
+    [
+        ("stuck", True, "make is not installed"),
+        (None, True, "the agent gave no outcome"),
+        ("accept", True, "outcome accept is not one of review, tests, question, stuck"),
+        ("review", False, "error_during_execution"),
+    ],
+)
+def test_a_run_that_did_not_finish_is_a_stall(
+    world: World, result: str | None, ok: bool, reason: str
+) -> None:
+    world.on_branch(B1, stage="doing")
+
+    def act(root: Path) -> agent.AgentRun:
+        running = watch.read_running(root)
+        assert running is not None and running.path == S1  # the run file names the story
+        (root / "src" / "half.py").parent.mkdir(exist_ok=True)
+        (root / "src" / "half.py").write_text("half\n")
+        structured = {"outcome": result, "entry": "make is not installed"} if result else None
+        return agent.AgentRun(
+            ok=ok,
+            reason="error_during_execution",
+            structured=structured,
+            denials=["Bash: git push --force"],
+        )
+
+    world.agent = act
+    assert world.handle(f"run coder {S1} {B1}").ok
+    text = world.read(S1, f"origin/{B1}")
+    meta = watch.parse_frontmatter(text)
+    assert (meta["stage"], meta["attempts"], meta["comments_seen"]) == ("doing", 1, 1)
+    assert story.last_entry(text) == (
+        f"stage doing stalled: {reason}; denied: Bash: git push --force; partial work committed"
+    )
+    assert world.read("src/half.py", f"origin/{B1}") == "half\n"
+    assert subjects(world, f"origin/{B1}", 1) == ["ticket F0001-S0001: doing stalled"]
+    assert watch.read_running(world.root) is None
+
+
+def test_writes_outside_the_lane_and_to_the_frontmatter_are_undone(world: World) -> None:
+    other = f"{FEATURE}/ongoing/F0001-S0002-other.md"
+    world.write(other, DRAFT)
+    world.commit("F0001: start S0002")
+    git(world.root, "push", "-q")
+    world.on_branch(B1, stage="review")
+    meta, body = story.split(world.read(S1))
+    tampered = story.render({**meta, "stage": "accept"}, story.append(body, "reviewer: my own"))
+    world.agent = outcome(
+        "docs",
+        "pass",
+        edits={S1: tampered, "src/hack.py": "x = 1\n", other: "# overwritten\n"},
+    )
+    assert world.handle(f"run reviewer {S1} {B1}").ok
+    text = world.read(S1, f"origin/{B1}")
+    assert watch.parse_frontmatter(text)["stage"] == "docs"
+    assert [t for _n, t in story.entries(story.split(text)[1])] == [
+        "human: created.",
+        "reviewer: pass\n\n"
+        f"The factory undid changes outside the reviewer's lane: {other}, src/hack.py",
+    ]
+    assert world.read(other, f"origin/{B1}") == DRAFT
+    with pytest.raises(subprocess.CalledProcessError):
+        world.read("src/hack.py", f"origin/{B1}")
+    assert not (world.root / "src" / "hack.py").exists()
+
+
+def test_the_tester_leaves_tests_red_and_lint_green(world: World) -> None:
+    world.on_branch(B1, stage="tests")
+    world.agent = outcome("doing", "criterion 1: test_thing_returns", edits={"tests/t.py": "x\n"})
+    assert world.handle(f"run tester {S1} {B1}").ok
+    assert world.gated == ["lint", "test"]
+    assert world.meta(S1, f"origin/{B1}")["stage"] == "doing"
+    assert story.last_entry(world.read(S1, f"origin/{B1}")) == (
+        "tester: criterion 1: test_thing_returns\n\n`make lint`: lint: green\n"
+        "`make test`: 1 failed, 3 passed"
+    )
+    world.write(S1, story.update(world.read(S1), stage="tests"))
+    world.commit("ticket F0001-S0001: back to tests")
+    git(world.root, "push", "-q")
+    world.gate_results["lint"] = (False, "tests/t.py:1: F821 undefined name")
+    world.gated.clear()
+    assert world.handle(f"run tester {S1} {B1}").ok
+    assert world.gated == ["lint"]
+    meta = world.meta(S1, f"origin/{B1}")
+    assert (meta["stage"], meta["attempts"]) == ("tests", 1)
+
+
+def test_the_tester_is_told_when_it_makes_an_approved_test_change(world: World) -> None:
+    world.on_branch(B1, stage="tests")
+    meta, body = story.split(world.read(S1))
+    body = story.append(body, "coder: criterion 1 says `blank`, test_thing expects `empty`")
+    world.write(S1, story.render(meta, body))
+    world.commit("ticket F0001-S0001: doing → tests (test change approved)")
+    git(world.root, "push", "-q")
+    world.agent = outcome("doing", "changed test_thing to `blank`")
+    assert world.handle(f"run tester {S1} {B1}").ok
+    message = world.started[0][1]
+    assert "Mode: a test change the human approved; the coder's entry 2 names it.\n" in message
+
+
+DEMO_ENTRIES = (
+    "tester: criterion 1: test_thing_returns",
+    "reviewer: no findings",
+    "documenter: README mentions thing()",
+)
+
+
+def test_demo_hands_over_with_the_pull_request_body_from_the_story(world: World) -> None:
+    world.on_branch(B1, stage="demo")
+    meta, body = story.split(world.read(S1))
+    for entry in DEMO_ENTRIES:
+        body = story.append(body, entry)
+    world.write(S1, story.render(meta, body))
+    world.commit("ticket F0001-S0001: docs → demo")
+    git(world.root, "push", "-q")
+    world.agent = outcome("accept", "1 command, as expected:\n```\nok\n```")
+    assert world.handle(f"run demo {S1} {B1}").ok
+    assert world.meta(S1, f"origin/{B1}")["stage"] == "accept"
+    assert "ready 7" in world.gh.calls
+    pr_body = world.gh.bodies[7]
+    for part in (
+        "## Assignment\n\nBuild it.",
+        "## Acceptance criteria\n\n1. `thing()` returns.",
+        "## Tests\n\ntester: criterion 1: test_thing_returns",
+        "## Review\n\nreviewer: no findings",
+        "## Documentation\n\ndocumenter: README mentions thing()",
+        "## Demo\n\ndemo: 1 command, as expected:\n```\nok\n```",
+        "## Commits\n\n",
+        "ticket F0001-S0001: demo → accept",
+        "This is the last story of F0001-thing; merging completes the feature.",
+        stage.STORY_CLOSING,
+    ):
+        assert part in pr_body, part
+
+
+def test_the_acceptor_gets_its_branch_report_and_facts(world: World) -> None:
+    done = f"{FEATURE}/done/F0001-S0001-thing.md"
+    (world.root / FEATURE / "done").mkdir()
+    git(world.root, "mv", S1, done)
+    meta, body = story.split(DRAFT)
+    body = story.append(
+        body,
+        "done (pull request merged); cost: 6 runs, 7.3 min, 30 turns, "
+        "114k tokens in (769k more from cache), 5k out, $1.92",
+    )
+    world.write(done, story.render({"stage": "done"}, body))
+    world.commit("ticket F0001-S0001: accept → done (pull request merged)")
+    git(world.root, "push", "-q")
+    report = (
+        "---\nstage: feature\n---\n# Acceptance of Thing\n\n## Verdict\n\naccepted with drafts: "
+        "one survivor\n\n## 1 Scope\n\nnone\n\n## Proposed stories\n\n- F0001-S0002 pin it\n"
+    )
+    world.agent = outcome(
+        "accept",
+        "accepted with drafts; 1 draft proposed; make mutants 9/10",
+        edits={ACCEPT: report, f"{FEATURE}/drafts/F0001-S0002-pin.md": "# Pin it\n"},
+    )
+    assert world.handle(f"run acceptor {ACCEPT} main").ok
+    message = world.started[0][1]
+    assert f"Branch: {AB}\nPull request: 9\n" in message
+    assert "Archived stories: F0001-S0001\n" in message
+    assert "Next free story number: F0001-S0002\n" in message
+    assert "Cost of the stories: 6 runs, 7.3 min, $1.92\n" in message
+    assert world.gh.created[0][:2] == (AB, "F0001-thing: acceptance")
+    text = world.read(ACCEPT, f"origin/{AB}")
+    meta = watch.parse_frontmatter(text)
+    assert (meta["stage"], meta["pr"], meta["stories"]) == ("accept", 9, ["F0001-S0001"])
+    assert "## Verdict\n\naccepted with drafts: one survivor" in text
+    assert world.read(f"{FEATURE}/drafts/F0001-S0002-pin.md", f"origin/{AB}") == "# Pin it\n"
+    assert subjects(world, f"origin/{AB}", 2) == [
+        "acceptance F0001-thing: feature → accept",
+        "acceptance F0001-thing: acceptance starts",
+    ]
+    pr_body = world.gh.bodies[9]
+    assert pr_body.startswith("## Verdict\n\naccepted with drafts: one survivor")
+    assert "## Proposed stories\n\n- F0001-S0002 pin it" in pr_body
+    assert pr_body.endswith(stage.ACCEPTANCE_CLOSING)
+    assert "ready 9" in world.gh.calls
+
+
+def test_a_stage_that_breaks_the_storys_form_is_held(world: World) -> None:
+    world.on_branch(B1, stage="doing")
+    broken = world.read(S1).replace("Expect: `ok`.\n", "")
+    world.agent = outcome("review", "built it", edits={S1: broken})
+    assert world.handle(f"run coder {S1} {B1}").ok
+    text = world.read(S1, f"origin/{B1}")
+    meta = watch.parse_frontmatter(text)
+    assert (meta["stage"], meta["attempts"]) == ("doing", 1)
+    assert story.last_entry(text) == (
+        "stage doing stalled: the story's form broke: Demo command block 1 has no `Expect:` "
+        "line after it; partial work committed"
+    )
 
 
 def test_a_stage_on_its_branch_first_takes_main_in(world: World) -> None:
@@ -479,7 +833,7 @@ def test_a_stage_on_its_branch_first_takes_main_in(world: World) -> None:
     world.write("factory/note.md", "a change on main\n")
     world.commit("F0002: draft")
     git(world.root, "push", "-q")
-    world.agent = stage_agent("review")
+    world.agent = outcome("review", "built it")
     assert world.handle(f"run coder {S1} {B1}").ok
     assert (world.root / "factory" / "note.md").exists()
     assert "ticket F0001-S0001: merge main" in git(world.root, "log", "--format=%s", f"origin/{B1}")
@@ -494,46 +848,9 @@ def test_a_closed_pull_request_discards_instead_of_starting_the_agent(world: Wor
 
 
 def test_a_story_that_moved_on_is_not_run_again(world: World) -> None:
-    world.on_branch(B1, stage="doing")
-    world.write(S1, story.update(world.read(S1), stage="review"))
-    world.commit("ticket F0001-S0001: doing → review")
-    git(world.root, "push", "-q")
+    world.on_branch(B1, stage="review")
     assert world.handle(f"run coder {S1} {B1}").summary == "nothing to do"
     assert world.started == []
-
-
-def test_a_run_without_progress_is_a_stall_with_its_reason(world: World) -> None:
-    world.on_branch(B1, stage="doing")
-
-    def claims_then_dies(root: Path) -> agent.AgentRun:
-        running = watch.read_running(root)
-        assert running is not None and running.path == S1  # the run file names the story
-        (root / "src.py").write_text("half\n")
-        return agent.AgentRun(
-            ok=False, reason="error_during_execution", denials=["Bash: git push --force"]
-        )
-
-    world.agent = claims_then_dies
-    handled = world.handle(f"run coder {S1} {B1}")
-    assert handled.ok and handled.run is not None
-    text = world.read(S1, f"origin/{B1}")
-    meta = watch.parse_frontmatter(text)
-    assert (meta["stage"], meta["attempts"], meta["comments_seen"]) == ("doing", 1, 1)
-    assert watch.read_running(world.root) is None
-    assert story.last_entry(text) == (
-        "stage doing stalled: error_during_execution; denied: Bash: git push --force; "
-        "partial work committed"
-    )
-    assert world.read("src.py", f"origin/{B1}") == "half\n"
-    assert world.gh.posts(7)[0].startswith("Stage doing stalled (attempt 1 of 2)")
-
-
-def test_a_stall_before_the_branch_exists_commits_nothing_on_main(world: World) -> None:
-    world.agent = lambda _root: agent.AgentRun(ok=False, reason="agent 'intake' is not installed")
-    tip = world.tip("origin/main")
-    handled = world.handle(f"run intake {S1} main")
-    assert not handled.ok and "intake" in handled.summary
-    assert world.tip("origin/main") == tip
 
 
 def test_a_conflict_with_main_is_a_stall(world: World) -> None:
@@ -555,20 +872,3 @@ def test_a_conflict_with_main_is_a_stall(world: World) -> None:
 def test_lines_without_work_do_nothing(world: World) -> None:
     for line in ("idle", f"busy {S1}", f"duplicate F0001-S0001 {S1} {S1}", f"error pr-lookup {S1}"):
         assert world.handle(line).ok
-
-
-def test_intake_cannot_accept_a_story_the_format_check_refuses(world: World) -> None:
-    world.write(S1, DRAFT.replace("Expect: `ok`.\n", ""))
-    world.commit("F0001: a Demo without Expect")
-    git(world.root, "push", "-q")
-    world.agent = stage_agent("tests", create=True)
-    assert world.handle(f"run intake {S1} main").ok
-    message = world.started[0][1]
-    assert "Format check found: 1. Demo command block 1 has no `Expect:` line after it." in message
-    meta = world.meta(S1, f"origin/{B1}")
-    assert (meta["stage"], meta["blocked"]) == ("ready", "question")
-    assert story.last_entry(world.read(S1, f"origin/{B1}")) == (
-        "format check: the story cannot start until its form is right: "
-        "Demo command block 1 has no `Expect:` line after it."
-    )
-    assert watch.last_change(world.root, watch.load_config(world.root)) is None  # moved back

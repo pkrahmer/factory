@@ -28,8 +28,9 @@ import time
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
-from factory import agent, costs, dispatch, github, preflight, watch
+from factory import agent, costs, dispatch, github, preflight, stage, watch
 
 # Consecutive failures on one (line, HEAD) before the tick gives up on it.
 MAX_FAILURES = 3
@@ -244,7 +245,9 @@ def context(root: Path, claude: str) -> dispatch.Context:
     home = Path(os.environ.get("FACTORY_CLAUDE_HOME") or Path.home() / ".claude")
     process = agent.subprocess_process(root)
 
-    def start(name: str, message: str) -> agent.AgentRun:
+    timeout = int(config["lease_minutes"]) * 60
+
+    def start(name: str, message: str, schema: dict[str, Any]) -> agent.AgentRun:
         try:
             spec = agent.load(name, home)
         except agent.AgentMissingError as missing:
@@ -253,11 +256,15 @@ def context(root: Path, claude: str) -> dispatch.Context:
             spec,
             message,
             state=git_dir(root) / "factory-agent",
-            timeout=int(config["lease_minutes"]) * 60,
+            timeout=timeout,
             process=process,
             claude=claude,
-            finish=dispatch.FINISH,
+            finish=stage.FINISH,
+            schema=schema,
         )
+
+    def gate(target: str) -> tuple[bool, str]:
+        return make(root, target, timeout)
 
     return dispatch.Context(
         root=root,
@@ -265,7 +272,28 @@ def context(root: Path, claude: str) -> dispatch.Context:
         github=github.GitHub(github.gh_runner(root)),
         start=start,
         today=datetime.now(UTC).strftime("%Y-%m-%d"),
+        gate=gate,
     )
+
+
+def make(root: Path, target: str, timeout: int) -> tuple[bool, str]:
+    """`make <target>` in the checkout: (green, the last lines of its output)."""
+    try:
+        proc = subprocess.run(
+            ["make", target],
+            cwd=root,
+            capture_output=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+            timeout=timeout,
+        )
+    except subprocess.TimeoutExpired:
+        return False, f"make {target} timed out after {timeout // 60} min"
+    except OSError as missing:
+        return False, f"make {target} could not run: {missing}"
+    lines = (proc.stdout + proc.stderr).strip().split("\n")
+    return proc.returncode == 0, "\n".join(lines[-stage.TAIL :])
 
 
 def record(root: Path, line: str, run: agent.AgentRun) -> None:

@@ -86,3 +86,32 @@ class GitHub:
 
     def to_draft(self, pr: int) -> None:
         self._gh("pr", "ready", "--undo", str(pr))
+
+    def create_draft(self, head: str, title: str, body: str) -> int:
+        out = self._gh(
+            "pr",
+            "create",
+            "--draft",
+            "--head",
+            head,
+            "--title",
+            title,
+            "--body-file",
+            "-",
+            stdin=body,
+        )
+        return int(out.strip().rstrip("/").rsplit("/", 1)[-1])
+
+    def find(self, head: str) -> int | None:
+        """The open pull request of a branch; a closed one belongs to an earlier, discarded run."""
+        try:
+            data = json.loads(self._gh("pr", "view", head, "--json", "number,state"))
+        except (GitHubError, ValueError):
+            return None
+        return int(data["number"]) if data.get("state") == "OPEN" else None
+
+    def edit_body(self, pr: int, body: str) -> None:
+        self._gh("pr", "edit", str(pr), "--body-file", "-", stdin=body)
+
+    def ready(self, pr: int) -> None:
+        self._gh("pr", "ready", str(pr))
