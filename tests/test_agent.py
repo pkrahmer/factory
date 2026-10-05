@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -57,7 +58,8 @@ def test_the_command_carries_the_definition_and_the_guard(home: Path, tmp_path: 
     spec = agent.load("coder", home)
     cmd = agent.command("claude", spec, "Ticket: x", session="s-1", state=tmp_path, budget=3.0)
     assert cmd[:3] == ["claude", "-p", "Ticket: x"]
-    flags = dict(zip(cmd[3::2], cmd[4::2], strict=False))
+    rest = [a for a in cmd[3:] if a != "--strict-mcp-config"]  # the one flag without a value
+    flags = dict(zip(rest[::2], rest[1::2], strict=True))
     assert flags["--model"] == "opus"
     assert flags["--effort"] == "medium"
     assert flags["--tools"] == "Read,Grep,Glob,Edit,Write,Bash"
@@ -160,3 +162,29 @@ def test_an_agent_file_that_is_not_valid_yaml_is_missing_not_a_crash(home: Path)
     (home / "agents" / "coder.md").write_text("---\nname: coder\ndescription: a: b: c\n---\nx\n")
     with pytest.raises(agent.AgentMissingError, match="not valid YAML"):
         agent.load("coder", home)
+
+
+def test_an_agent_carries_no_account_connectors_memory_or_git_snapshot(
+    home: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Measured in demo run 4: the account's claude.ai connectors arrived after the first call
+    and rewrote the cached prefix, ~7.5k tokens per run; memory and the git snapshot are text
+    no stage agent uses (docs/decisions.md, 2026-10-05)."""
+    cmd = agent.command(
+        "claude", agent.load("coder", home), "t", session="s", state=tmp_path, budget=1.0
+    )
+    assert "--strict-mcp-config" in cmd
+    seen: dict[str, str] = {}
+
+    def fake_run(_args: list[str], **kw: object) -> object:
+        env = kw["env"]
+        assert isinstance(env, dict)
+        seen.update(env)
+        return subprocess.CompletedProcess(_args, 0, "{}", "")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    agent.subprocess_process(tmp_path)(["claude"], 60)
+    assert seen["CLAUDE_CODE_DISABLE_AUTO_MEMORY"] == "1"
+    assert seen["CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS"] == "1"
+    assert seen["PYTHONDONTWRITEBYTECODE"] == "1"
+    assert "PATH" in seen  # the rest of the environment stays

@@ -12,6 +12,7 @@ once, under the session id the runner chose, with a message telling the agent to
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import time
 import uuid
@@ -29,6 +30,16 @@ DEFAULT_BUDGET = 3.0
 RESUME_SHARE = 0.25  # of the budget, for the one resume after a budget stop
 MIN_RESUME = 0.5
 BUDGET_STOP = "error_max_budget_usd"
+# What a stage agent's session leaves out, measured in demo run 4 (docs/decisions.md, 2026-10-05):
+# auto memory and the git snapshot (with its commit attribution) are text no stage uses, and
+# bytecode files only lengthen the listings agents read. `--strict-mcp-config` in the command
+# keeps the login's claude.ai connectors out; they arrived after the first call and rewrote the
+# cached prefix.
+AGENT_ENV = {
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+}
 
 
 class AgentMissingError(RuntimeError):
@@ -130,6 +141,7 @@ def command(  # noqa: PLR0913 — one keyword per part of the command
         "auto",
         "--permission-prompts",
         "none",
+        "--strict-mcp-config",
         "--max-budget-usd",
         f"{budget:.2f}",
         "--output-format",
@@ -144,7 +156,13 @@ def subprocess_process(root: Path) -> Process:
     def run(args: list[str], timeout: int) -> tuple[int, str] | None:
         try:
             proc = subprocess.run(
-                args, cwd=root, capture_output=True, encoding="utf-8", check=False, timeout=timeout
+                args,
+                cwd=root,
+                capture_output=True,
+                encoding="utf-8",
+                check=False,
+                timeout=timeout,
+                env={**os.environ, **AGENT_ENV},
             )
         except subprocess.TimeoutExpired:
             return None
