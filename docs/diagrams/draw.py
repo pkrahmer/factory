@@ -349,7 +349,7 @@ def stages() -> Diagram:
         640,
         "01 · One story through the stages",
         "Boxes: what happens in the stage. Arrows: what moves the story on. "
-        "Every move is one edit of the stage field, committed and pushed.",
+        "Every move is an agent's outcome or the human's merge or close; the factory commits it.",
     )
     drafts = Node(
         40,
@@ -365,7 +365,7 @@ def stages() -> Diagram:
         (
             "ready",
             "intake",
-            ("Opens the branch", "and a draft PR;", "checks the story", "is buildable"),
+            ("Judges whether", "the story is", "buildable; carries", "answers in"),
         ),
         ("tests", "tester", ("One test per", "acceptance", "criterion, red", "on purpose")),
         ("doing", "coder", ("Makes the tests", "pass, refactors", "once, make check", "green")),
@@ -382,7 +382,7 @@ def stages() -> Diagram:
         (
             "demo",
             "demo",
-            ("Runs the demo", "commands, judges", "the output, writes", "the PR body"),
+            ("Runs the demo", "commands and", "judges the output", "against Expect"),
         ),
         ("accept", "human", ("Reads the PR,", "wherever they are;", "then merges or", "closes it")),
     ]
@@ -396,9 +396,9 @@ def stages() -> Diagram:
         top,
         150,
         bh,
-        "disp",
+        "code",
         "done",
-        "dispatcher",
+        "factory",
         ("Story moved to", "done/ on main,", "branch deleted,", "cost logged"),
     )
     feature = Node(
@@ -413,7 +413,7 @@ def stages() -> Diagram:
         ("doing", "review", ("make check", "green")),
         ("review", "docs", ("verdict:", "pass")),
         ("docs", "demo", ("docs written,", "no findings")),
-        ("demo", "accept", ("all as expected,", "PR marked ready")),
+        ("demo", "accept", ("all as expected;", "PR ready")),
         ("accept", done, ("human merges", "the PR")),
     ]
     for a, b, label in forward:
@@ -475,7 +475,7 @@ def stages() -> Diagram:
         [
             ("node:agent", "agent stage"),
             ("node:human", "human"),
-            ("node:disp", "dispatcher"),
+            ("node:code", "the factory (code)"),
             ("edge:flow", "moves on"),
             ("edge:back", "goes back"),
             ("edge:stall", "discarded"),
@@ -492,11 +492,10 @@ def lanes() -> Diagram:
     x0, y0 = 40.0, 110.0
     rows = [
         ("Human", "drafts/, merge or close", "lane-alt"),
-        ("Pull request", "GitHub, written with gh", "lane"),
-        ("tests/*", "tester", "lane-alt"),
-        ("src/*, docs/openapi.json", "coder", "lane"),
-        ("Story file", "ongoing/*.md: every agent", "lane-alt"),
-        ("README.md, docs/*", "documenter", "lane"),
+        ("tests/*", "tester", "lane"),
+        ("src/*, docs/openapi.json", "coder", "lane-alt"),
+        ("Story file", "ongoing/*.md: every agent", "lane"),
+        ("README.md, docs/*", "documenter", "lane-alt"),
     ]
     cols = 9
     width = x0 + head_w + 30 + cols * bw + (cols - 1) * gap + 40
@@ -504,8 +503,8 @@ def lanes() -> Diagram:
         width,
         y0 + len(rows) * row_h + 110,
         "02 · Lanes: where each stage writes",
-        "One row per lane from stages.yml; each stage sits in the row of what it produces. "
-        "The guard hook refuses every write outside the agent's lane.",
+        "One row per lane from stages.yml; each stage sits in the row of what it produces. The "
+        "factory undoes any write outside the lane and alone writes the pull request and commits.",
     )
     for i, (name, who, cls) in enumerate(rows):
         y = y0 + i * row_h
@@ -526,14 +525,14 @@ def lanes() -> Diagram:
 
     steps = [
         at((0, 0), "human", "promote", "human", ("git mv drafts/", "→ ongoing/")),
-        at((1, 1), "agent", "ready", "intake", ("branch, draft PR,", "frontmatter")),
-        at((2, 2), "agent", "tests", "tester", ("one test per", "criterion")),
-        at((3, 3), "agent", "doing", "coder", ("code that makes", "the tests pass")),
-        at((4, 4), "agent", "review", "reviewer", ("findings and", "verdict in the log")),
-        at((5, 5), "agent", "docs", "documenter", ("what the reader", "needs; stale fixed")),
-        at((6, 1), "agent", "demo", "demo", ("PR body written,", "marked ready")),
+        at((1, 3), "agent", "ready", "intake", ("judges the story,", "carries answers in")),
+        at((2, 1), "agent", "tests", "tester", ("one test per", "criterion")),
+        at((3, 2), "agent", "doing", "coder", ("code that makes", "the tests pass")),
+        at((4, 3), "agent", "review", "reviewer", ("findings and", "verdict, its entry")),
+        at((5, 4), "agent", "docs", "documenter", ("what the reader", "needs; stale fixed")),
+        at((6, 3), "agent", "demo", "demo", ("output and", "judgement, its entry")),
         at((7, 0), "human", "accept", "human", ("merges the PR",)),
-        at((8, 4), "disp", "done", "dispatcher", ("on main: story", "git mv to done/")),
+        at((8, 3), "code", "done", "factory", ("on main: story", "git mv to done/")),
     ]
     d.nodes = steps
     triggers = [
@@ -543,7 +542,7 @@ def lanes() -> Diagram:
         "green",
         "pass",
         "no findings",
-        "PR ready",
+        "as expected",
         "merged",
     ]
     d.edges = [right(a, b, (t,)) for a, b, t in zip(steps, steps[1:], triggers, strict=False)]
@@ -560,7 +559,7 @@ def lanes() -> Diagram:
         f'<text class="lane-head" x="{x0 + 16:g}" y="{band_y + 18:g}">Branch</text>',
         f'<text class="note" x="{x0 + head_w + 44:g}" y="{band_y + 18:g}">main</text>',
         f'<text class="note" x="{first + 14:g}" y="{band_y + 18:g}">ticket/&lt;stem&gt;, '
-        "one per story: every stage commits code and story together and pushes; "
+        "one per story: the factory commits every stage and pushes; "
         "it comes back to main only through the merge</text>",
         f'<text class="note" x="{last + 14:g}" y="{band_y + 18:g}">main</text>',
         *legend(
@@ -569,7 +568,7 @@ def lanes() -> Diagram:
             [
                 ("node:agent", "agent stage"),
                 ("node:human", "human"),
-                ("node:disp", "dispatcher"),
+                ("node:code", "the factory (code)"),
                 ("edge:flow", "moves on"),
             ],
         ),
@@ -585,41 +584,65 @@ def stage_run() -> Diagram:
         2420,
         790,
         "03 · Inside one stage run",
-        "The same for every agent stage; what the agent reads and writes differs by stage. "
-        "Each run starts from what is committed and carries nothing over.",
+        "The agent does the stage's work and ends with an outcome; everything around it is the "
+        "factory's code. Each run starts from what is committed and carries nothing over.",
     )
     y, mid = 180.0, 244.0
-    pr_open = diamond(110, mid, ("PR still", "open?"), "disp")
-    gone = outcome(85, 450, "disp", "handled as closed", ("or as merged", "(01); no agent runs"))
+    pr_open = diamond(110, mid, ("PR still", "open?"))
+    gone = outcome(85, 450, "code", "handled as closed", ("or as merged", "(01); no agent runs"))
     prep = box(
         330,
         y,
-        "disp",
-        ("check out", "dispatcher"),
-        ("ticket branch, pull,", "merge main in; ready:", "main, or the branch", "after an answer"),
+        "code",
+        ("prepare", "factory"),
+        (
+            "check out, merge main",
+            "in; for intake and the",
+            "acceptor: open branch",
+            "and draft PR",
+        ),
     )
     claim = box(
         600,
         y,
-        "disp",
-        ("run file", "dispatcher"),
+        "code",
+        ("run file", "factory"),
         ("written before the", "agent, removed after;", "no commit"),
     )
-    read = box(
+    work = box(
         860,
         y,
         "agent",
-        ("read", "agent"),
-        ("the story and what", "the stage names:", "log, diff, CLAUDE.md"),
+        ("work", "agent"),
+        ("reads what the task", "names; works in its", "lane; only the coder", "commits"),
     )
-    work = box(1120, y, "agent", ("work", "agent"), ("within its lane;", "commits as it goes"))
+    said = box(
+        1120,
+        y,
+        "agent",
+        ("outcome", "agent"),
+        ("a stage of next,", "question or stuck,", "and its log entry"),
+    )
     judge = box(
-        1380, y, "agent", ("check and judge", "agent"), ("make check, then", "against the criteria")
+        1380,
+        y,
+        "code",
+        ("check", "factory"),
+        ("undo writes outside", "the lane; keep the", "frontmatter and log;", "outcome and form"),
     )
     col_f, col_g, col_h = 1790.0, 2030.0, 2240.0
-    adv = Node(col_f, mid - 40, 180, 80, "disp", "move on", "", ("checks green;", "commit, push"))
-    rework = Node(col_f, 360, 180, 80, "back", "send back", "", ("findings in log,", "round + 1"))
-    ask = Node(col_f, 510, 180, 80, "ask", "ask", "", ("question in log,", "blocked: question"))
+    adv = Node(
+        col_f,
+        mid - 46,
+        190,
+        92,
+        "code",
+        "move on",
+        "",
+        ("entry, stage = next,", "commit, push; at the", "gate: PR body, ready"),
+    )
+    rework = Node(col_f, 360, 180, 80, "back", "send back", "", ("entry in log,", "round + 1"))
+    ask = Node(col_f, 510, 180, 80, "ask", "ask", "", ("entry in log,", "blocked: question"))
     stall = Node(
         col_f,
         640,
@@ -627,7 +650,7 @@ def stage_run() -> Diagram:
         92,
         "stall",
         "stall",
-        "dispatcher",
+        "factory",
         ("attempts + 1, partial", "work committed"),
     )
     cap_rounds = Node(
@@ -645,8 +668,8 @@ def stage_run() -> Diagram:
         gone,
         prep,
         claim,
-        read,
         work,
+        said,
         judge,
         adv,
         rework,
@@ -664,16 +687,16 @@ def stage_run() -> Diagram:
         right(pr_open, prep, ("yes, or", "no PR yet")),
         down(pr_open, gone, ("closed or merged",), "stall"),
         right(prep, claim, ("on the", "branch")),
-        right(claim, read),
-        right(read, work),
-        right(work, judge),
+        right(claim, work, ("the task",)),
+        right(work, said),
+        right(said, judge, ("it returns",)),
     ]
     bus = judge.right + 30
     d.edges += [
         Edge(
             [(judge.right, adv.cy), (adv.x, adv.cy)],
             "flow",
-            ("green, criteria met",),
+            ("forward, and the", "stage's checks green"),
             (bus + 8, adv.cy - 9),
             "start",
         ),
@@ -685,28 +708,25 @@ def stage_run() -> Diagram:
                 (rework.x, rework.cy),
             ],
             "back",
-            ("findings", "(review, docs, demo)"),
+            ("back to doing", "(review, docs, demo)"),
             (bus + 8, rework.cy - 9),
             "start",
         ),
         Edge(
             [(judge.right - 30, judge.bottom), (judge.right - 30, ask.cy), (ask.x, ask.cy)],
             "ask",
-            ("unclear, contradictory,", "or a tool is missing"),
+            ("question, or intake", "past a format finding"),
             (bus + 8, ask.cy - 9),
             "start",
         ),
         Edge(
-            [(work.cx, work.bottom), (work.cx, stall.cy), (stall.x, stall.cy)],
+            [(judge.cx, judge.bottom), (judge.cx, stall.cy), (stall.x, stall.cy)],
             "stall",
-            (
-                "no new commit, an error, a denied tool; or its run is gone: lease over, machine "
-                "restarted",
-            ),
-            (work.cx + 14, stall.cy - 9),
+            ("stuck, no or a wrong outcome, a red check,", "a broken form, an error"),
+            (judge.cx + 14, stall.cy - 9),
             "start",
         ),
-        right(adv, next_stage, ("commit a → b, push",)),
+        right(adv, next_stage, ("pushed",)),
         right(rework, cap_rounds, (), "back"),
         right(cap_rounds, to_doing, ("no",), "back"),
         down(cap_rounds, waits, ("yes",), "ask"),
@@ -728,8 +748,8 @@ def stage_run() -> Diagram:
         110,
         112,
         [
-            ("node:agent", "agent"),
-            ("node:disp", "dispatcher"),
+            ("node:agent", "agent (a model)"),
+            ("node:code", "the factory (code)"),
             ("edge:flow", "moves on"),
             ("edge:back", "goes back"),
             ("edge:ask", "asks the human"),
@@ -750,7 +770,7 @@ def asking() -> Diagram:
         "Questions travel only through the pull request; the answer comes back into the "
         "story log, so the next run of the stage can read it.",
     )
-    src1 = Node(40, 150, 240, 64, "agent", "", "", ("agent cannot decide alone", "(R8)"), "pill")
+    src1 = Node(40, 150, 240, 64, "agent", "", "", ("an agent ends with", "question (R8)"), "pill")
     src2 = Node(40, 236, 240, 64, "back", "", "", ("rework cap: round over", "max_rounds"), "pill")
     src3 = Node(
         40, 380, 240, 64, "stall", "", "", ("stalled too often:", "attempts at max"), "pill"
@@ -765,17 +785,17 @@ def asking() -> Diagram:
         120,
         "ask",
         "question",
-        "agent",
-        ("log entry, blocked:", "question, claim", "cleared, commit"),
+        "factory",
+        ("the entry in the log,", "blocked: question,", "commit, push"),
     )
     post = Node(
         680,
         180,
         220,
         370,
-        "disp",
+        "code",
         "post",
-        "dispatcher",
+        "factory",
         ("the question on", "the PR, verbatim;", "blocked: asked,", "comments_seen = n"),
     )
     human = Node(
@@ -786,10 +806,10 @@ def asking() -> Diagram:
         150,
         220,
         112,
-        "disp",
+        "code",
         "copy back",
-        "dispatcher",
-        ("new comments into the", "log, blocked: null", "(retry: attempts = 0)"),
+        "factory",
+        ("new comments into the", "log, blocked: null;", "at the cap: attempts 0"),
     )
     rerun = Node(
         1650,
@@ -806,13 +826,13 @@ def asking() -> Diagram:
         316,
         220,
         100,
-        "disp",
+        "code",
         "discard",
-        "dispatcher",
+        "factory",
         ("on main: story back", "to drafts/; branch", "deleted"),
     )
     archive = Node(
-        1320, 456, 220, 100, "disp", "archive", "dispatcher", ("as merged: story", "to done/ (01)")
+        1320, 456, 220, 100, "code", "archive", "factory", ("as merged: story", "to done/ (01)")
     )
     end_ok = Node(1950, 180, 120, 52, "end", "moves on", "", (), "pill")
     end_draft = Node(1650, 340, 210, 52, "end", "the human's draft", "", (), "pill")
@@ -869,7 +889,7 @@ def asking() -> Diagram:
         616,
         [
             ("node:agent", "agent"),
-            ("node:disp", "dispatcher"),
+            ("node:code", "the factory (code)"),
             ("node:human", "human"),
             ("edge:ask", "question and answer"),
             ("edge:stall", "stalls, discards"),
@@ -895,9 +915,9 @@ def acceptance() -> Diagram:
     claim = box(
         330,
         top,
-        "agent",
-        ("branch and claim", "acceptor"),
-        ("acceptance/<feature>", "from main; report with", "stories: [ids];", "draft PR"),
+        "code",
+        ("branch and draft PR", "factory"),
+        ("acceptance/<feature>", "from main; the report's", "head with stories: [ids]"),
     )
     checks = box(
         600,
@@ -926,9 +946,9 @@ def acceptance() -> Diagram:
         136,
         230,
         128,
-        "disp",
+        "code",
         "accepted",
-        "dispatcher",
+        "factory",
         ("on main: stage done,", "outcome: accepted;", "report and drafts stay,", "branch deleted"),
     )
     refusal = Node(
@@ -936,9 +956,9 @@ def acceptance() -> Diagram:
         326,
         230,
         128,
-        "disp",
+        "code",
         "refused",
-        "dispatcher",
+        "factory",
         (
             "on main: the report,",
             "outcome: refused, your",
@@ -961,9 +981,9 @@ def acceptance() -> Diagram:
         arrive(20, due, ("watcher:", "a tick")),
         right(due, claim, ("yes",)),
         down(due, nothing, ("no",), "stall"),
-        right(claim, checks, ("claim", "pushed")),
+        right(claim, checks, ("the task:", "stories, cost")),
         right(checks, write),
-        into(write, human, write.cy, ("PR ready;", "stage: accept")),
+        into(write, human, write.cy, ("outcome accept;", "PR body, ready")),
         into(human, archive, archive.cy, ("merges",)),
         into(human, refusal, refusal.cy, ("closes, with a", "comment: why"), "stall"),
         right(archive, quiet),
@@ -981,7 +1001,7 @@ def acceptance() -> Diagram:
         [
             ("node:agent", "agent"),
             ("node:human", "human"),
-            ("node:disp", "dispatcher"),
+            ("node:code", "the factory (code)"),
             ("node:quiet", "nothing happens"),
             ("edge:flow", "moves on"),
             ("edge:back", "loops"),
@@ -1129,7 +1149,7 @@ def one_tick() -> Diagram:
         1350,
         "code",
         ("after a restart", "tick"),
-        ("busy with a claim from", "before the machine", "started becomes", "expired"),
+        ("busy with a run that", "started before the", "machine did becomes", "expired"),
     )
     needs = step(
         1640,
@@ -1145,7 +1165,7 @@ def one_tick() -> Diagram:
     )
     disp = step(
         1930,
-        "disp",
+        "code",
         ("dispatcher", "code"),
         ("handles that one line;", "a run line starts the", "agent; its cost recorded"),
     )
@@ -1222,7 +1242,7 @@ def one_tick() -> Diagram:
         Edge(
             [(ok.cx, ok.bottom), (ok.cx, fails.y)],
             "stall",
-            ("no: an error, or no commit", "for expired, merged,", "closed or reject"),
+            ("no: the handler raised,", "a situation it does", "not know"),
             (ok.cx + 9, fails.y - 20),
             "start",
         ),
@@ -1235,7 +1255,6 @@ def one_tick() -> Diagram:
         672,
         [
             ("node:code", "deterministic code"),
-            ("node:disp", "model"),
             ("node:quiet", "nothing happens"),
             ("edge:flow", "moves on"),
             ("edge:stall", "stops or recovers"),
@@ -1266,9 +1285,9 @@ def watcher() -> Diagram:
         "watcher",
         (
             "stages.yml; every ongoing",
-            "story and due acceptance,",
-            "from its branch, origin/main",
-            "or the tree; the last commit",
+            "story and due acceptance",
+            "from its branch or main;",
+            "the last commit; the run file",
         ),
     )
     checks = [
@@ -1276,7 +1295,7 @@ def watcher() -> Diagram:
         ("duplicate id?", ("two ongoing files", "with one id")),
         ("waiting on the human?", ("gate stage or blocked:", "asked, and a pr:", "gh pr view")),
         ("question open?", ("blocked: question, or", "a gate stage", "without a pr")),
-        ("story claimed?", ("claimed_at is set",)),
+        ("agent at work?", ("the run file", "names a ticket")),
         (
             "stage with an agent?",
             ("lowest id first; a", "feature's acceptance", "after its stories"),
@@ -1292,22 +1311,22 @@ def watcher() -> Diagram:
     d.edges += [right(a, b, ("no",)) for a, b in zip(nodes, nodes[1:], strict=False)]
     d.edges.append(right(nodes[-1], idle, ("no",)))
     outputs = [
-        [("stage not in next", "reject", ("moved back", "by the dispatcher"), "disp")],
+        [("stage not in next", "reject", ("moved back", "by the factory"), "disp")],
         [("same id twice", "duplicate", ("logged, nothing", "else happens"), "disp")],
         [
             ("gh fails", "error pr-lookup", ("gh login missing?",), "disp"),
             ("MERGED", "merged", ("archived to done/",), "disp"),
             ("CLOSED", "closed", ("back to doing,", "or discarded"), "disp"),
-            ("OPEN", "pr OPEN n", ("only new comments", "start the dispatcher"), "disp"),
+            ("OPEN", "pr OPEN n", ("new human comments", "copied into the log"), "disp"),
         ],
         [("yes", "ask", ("question onto", "the PR (04)"), "disp")],
         [
-            ("lease alive", "busy", ("nothing: one story", "at a time"), "quiet"),
-            ("lease over", "expired", ("claim cleared,", "attempts + 1"), "disp"),
+            ("run alive", "busy", ("nothing: one story", "at a time"), "quiet"),
+            ("over or killed", "expired", ("run file removed,", "attempts + 1"), "disp"),
         ],
         [
             ("attempts at max", "ask", ("ask whether", "to retry"), "disp"),
-            ("otherwise", "run <agent>", ("the stage agent", "starts (03)"), "disp"),
+            ("otherwise", "run <agent>", ("the stage agent", "starts (03)"), "agent"),
         ],
     ]
     for check, outs in zip(nodes, outputs, strict=False):
@@ -1320,7 +1339,8 @@ def watcher() -> Diagram:
         672,
         [
             ("node:code", "check"),
-            ("node:disp", "line the dispatcher handles"),
+            ("node:disp", "line the factory handles"),
+            ("node:agent", "line that starts an agent"),
             ("node:quiet", "line without a model"),
             ("edge:flow", "moves on"),
         ],
@@ -1471,7 +1491,7 @@ def branches() -> Diagram:
         f'<path d="M 630 {trunk:g} L 710 {ticket:g}" {side_line}/>',
         f'<path d="M 1570 {trunk:g} L 1630 {accept:g} L 1750 {accept:g} L 1870 {trunk:g}" '
         f"{side_line}/>",
-        *band(390, 1290, ticket - 92, "pull request: draft, opened by intake", False),
+        *band(390, 1290, ticket - 92, "pull request: draft, opened by the factory", False),
         *band(1290, 1390, ticket - 92, "ready", True),
         *band(1630, 1750, accept + 56, "draft", False),
         *band(1750, 1870, accept + 56, "ready", True),
@@ -1481,30 +1501,34 @@ def branches() -> Diagram:
     commits = [
         (250, trunk, "human", ("drafts and", "FEATURE.md"), False),
         (330, trunk, "human", ("git mv into", "ongoing/"), False),
-        (390, ticket, "agent", ("intake: claim,", "draft PR"), True),
-        (490, ticket, "agent", ("ready", "→ tests"), True),
-        (590, ticket, "agent", ("tests", "→ doing"), True),
+        (390, ticket, "code", ("intake starts,", "draft PR"), True),
+        (490, ticket, "code", ("ready", "→ tests"), True),
+        (590, ticket, "code", ("tests", "→ doing"), True),
         (630, trunk, "human", ("another", "draft"), False),
-        (710, ticket, "disp", ("merge main in,", "every stage"), True),
+        (710, ticket, "code", ("merge main in,", "every stage"), True),
         (810, ticket, "agent", ("feat:", "…"), True),
         (900, ticket, "agent", ("refactor:", "…"), True),
-        (990, ticket, "agent", ("doing", "→ review"), True),
-        (1090, ticket, "agent", ("review", "→ docs"), True),
-        (1190, ticket, "agent", ("docs", "→ demo"), True),
-        (1290, ticket, "agent", ("demo", "→ accept"), True),
+        (990, ticket, "code", ("doing", "→ review"), True),
+        (1090, ticket, "code", ("review", "→ docs"), True),
+        (1190, ticket, "code", ("docs", "→ demo"), True),
+        (1290, ticket, "code", ("demo → accept,", "PR ready"), True),
         (1390, trunk, "human", ("human merges:", "a merge commit,", "never a squash"), False),
-        (1490, trunk, "disp", ("archive: done/,", "branch deleted"), False),
-        (1630, accept, "agent", ("acceptor: claim,", "draft PR"), False),
-        (1750, accept, "agent", ("feature", "→ accept"), False),
+        (1490, trunk, "code", ("archive: done/,", "branch deleted"), False),
+        (1630, accept, "code", ("acceptance starts,", "draft PR"), False),
+        (1750, accept, "code", ("feature", "→ accept"), False),
         (1870, trunk, "human", ("human merges", "the report"), True),
-        (1970, trunk, "disp", ("outcome:", "accepted"), True),
+        (1970, trunk, "code", ("outcome:", "accepted"), True),
     ]
     for x, y, kind, label, above in commits:
         d.extra += commit(x, y, kind, label, above)
     d.extra += legend(
         40,
         620,
-        [("node:human", "the human"), ("node:agent", "an agent"), ("node:disp", "the dispatcher")],
+        [
+            ("node:human", "the human"),
+            ("node:agent", "the coder's work"),
+            ("node:code", "the factory (code)"),
+        ],
     )
     return d
 

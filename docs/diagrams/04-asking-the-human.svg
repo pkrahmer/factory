@@ -84,14 +84,14 @@
 <text class="subtitle" x="40" y="70">Questions travel only through the pull request; the answer comes back into the story log, so the next run of the stage can read it.</text>
 <g class="node agent"><rect x="40" y="604" width="26" height="16" rx="4"/></g>
 <text class="note" x="74" y="616">agent</text>
-<g class="node disp"><rect x="121" y="604" width="26" height="16" rx="4"/></g>
-<text class="note" x="155" y="616">dispatcher</text>
-<g class="node human"><rect x="237" y="604" width="26" height="16" rx="4"/></g>
-<text class="note" x="271" y="616">human</text>
-<path class="e e-ask" d="M 318 612 L 344 612" marker-end="url(#a-ask)"/>
-<text class="note" x="352" y="616">question and answer</text>
-<path class="e e-stall" d="M 497 612 L 523 612" marker-end="url(#a-stall)"/>
-<text class="note" x="531" y="616">stalls, discards</text>
+<g class="node code"><rect x="121" y="604" width="26" height="16" rx="4"/></g>
+<text class="note" x="155" y="616">the factory (code)</text>
+<g class="node human"><rect x="293" y="604" width="26" height="16" rx="4"/></g>
+<text class="note" x="327" y="616">human</text>
+<path class="e e-ask" d="M 374 612 L 400 612" marker-end="url(#a-ask)"/>
+<text class="note" x="408" y="616">question and answer</text>
+<path class="e e-stall" d="M 553 612 L 579 612" marker-end="url(#a-stall)"/>
+<text class="note" x="587" y="616">stalls, discards</text>
 <path class="e e-ask" d="M 280 182 L 310 182 Q 320 182 320 192 L 320 216 Q 320 226 330 226 L 380 226" marker-end="url(#a-ask)"/>
 <path class="e e-back" d="M 280 268 L 313 268 Q 320 268 320 261 L 320 261 Q 320 254 327 254 L 380 254" marker-end="url(#a-back)"/>
 <path class="e e-stall" d="M 280 412 L 680 412" marker-end="url(#a-stall)"/>
@@ -106,17 +106,17 @@
 <path class="e e-stall" d="M 1540 366 L 1650 366" marker-end="url(#a-stall)"/>
 <path class="e e-flow" d="M 1540 506 L 1650 506" marker-end="url(#a-flow)"/>
 <path class="e e-ask" d="M 1755 150 L 1755 126 Q 1755 116 1745 116 L 490 116 Q 480 116 480 126 L 480 180" marker-end="url(#a-ask)"/>
-<g class="node agent"><rect x="40" y="150" width="240" height="64" rx="32"/><text class="l" x="160" y="180.5" text-anchor="middle">agent cannot decide alone</text><text class="l" x="160" y="196.5" text-anchor="middle">(R8)</text></g>
+<g class="node agent"><rect x="40" y="150" width="240" height="64" rx="32"/><text class="l" x="160" y="180.5" text-anchor="middle">an agent ends with</text><text class="l" x="160" y="196.5" text-anchor="middle">question (R8)</text></g>
 <g class="node back"><rect x="40" y="236" width="240" height="64" rx="32"/><text class="l" x="160" y="266.5" text-anchor="middle">rework cap: round over</text><text class="l" x="160" y="282.5" text-anchor="middle">max_rounds</text></g>
 <g class="node stall"><rect x="40" y="380" width="240" height="64" rx="32"/><text class="l" x="160" y="410.5" text-anchor="middle">stalled too often:</text><text class="l" x="160" y="426.5" text-anchor="middle">attempts at max</text></g>
 <g class="node human"><rect x="40" y="466" width="240" height="64" rx="32"/><text class="l" x="160" y="496.5" text-anchor="middle">PR closed at accept</text><text class="l" x="160" y="512.5" text-anchor="middle">without a comment</text></g>
-<g class="node ask"><rect x="380" y="180" width="200" height="120" rx="10"/><text class="t" x="480" y="210.5" text-anchor="middle">question</text><text class="s" x="480" y="227.5" text-anchor="middle">AGENT</text><text class="l" x="480" y="248.5" text-anchor="middle">log entry, blocked:</text><text class="l" x="480" y="264.5" text-anchor="middle">question, claim</text><text class="l" x="480" y="280.5" text-anchor="middle">cleared, commit</text></g>
-<g class="node disp"><rect x="680" y="180" width="220" height="370" rx="10"/><text class="t" x="790" y="327.5" text-anchor="middle">post</text><text class="s" x="790" y="344.5" text-anchor="middle">DISPATCHER</text><text class="l" x="790" y="365.5" text-anchor="middle">the question on</text><text class="l" x="790" y="381.5" text-anchor="middle">the PR, verbatim;</text><text class="l" x="790" y="397.5" text-anchor="middle">blocked: asked,</text><text class="l" x="790" y="413.5" text-anchor="middle">comments_seen = n</text></g>
+<g class="node ask"><rect x="380" y="180" width="200" height="120" rx="10"/><text class="t" x="480" y="210.5" text-anchor="middle">question</text><text class="s" x="480" y="227.5" text-anchor="middle">FACTORY</text><text class="l" x="480" y="248.5" text-anchor="middle">the entry in the log,</text><text class="l" x="480" y="264.5" text-anchor="middle">blocked: question,</text><text class="l" x="480" y="280.5" text-anchor="middle">commit, push</text></g>
+<g class="node code"><rect x="680" y="180" width="220" height="370" rx="10"/><text class="t" x="790" y="327.5" text-anchor="middle">post</text><text class="s" x="790" y="344.5" text-anchor="middle">FACTORY</text><text class="l" x="790" y="365.5" text-anchor="middle">the question on</text><text class="l" x="790" y="381.5" text-anchor="middle">the PR, verbatim;</text><text class="l" x="790" y="397.5" text-anchor="middle">blocked: asked,</text><text class="l" x="790" y="413.5" text-anchor="middle">comments_seen = n</text></g>
 <g class="node human"><rect x="1000" y="180" width="190" height="370" rx="10"/><text class="t" x="1095" y="343.5" text-anchor="middle">the human</text><text class="s" x="1095" y="360.5" text-anchor="middle">HUMAN</text><text class="l" x="1095" y="381.5" text-anchor="middle">reads the PR,</text><text class="l" x="1095" y="397.5" text-anchor="middle">wherever they are</text></g>
-<g class="node disp"><rect x="1320" y="150" width="220" height="112" rx="10"/><text class="t" x="1430" y="176.5" text-anchor="middle">copy back</text><text class="s" x="1430" y="193.5" text-anchor="middle">DISPATCHER</text><text class="l" x="1430" y="214.5" text-anchor="middle">new comments into the</text><text class="l" x="1430" y="230.5" text-anchor="middle">log, blocked: null</text><text class="l" x="1430" y="246.5" text-anchor="middle">(retry: attempts = 0)</text></g>
+<g class="node code"><rect x="1320" y="150" width="220" height="112" rx="10"/><text class="t" x="1430" y="176.5" text-anchor="middle">copy back</text><text class="s" x="1430" y="193.5" text-anchor="middle">FACTORY</text><text class="l" x="1430" y="214.5" text-anchor="middle">new comments into the</text><text class="l" x="1430" y="230.5" text-anchor="middle">log, blocked: null;</text><text class="l" x="1430" y="246.5" text-anchor="middle">at the cap: attempts 0</text></g>
 <g class="node agent"><rect x="1650" y="150" width="210" height="112" rx="10"/><text class="t" x="1755" y="184.5" text-anchor="middle">same stage</text><text class="s" x="1755" y="201.5" text-anchor="middle">AGENT</text><text class="l" x="1755" y="222.5" text-anchor="middle">runs again and reads</text><text class="l" x="1755" y="238.5" text-anchor="middle">the answer in the log</text></g>
-<g class="node disp"><rect x="1320" y="316" width="220" height="100" rx="10"/><text class="t" x="1430" y="336.5" text-anchor="middle">discard</text><text class="s" x="1430" y="353.5" text-anchor="middle">DISPATCHER</text><text class="l" x="1430" y="374.5" text-anchor="middle">on main: story back</text><text class="l" x="1430" y="390.5" text-anchor="middle">to drafts/; branch</text><text class="l" x="1430" y="406.5" text-anchor="middle">deleted</text></g>
-<g class="node disp"><rect x="1320" y="456" width="220" height="100" rx="10"/><text class="t" x="1430" y="484.5" text-anchor="middle">archive</text><text class="s" x="1430" y="501.5" text-anchor="middle">DISPATCHER</text><text class="l" x="1430" y="522.5" text-anchor="middle">as merged: story</text><text class="l" x="1430" y="538.5" text-anchor="middle">to done/ (01)</text></g>
+<g class="node code"><rect x="1320" y="316" width="220" height="100" rx="10"/><text class="t" x="1430" y="336.5" text-anchor="middle">discard</text><text class="s" x="1430" y="353.5" text-anchor="middle">FACTORY</text><text class="l" x="1430" y="374.5" text-anchor="middle">on main: story back</text><text class="l" x="1430" y="390.5" text-anchor="middle">to drafts/; branch</text><text class="l" x="1430" y="406.5" text-anchor="middle">deleted</text></g>
+<g class="node code"><rect x="1320" y="456" width="220" height="100" rx="10"/><text class="t" x="1430" y="484.5" text-anchor="middle">archive</text><text class="s" x="1430" y="501.5" text-anchor="middle">FACTORY</text><text class="l" x="1430" y="522.5" text-anchor="middle">as merged: story</text><text class="l" x="1430" y="538.5" text-anchor="middle">to done/ (01)</text></g>
 <g class="node end"><rect x="1950" y="180" width="120" height="52" rx="26"/><text class="t" x="2010" y="211.5" text-anchor="middle">moves on</text></g>
 <g class="node end"><rect x="1650" y="340" width="210" height="52" rx="26"/><text class="t" x="1755" y="371.5" text-anchor="middle">the human&#x27;s draft</text></g>
 <g class="node end"><rect x="1650" y="480" width="210" height="52" rx="26"/><text class="t" x="1755" y="511.5" text-anchor="middle">done</text></g>

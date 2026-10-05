@@ -81,19 +81,19 @@
 </style><defs><marker id="a-flow" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-flow" d="M0,0 L10,5 L0,10 z"/></marker><marker id="a-back" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-back" d="M0,0 L10,5 L0,10 z"/></marker><marker id="a-ask" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-ask" d="M0,0 L10,5 L0,10 z"/></marker><marker id="a-stall" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path class="m-stall" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="bg" width="2420" height="790"/>
 <text class="title" x="40" y="46">03 · Inside one stage run</text>
-<text class="subtitle" x="40" y="70">The same for every agent stage; what the agent reads and writes differs by stage. Each run starts from what is committed and carries nothing over.</text>
+<text class="subtitle" x="40" y="70">The agent does the stage&#x27;s work and ends with an outcome; everything around it is the factory&#x27;s code. Each run starts from what is committed and carries nothing over.</text>
 <g class="node agent"><rect x="110" y="100" width="26" height="16" rx="4"/></g>
-<text class="note" x="144" y="112">agent</text>
-<g class="node disp"><rect x="191" y="100" width="26" height="16" rx="4"/></g>
-<text class="note" x="225" y="112">dispatcher</text>
-<path class="e e-flow" d="M 307 108 L 333 108" marker-end="url(#a-flow)"/>
-<text class="note" x="341" y="112">moves on</text>
-<path class="e e-back" d="M 409 108 L 435 108" marker-end="url(#a-back)"/>
-<text class="note" x="443" y="112">goes back</text>
-<path class="e e-ask" d="M 518 108 L 544 108" marker-end="url(#a-ask)"/>
-<text class="note" x="552" y="112">asks the human</text>
-<path class="e e-stall" d="M 662 108 L 688 108" marker-end="url(#a-stall)"/>
-<text class="note" x="696" y="112">stalls, ends</text>
+<text class="note" x="144" y="112">agent (a model)</text>
+<g class="node code"><rect x="261" y="100" width="26" height="16" rx="4"/></g>
+<text class="note" x="295" y="112">the factory (code)</text>
+<path class="e e-flow" d="M 433 108 L 459 108" marker-end="url(#a-flow)"/>
+<text class="note" x="467" y="112">moves on</text>
+<path class="e e-back" d="M 535 108 L 561 108" marker-end="url(#a-back)"/>
+<text class="note" x="569" y="112">goes back</text>
+<path class="e e-ask" d="M 644 108 L 670 108" marker-end="url(#a-ask)"/>
+<text class="note" x="678" y="112">asks the human</text>
+<path class="e e-stall" d="M 788 108 L 814 108" marker-end="url(#a-stall)"/>
+<text class="note" x="822" y="112">stalls, ends</text>
 <path class="e e-flow" d="M 20 244 L 110 244" marker-end="url(#a-flow)"/>
 <path class="e e-flow" d="M 250 244 L 330 244" marker-end="url(#a-flow)"/>
 <path class="e e-stall" d="M 180 299 L 180 414" marker-end="url(#a-stall)"/>
@@ -104,8 +104,8 @@
 <path class="e e-flow" d="M 1570 244 L 1790 244" marker-end="url(#a-flow)"/>
 <path class="e e-back" d="M 1570 284 L 1590 284 Q 1600 284 1600 294 L 1600 390 Q 1600 400 1610 400 L 1790 400" marker-end="url(#a-back)"/>
 <path class="e e-ask" d="M 1540 308 L 1540 540 Q 1540 550 1550 550 L 1790 550" marker-end="url(#a-ask)"/>
-<path class="e e-stall" d="M 1215 308 L 1215 676 Q 1215 686 1225 686 L 1790 686" marker-end="url(#a-stall)"/>
-<path class="e e-flow" d="M 1970 244 L 2240 244" marker-end="url(#a-flow)"/>
+<path class="e e-stall" d="M 1475 308 L 1475 676 Q 1475 686 1485 686 L 1790 686" marker-end="url(#a-stall)"/>
+<path class="e e-flow" d="M 1980 244 L 2240 244" marker-end="url(#a-flow)"/>
 <path class="e e-back" d="M 1970 400 L 2020 400" marker-end="url(#a-back)"/>
 <path class="e e-back" d="M 2160 400 L 2240 400" marker-end="url(#a-back)"/>
 <path class="e e-ask" d="M 2090 444 L 2090 510" marker-end="url(#a-ask)"/>
@@ -114,17 +114,17 @@
 <path class="e e-ask" d="M 2090 642 L 2090 590" marker-end="url(#a-ask)"/>
 <path class="e e-stall" d="M 2160 686 L 2240 686" marker-end="url(#a-stall)"/>
 <path class="e e-stall" d="M 2315 712 L 2315 755 Q 2315 765 2305 765 L 435 765 Q 425 765 425 755 L 425 308" marker-end="url(#a-stall)"/>
-<g class="node disp"><polygon points="180.0,189.0 250,244.0 180.0,299.0 110,244.0"/><text class="l" x="180" y="242.5" text-anchor="middle">PR still</text><text class="l" x="180" y="258.5" text-anchor="middle">open?</text></g>
-<g class="node disp"><rect x="85" y="414" width="190" height="72" rx="10"/><text class="t" x="180" y="437" text-anchor="middle">handled as closed</text><text class="l" x="180" y="458" text-anchor="middle">or as merged</text><text class="l" x="180" y="474" text-anchor="middle">(01); no agent runs</text></g>
-<g class="node disp"><rect x="330" y="180" width="190" height="128" rx="10"/><text class="t" x="425" y="206.5" text-anchor="middle">check out</text><text class="s" x="425" y="223.5" text-anchor="middle">DISPATCHER</text><text class="l" x="425" y="244.5" text-anchor="middle">ticket branch, pull,</text><text class="l" x="425" y="260.5" text-anchor="middle">merge main in; ready:</text><text class="l" x="425" y="276.5" text-anchor="middle">main, or the branch</text><text class="l" x="425" y="292.5" text-anchor="middle">after an answer</text></g>
-<g class="node disp"><rect x="600" y="180" width="190" height="128" rx="10"/><text class="t" x="695" y="214.5" text-anchor="middle">run file</text><text class="s" x="695" y="231.5" text-anchor="middle">DISPATCHER</text><text class="l" x="695" y="252.5" text-anchor="middle">written before the</text><text class="l" x="695" y="268.5" text-anchor="middle">agent, removed after;</text><text class="l" x="695" y="284.5" text-anchor="middle">no commit</text></g>
-<g class="node agent"><rect x="860" y="180" width="190" height="128" rx="10"/><text class="t" x="955" y="214.5" text-anchor="middle">read</text><text class="s" x="955" y="231.5" text-anchor="middle">AGENT</text><text class="l" x="955" y="252.5" text-anchor="middle">the story and what</text><text class="l" x="955" y="268.5" text-anchor="middle">the stage names:</text><text class="l" x="955" y="284.5" text-anchor="middle">log, diff, CLAUDE.md</text></g>
-<g class="node agent"><rect x="1120" y="180" width="190" height="128" rx="10"/><text class="t" x="1215" y="222.5" text-anchor="middle">work</text><text class="s" x="1215" y="239.5" text-anchor="middle">AGENT</text><text class="l" x="1215" y="260.5" text-anchor="middle">within its lane;</text><text class="l" x="1215" y="276.5" text-anchor="middle">commits as it goes</text></g>
-<g class="node agent"><rect x="1380" y="180" width="190" height="128" rx="10"/><text class="t" x="1475" y="222.5" text-anchor="middle">check and judge</text><text class="s" x="1475" y="239.5" text-anchor="middle">AGENT</text><text class="l" x="1475" y="260.5" text-anchor="middle">make check, then</text><text class="l" x="1475" y="276.5" text-anchor="middle">against the criteria</text></g>
-<g class="node disp"><rect x="1790" y="204" width="180" height="80" rx="10"/><text class="t" x="1880" y="231" text-anchor="middle">move on</text><text class="l" x="1880" y="252" text-anchor="middle">checks green;</text><text class="l" x="1880" y="268" text-anchor="middle">commit, push</text></g>
-<g class="node back"><rect x="1790" y="360" width="180" height="80" rx="10"/><text class="t" x="1880" y="387" text-anchor="middle">send back</text><text class="l" x="1880" y="408" text-anchor="middle">findings in log,</text><text class="l" x="1880" y="424" text-anchor="middle">round + 1</text></g>
-<g class="node ask"><rect x="1790" y="510" width="180" height="80" rx="10"/><text class="t" x="1880" y="537" text-anchor="middle">ask</text><text class="l" x="1880" y="558" text-anchor="middle">question in log,</text><text class="l" x="1880" y="574" text-anchor="middle">blocked: question</text></g>
-<g class="node stall"><rect x="1790" y="640" width="180" height="92" rx="10"/><text class="t" x="1880" y="664.5" text-anchor="middle">stall</text><text class="s" x="1880" y="681.5" text-anchor="middle">DISPATCHER</text><text class="l" x="1880" y="702.5" text-anchor="middle">attempts + 1, partial</text><text class="l" x="1880" y="718.5" text-anchor="middle">work committed</text></g>
+<g class="node code"><polygon points="180.0,189.0 250,244.0 180.0,299.0 110,244.0"/><text class="l" x="180" y="242.5" text-anchor="middle">PR still</text><text class="l" x="180" y="258.5" text-anchor="middle">open?</text></g>
+<g class="node code"><rect x="85" y="414" width="190" height="72" rx="10"/><text class="t" x="180" y="437" text-anchor="middle">handled as closed</text><text class="l" x="180" y="458" text-anchor="middle">or as merged</text><text class="l" x="180" y="474" text-anchor="middle">(01); no agent runs</text></g>
+<g class="node code"><rect x="330" y="180" width="190" height="128" rx="10"/><text class="t" x="425" y="206.5" text-anchor="middle">prepare</text><text class="s" x="425" y="223.5" text-anchor="middle">FACTORY</text><text class="l" x="425" y="244.5" text-anchor="middle">check out, merge main</text><text class="l" x="425" y="260.5" text-anchor="middle">in; for intake and the</text><text class="l" x="425" y="276.5" text-anchor="middle">acceptor: open branch</text><text class="l" x="425" y="292.5" text-anchor="middle">and draft PR</text></g>
+<g class="node code"><rect x="600" y="180" width="190" height="128" rx="10"/><text class="t" x="695" y="214.5" text-anchor="middle">run file</text><text class="s" x="695" y="231.5" text-anchor="middle">FACTORY</text><text class="l" x="695" y="252.5" text-anchor="middle">written before the</text><text class="l" x="695" y="268.5" text-anchor="middle">agent, removed after;</text><text class="l" x="695" y="284.5" text-anchor="middle">no commit</text></g>
+<g class="node agent"><rect x="860" y="180" width="190" height="128" rx="10"/><text class="t" x="955" y="206.5" text-anchor="middle">work</text><text class="s" x="955" y="223.5" text-anchor="middle">AGENT</text><text class="l" x="955" y="244.5" text-anchor="middle">reads what the task</text><text class="l" x="955" y="260.5" text-anchor="middle">names; works in its</text><text class="l" x="955" y="276.5" text-anchor="middle">lane; only the coder</text><text class="l" x="955" y="292.5" text-anchor="middle">commits</text></g>
+<g class="node agent"><rect x="1120" y="180" width="190" height="128" rx="10"/><text class="t" x="1215" y="214.5" text-anchor="middle">outcome</text><text class="s" x="1215" y="231.5" text-anchor="middle">AGENT</text><text class="l" x="1215" y="252.5" text-anchor="middle">a stage of next,</text><text class="l" x="1215" y="268.5" text-anchor="middle">question or stuck,</text><text class="l" x="1215" y="284.5" text-anchor="middle">and its log entry</text></g>
+<g class="node code"><rect x="1380" y="180" width="190" height="128" rx="10"/><text class="t" x="1475" y="206.5" text-anchor="middle">check</text><text class="s" x="1475" y="223.5" text-anchor="middle">FACTORY</text><text class="l" x="1475" y="244.5" text-anchor="middle">undo writes outside</text><text class="l" x="1475" y="260.5" text-anchor="middle">the lane; keep the</text><text class="l" x="1475" y="276.5" text-anchor="middle">frontmatter and log;</text><text class="l" x="1475" y="292.5" text-anchor="middle">outcome and form</text></g>
+<g class="node code"><rect x="1790" y="198" width="190" height="92" rx="10"/><text class="t" x="1885" y="223" text-anchor="middle">move on</text><text class="l" x="1885" y="244" text-anchor="middle">entry, stage = next,</text><text class="l" x="1885" y="260" text-anchor="middle">commit, push; at the</text><text class="l" x="1885" y="276" text-anchor="middle">gate: PR body, ready</text></g>
+<g class="node back"><rect x="1790" y="360" width="180" height="80" rx="10"/><text class="t" x="1880" y="387" text-anchor="middle">send back</text><text class="l" x="1880" y="408" text-anchor="middle">entry in log,</text><text class="l" x="1880" y="424" text-anchor="middle">round + 1</text></g>
+<g class="node ask"><rect x="1790" y="510" width="180" height="80" rx="10"/><text class="t" x="1880" y="537" text-anchor="middle">ask</text><text class="l" x="1880" y="558" text-anchor="middle">entry in log,</text><text class="l" x="1880" y="574" text-anchor="middle">blocked: question</text></g>
+<g class="node stall"><rect x="1790" y="640" width="180" height="92" rx="10"/><text class="t" x="1880" y="664.5" text-anchor="middle">stall</text><text class="s" x="1880" y="681.5" text-anchor="middle">FACTORY</text><text class="l" x="1880" y="702.5" text-anchor="middle">attempts + 1, partial</text><text class="l" x="1880" y="718.5" text-anchor="middle">work committed</text></g>
 <g class="node back"><polygon points="2090.0,356 2160.0,400.0 2090.0,444 2020.0,400.0"/><text class="l" x="2090" y="398.5" text-anchor="middle">round over</text><text class="l" x="2090" y="414.5" text-anchor="middle">max_rounds?</text></g>
 <g class="node ask"><rect x="2010" y="510" width="160" height="80" rx="10"/><text class="t" x="2090" y="528.5" text-anchor="middle">human</text><text class="s" x="2090" y="545.5" text-anchor="middle">SEE 04</text><text class="l" x="2090" y="566.5" text-anchor="middle">answers on</text><text class="l" x="2090" y="582.5" text-anchor="middle">the PR</text></g>
 <g class="node stall"><polygon points="2090.0,642 2160.0,686.0 2090.0,730 2020.0,686.0"/><text class="l" x="2090" y="684.5" text-anchor="middle">attempts at</text><text class="l" x="2090" y="700.5" text-anchor="middle">max_attempts?</text></g>
@@ -135,14 +135,14 @@
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="290" y="220">yes, or</tspan><tspan x="290" y="235">no PR yet</tspan></text>
 <text class="lbl lbl-stall" text-anchor="start"><tspan x="189" y="360.5">closed or merged</tspan></text>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="560" y="220">on the</tspan><tspan x="560" y="235">branch</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="825" y="235">the task</tspan></text>
 
-
-
-<text class="lbl lbl-flow" text-anchor="start"><tspan x="1608" y="235">green, criteria met</tspan></text>
-<text class="lbl lbl-back" text-anchor="start"><tspan x="1608" y="376">findings</tspan><tspan x="1608" y="391">(review, docs, demo)</tspan></text>
-<text class="lbl lbl-ask" text-anchor="start"><tspan x="1608" y="526">unclear, contradictory,</tspan><tspan x="1608" y="541">or a tool is missing</tspan></text>
-<text class="lbl lbl-stall" text-anchor="start"><tspan x="1229" y="677">no new commit, an error, a denied tool; or its run is gone: lease over, machine restarted</tspan></text>
-<text class="lbl lbl-flow" text-anchor="middle"><tspan x="2105" y="235">commit a → b, push</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1345" y="235">it returns</tspan></text>
+<text class="lbl lbl-flow" text-anchor="start"><tspan x="1608" y="220">forward, and the</tspan><tspan x="1608" y="235">stage&#x27;s checks green</tspan></text>
+<text class="lbl lbl-back" text-anchor="start"><tspan x="1608" y="376">back to doing</tspan><tspan x="1608" y="391">(review, docs, demo)</tspan></text>
+<text class="lbl lbl-ask" text-anchor="start"><tspan x="1608" y="526">question, or intake</tspan><tspan x="1608" y="541">past a format finding</tspan></text>
+<text class="lbl lbl-stall" text-anchor="start"><tspan x="1489" y="662">stuck, no or a wrong outcome, a red check,</tspan><tspan x="1489" y="677">a broken form, an error</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="2110" y="235">pushed</tspan></text>
 
 <text class="lbl lbl-back" text-anchor="middle"><tspan x="2200" y="391">no</tspan></text>
 <text class="lbl lbl-ask" text-anchor="start"><tspan x="2099" y="481">yes</tspan></text>

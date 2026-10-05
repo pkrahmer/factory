@@ -84,14 +84,12 @@
 <text class="subtitle" x="40" y="70">factory-tick decides whether this repository needs a hand right now and handles the line in code; a model runs only as a stage agent. Tokens are spent on events, not on time.</text>
 <g class="node code"><rect x="40" y="660" width="26" height="16" rx="4"/></g>
 <text class="note" x="74" y="672">deterministic code</text>
-<g class="node disp"><rect x="212" y="660" width="26" height="16" rx="4"/></g>
-<text class="note" x="246" y="672">model</text>
-<g class="node quiet"><rect x="293" y="660" width="26" height="16" rx="4"/></g>
-<text class="note" x="327" y="672">nothing happens</text>
-<path class="e e-flow" d="M 444 668 L 470 668" marker-end="url(#a-flow)"/>
-<text class="note" x="478" y="672">moves on</text>
-<path class="e e-stall" d="M 546 668 L 572 668" marker-end="url(#a-stall)"/>
-<text class="note" x="580" y="672">stops or recovers</text>
+<g class="node quiet"><rect x="212" y="660" width="26" height="16" rx="4"/></g>
+<text class="note" x="246" y="672">nothing happens</text>
+<path class="e e-flow" d="M 363 668 L 389 668" marker-end="url(#a-flow)"/>
+<text class="note" x="397" y="672">moves on</text>
+<path class="e e-stall" d="M 465 668 L 491 668" marker-end="url(#a-stall)"/>
+<text class="note" x="499" y="672">stops or recovers</text>
 <path class="e e-flow" d="M 20 208 L 110 208" marker-end="url(#a-flow)"/>
 <path class="e e-flow" d="M 250 208 L 330 208" marker-end="url(#a-flow)"/>
 <path class="e e-flow" d="M 470 208 L 550 208" marker-end="url(#a-flow)"/>
@@ -120,9 +118,9 @@
 <g class="node code"><polygon points="620.0,345.0 690,400.0 620.0,455.0 550,400.0"/><text class="l" x="620" y="390.5" text-anchor="middle">on a ticket or</text><text class="l" x="620" y="406.5" text-anchor="middle">acceptance</text><text class="l" x="620" y="422.5" text-anchor="middle">branch?</text></g>
 <g class="node code"><rect x="770" y="140" width="220" height="136" rx="10"/><text class="t" x="880" y="178.5" text-anchor="middle">fetch</text><text class="s" x="880" y="195.5" text-anchor="middle">TICK</text><text class="l" x="880" y="216.5" text-anchor="middle">git fetch --prune;</text><text class="l" x="880" y="232.5" text-anchor="middle">on main: fast-forward</text><text class="l" x="880" y="248.5" text-anchor="middle">to origin/main</text></g>
 <g class="node code"><rect x="1060" y="140" width="220" height="136" rx="10"/><text class="t" x="1170" y="186.5" text-anchor="middle">evaluate</text><text class="s" x="1170" y="203.5" text-anchor="middle">WATCHER, SEE 08</text><text class="l" x="1170" y="224.5" text-anchor="middle">one line: what</text><text class="l" x="1170" y="240.5" text-anchor="middle">should happen next</text></g>
-<g class="node code"><rect x="1350" y="140" width="220" height="136" rx="10"/><text class="t" x="1460" y="170.5" text-anchor="middle">after a restart</text><text class="s" x="1460" y="187.5" text-anchor="middle">TICK</text><text class="l" x="1460" y="208.5" text-anchor="middle">busy with a claim from</text><text class="l" x="1460" y="224.5" text-anchor="middle">before the machine</text><text class="l" x="1460" y="240.5" text-anchor="middle">started becomes</text><text class="l" x="1460" y="256.5" text-anchor="middle">expired</text></g>
+<g class="node code"><rect x="1350" y="140" width="220" height="136" rx="10"/><text class="t" x="1460" y="170.5" text-anchor="middle">after a restart</text><text class="s" x="1460" y="187.5" text-anchor="middle">TICK</text><text class="l" x="1460" y="208.5" text-anchor="middle">busy with a run that</text><text class="l" x="1460" y="224.5" text-anchor="middle">started before the</text><text class="l" x="1460" y="240.5" text-anchor="middle">machine did becomes</text><text class="l" x="1460" y="256.5" text-anchor="middle">expired</text></g>
 <g class="node code"><rect x="1640" y="140" width="220" height="136" rx="10"/><text class="t" x="1750" y="162.5" text-anchor="middle">needs a hand?</text><text class="s" x="1750" y="179.5" text-anchor="middle">TICK</text><text class="l" x="1750" y="200.5" text-anchor="middle">not for idle or busy, nor</text><text class="l" x="1750" y="216.5" text-anchor="middle">pr whose new comments</text><text class="l" x="1750" y="232.5" text-anchor="middle">are all the factory&#x27;s own,</text><text class="l" x="1750" y="248.5" text-anchor="middle">nor a line already</text><text class="l" x="1750" y="264.5" text-anchor="middle">handled at this HEAD</text></g>
-<g class="node disp"><rect x="1930" y="140" width="220" height="136" rx="10"/><text class="t" x="2040" y="178.5" text-anchor="middle">dispatcher</text><text class="s" x="2040" y="195.5" text-anchor="middle">CODE</text><text class="l" x="2040" y="216.5" text-anchor="middle">handles that one line;</text><text class="l" x="2040" y="232.5" text-anchor="middle">a run line starts the</text><text class="l" x="2040" y="248.5" text-anchor="middle">agent; its cost recorded</text></g>
+<g class="node code"><rect x="1930" y="140" width="220" height="136" rx="10"/><text class="t" x="2040" y="178.5" text-anchor="middle">dispatcher</text><text class="s" x="2040" y="195.5" text-anchor="middle">CODE</text><text class="l" x="2040" y="216.5" text-anchor="middle">handles that one line;</text><text class="l" x="2040" y="232.5" text-anchor="middle">a run line starts the</text><text class="l" x="2040" y="248.5" text-anchor="middle">agent; its cost recorded</text></g>
 <g class="node code"><polygon points="2300.0,153.0 2370,208.0 2300.0,263.0 2230,208.0"/><text class="l" x="2300" y="214.5" text-anchor="middle">ok?</text></g>
 <g class="node code"><rect x="2430" y="140" width="220" height="136" rx="10"/><text class="t" x="2540" y="178.5" text-anchor="middle">remember</text><text class="s" x="2540" y="195.5" text-anchor="middle">TICK</text><text class="l" x="2540" y="216.5" text-anchor="middle">line and HEAD handled;</text><text class="l" x="2540" y="232.5" text-anchor="middle">story at the gate:</text><text class="l" x="2540" y="248.5" text-anchor="middle">cost table on the PR</text></g>
 <g class="node end"><rect x="2730" y="174" width="170" height="68" rx="10"/><text class="t" x="2815" y="203" text-anchor="middle">exit 3</text><text class="l" x="2815" y="224" text-anchor="middle">tick again in 2 s</text></g>
@@ -153,7 +151,7 @@
 <text class="lbl lbl-stall" text-anchor="start"><tspan x="889" y="322">then on</tspan></text>
 <text class="lbl lbl-stall" text-anchor="start"><tspan x="629" y="503.5">no</tspan></text>
 <text class="lbl lbl-stall" text-anchor="start"><tspan x="1759" y="324">no</tspan></text>
-<text class="lbl lbl-stall" text-anchor="start"><tspan x="2309" y="310">no: an error, or no commit</tspan><tspan x="2309" y="325">for expired, merged,</tspan><tspan x="2309" y="340">closed or reject</tspan></text>
+<text class="lbl lbl-stall" text-anchor="start"><tspan x="2309" y="310">no: the handler raised,</tspan><tspan x="2309" y="325">a situation it does</tspan><tspan x="2309" y="340">not know</tspan></text>
 
 <text class="lbl lbl-stall" text-anchor="middle"><tspan x="2665" y="391">no</tspan></text>
 <text class="lbl lbl-stall" text-anchor="start"><tspan x="2549" y="496.5">yes</tspan></text>

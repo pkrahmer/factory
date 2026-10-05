@@ -85,11 +85,13 @@
 <g class="node code"><rect x="40" y="660" width="26" height="16" rx="4"/></g>
 <text class="note" x="74" y="672">check</text>
 <g class="node disp"><rect x="121" y="660" width="26" height="16" rx="4"/></g>
-<text class="note" x="155" y="672">line the dispatcher handles</text>
-<g class="node quiet"><rect x="356" y="660" width="26" height="16" rx="4"/></g>
-<text class="note" x="390" y="672">line without a model</text>
-<path class="e e-flow" d="M 542 668 L 568 668" marker-end="url(#a-flow)"/>
-<text class="note" x="576" y="672">moves on</text>
+<text class="note" x="155" y="672">line the factory handles</text>
+<g class="node agent"><rect x="335" y="660" width="26" height="16" rx="4"/></g>
+<text class="note" x="369" y="672">line that starts an agent</text>
+<g class="node quiet"><rect x="556" y="660" width="26" height="16" rx="4"/></g>
+<text class="note" x="590" y="672">line without a model</text>
+<path class="e e-flow" d="M 742 668 L 768 668" marker-end="url(#a-flow)"/>
+<text class="note" x="776" y="672">moves on</text>
 <path class="e e-flow" d="M 300 190 L 400 190" marker-end="url(#a-flow)"/>
 <path class="e e-flow" d="M 610 190 L 720 190" marker-end="url(#a-flow)"/>
 <path class="e e-flow" d="M 930 190 L 1040 190" marker-end="url(#a-flow)"/>
@@ -108,25 +110,25 @@
 <path class="e e-flow" d="M 1704 250 L 1704 418 Q 1704 428 1714 428 L 1816 428" marker-end="url(#a-flow)"/>
 <path class="e e-flow" d="M 2024 250 L 2024 326 Q 2024 336 2034 336 L 2136 336" marker-end="url(#a-flow)"/>
 <path class="e e-flow" d="M 2024 250 L 2024 418 Q 2024 428 2034 428 L 2136 428" marker-end="url(#a-flow)"/>
-<g class="node code"><rect x="60" y="130" width="240" height="120" rx="10"/><text class="t" x="180" y="152.5" text-anchor="middle">read</text><text class="s" x="180" y="169.5" text-anchor="middle">WATCHER</text><text class="l" x="180" y="190.5" text-anchor="middle">stages.yml; every ongoing</text><text class="l" x="180" y="206.5" text-anchor="middle">story and due acceptance,</text><text class="l" x="180" y="222.5" text-anchor="middle">from its branch, origin/main</text><text class="l" x="180" y="238.5" text-anchor="middle">or the tree; the last commit</text></g>
+<g class="node code"><rect x="60" y="130" width="240" height="120" rx="10"/><text class="t" x="180" y="152.5" text-anchor="middle">read</text><text class="s" x="180" y="169.5" text-anchor="middle">WATCHER</text><text class="l" x="180" y="190.5" text-anchor="middle">stages.yml; every ongoing</text><text class="l" x="180" y="206.5" text-anchor="middle">story and due acceptance</text><text class="l" x="180" y="222.5" text-anchor="middle">from its branch or main;</text><text class="l" x="180" y="238.5" text-anchor="middle">the last commit; the run file</text></g>
 <g class="node code"><rect x="400" y="130" width="210" height="120" rx="10"/><text class="t" x="505" y="177" text-anchor="middle">illegal change?</text><text class="l" x="505" y="198" text-anchor="middle">last commit set a stage</text><text class="l" x="505" y="214" text-anchor="middle">not under next</text></g>
 <g class="node code"><rect x="720" y="130" width="210" height="120" rx="10"/><text class="t" x="825" y="177" text-anchor="middle">duplicate id?</text><text class="l" x="825" y="198" text-anchor="middle">two ongoing files</text><text class="l" x="825" y="214" text-anchor="middle">with one id</text></g>
 <g class="node code"><rect x="1040" y="130" width="210" height="120" rx="10"/><text class="t" x="1145" y="169" text-anchor="middle">waiting on the human?</text><text class="l" x="1145" y="190" text-anchor="middle">gate stage or blocked:</text><text class="l" x="1145" y="206" text-anchor="middle">asked, and a pr:</text><text class="l" x="1145" y="222" text-anchor="middle">gh pr view</text></g>
 <g class="node code"><rect x="1360" y="130" width="210" height="120" rx="10"/><text class="t" x="1465" y="169" text-anchor="middle">question open?</text><text class="l" x="1465" y="190" text-anchor="middle">blocked: question, or</text><text class="l" x="1465" y="206" text-anchor="middle">a gate stage</text><text class="l" x="1465" y="222" text-anchor="middle">without a pr</text></g>
-<g class="node code"><rect x="1680" y="130" width="210" height="120" rx="10"/><text class="t" x="1785" y="185" text-anchor="middle">story claimed?</text><text class="l" x="1785" y="206" text-anchor="middle">claimed_at is set</text></g>
+<g class="node code"><rect x="1680" y="130" width="210" height="120" rx="10"/><text class="t" x="1785" y="177" text-anchor="middle">agent at work?</text><text class="l" x="1785" y="198" text-anchor="middle">the run file</text><text class="l" x="1785" y="214" text-anchor="middle">names a ticket</text></g>
 <g class="node code"><rect x="2000" y="130" width="210" height="120" rx="10"/><text class="t" x="2105" y="169" text-anchor="middle">stage with an agent?</text><text class="l" x="2105" y="190" text-anchor="middle">lowest id first; a</text><text class="l" x="2105" y="206" text-anchor="middle">feature&#x27;s acceptance</text><text class="l" x="2105" y="222" text-anchor="middle">after its stories</text></g>
 <g class="node quiet"><rect x="2300" y="156" width="130" height="68" rx="10"/><text class="t" x="2365" y="185" text-anchor="middle">idle</text><text class="l" x="2365" y="206" text-anchor="middle">nothing to do</text></g>
-<g class="node disp"><rect x="536" y="300" width="176" height="72" rx="10"/><text class="t" x="624" y="323" text-anchor="middle">reject</text><text class="l" x="624" y="344" text-anchor="middle">moved back</text><text class="l" x="624" y="360" text-anchor="middle">by the dispatcher</text></g>
+<g class="node disp"><rect x="536" y="300" width="176" height="72" rx="10"/><text class="t" x="624" y="323" text-anchor="middle">reject</text><text class="l" x="624" y="344" text-anchor="middle">moved back</text><text class="l" x="624" y="360" text-anchor="middle">by the factory</text></g>
 <g class="node disp"><rect x="856" y="300" width="176" height="72" rx="10"/><text class="t" x="944" y="323" text-anchor="middle">duplicate</text><text class="l" x="944" y="344" text-anchor="middle">logged, nothing</text><text class="l" x="944" y="360" text-anchor="middle">else happens</text></g>
 <g class="node disp"><rect x="1176" y="300" width="176" height="72" rx="10"/><text class="t" x="1264" y="331" text-anchor="middle">error pr-lookup</text><text class="l" x="1264" y="352" text-anchor="middle">gh login missing?</text></g>
 <g class="node disp"><rect x="1176" y="392" width="176" height="72" rx="10"/><text class="t" x="1264" y="423" text-anchor="middle">merged</text><text class="l" x="1264" y="444" text-anchor="middle">archived to done/</text></g>
 <g class="node disp"><rect x="1176" y="484" width="176" height="72" rx="10"/><text class="t" x="1264" y="507" text-anchor="middle">closed</text><text class="l" x="1264" y="528" text-anchor="middle">back to doing,</text><text class="l" x="1264" y="544" text-anchor="middle">or discarded</text></g>
-<g class="node disp"><rect x="1176" y="576" width="176" height="72" rx="10"/><text class="t" x="1264" y="599" text-anchor="middle">pr OPEN n</text><text class="l" x="1264" y="620" text-anchor="middle">only new comments</text><text class="l" x="1264" y="636" text-anchor="middle">start the dispatcher</text></g>
+<g class="node disp"><rect x="1176" y="576" width="176" height="72" rx="10"/><text class="t" x="1264" y="599" text-anchor="middle">pr OPEN n</text><text class="l" x="1264" y="620" text-anchor="middle">new human comments</text><text class="l" x="1264" y="636" text-anchor="middle">copied into the log</text></g>
 <g class="node disp"><rect x="1496" y="300" width="176" height="72" rx="10"/><text class="t" x="1584" y="323" text-anchor="middle">ask</text><text class="l" x="1584" y="344" text-anchor="middle">question onto</text><text class="l" x="1584" y="360" text-anchor="middle">the PR (04)</text></g>
 <g class="node quiet"><rect x="1816" y="300" width="176" height="72" rx="10"/><text class="t" x="1904" y="323" text-anchor="middle">busy</text><text class="l" x="1904" y="344" text-anchor="middle">nothing: one story</text><text class="l" x="1904" y="360" text-anchor="middle">at a time</text></g>
-<g class="node disp"><rect x="1816" y="392" width="176" height="72" rx="10"/><text class="t" x="1904" y="415" text-anchor="middle">expired</text><text class="l" x="1904" y="436" text-anchor="middle">claim cleared,</text><text class="l" x="1904" y="452" text-anchor="middle">attempts + 1</text></g>
+<g class="node disp"><rect x="1816" y="392" width="176" height="72" rx="10"/><text class="t" x="1904" y="415" text-anchor="middle">expired</text><text class="l" x="1904" y="436" text-anchor="middle">run file removed,</text><text class="l" x="1904" y="452" text-anchor="middle">attempts + 1</text></g>
 <g class="node disp"><rect x="2136" y="300" width="176" height="72" rx="10"/><text class="t" x="2224" y="323" text-anchor="middle">ask</text><text class="l" x="2224" y="344" text-anchor="middle">ask whether</text><text class="l" x="2224" y="360" text-anchor="middle">to retry</text></g>
-<g class="node disp"><rect x="2136" y="392" width="176" height="72" rx="10"/><text class="t" x="2224" y="415" text-anchor="middle">run &lt;agent&gt;</text><text class="l" x="2224" y="436" text-anchor="middle">the stage agent</text><text class="l" x="2224" y="452" text-anchor="middle">starts (03)</text></g>
+<g class="node agent"><rect x="2136" y="392" width="176" height="72" rx="10"/><text class="t" x="2224" y="415" text-anchor="middle">run &lt;agent&gt;</text><text class="l" x="2224" y="436" text-anchor="middle">the stage agent</text><text class="l" x="2224" y="452" text-anchor="middle">starts (03)</text></g>
 
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="665" y="181">no</tspan></text>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="985" y="181">no</tspan></text>
@@ -141,8 +143,8 @@
 <text class="lbl lbl-flow" text-anchor="start"><tspan x="1074" y="512">CLOSED</tspan></text>
 <text class="lbl lbl-flow" text-anchor="start"><tspan x="1074" y="604">OPEN</tspan></text>
 <text class="lbl lbl-flow" text-anchor="start"><tspan x="1394" y="328">yes</tspan></text>
-<text class="lbl lbl-flow" text-anchor="start"><tspan x="1714" y="328">lease alive</tspan></text>
-<text class="lbl lbl-flow" text-anchor="start"><tspan x="1714" y="420">lease over</tspan></text>
+<text class="lbl lbl-flow" text-anchor="start"><tspan x="1714" y="328">run alive</tspan></text>
+<text class="lbl lbl-flow" text-anchor="start"><tspan x="1714" y="420">over or killed</tspan></text>
 <text class="lbl lbl-flow" text-anchor="start"><tspan x="2034" y="328">attempts at max</tspan></text>
 <text class="lbl lbl-flow" text-anchor="start"><tspan x="2034" y="420">otherwise</tspan></text>
 </svg>

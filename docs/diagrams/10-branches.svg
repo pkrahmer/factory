@@ -90,7 +90,7 @@
 <path d="M 630 370 L 710 230" class="twig" stroke-width="3.5" fill="none" stroke-linecap="round"/>
 <path d="M 1570 370 L 1630 510 L 1750 510 L 1870 370" class="twig" stroke-width="3.5" fill="none" stroke-linecap="round"/>
 <rect class="pr-draft" x="390" y="138" width="900" height="24" rx="5" stroke-dasharray="5 3"/>
-<text class="note" x="400" y="154">pull request: draft, opened by intake</text>
+<text class="note" x="400" y="154">pull request: draft, opened by the factory</text>
 <rect class="pr-ready" x="1290" y="138" width="100" height="24" rx="5" stroke-dasharray="5 3"/>
 <text class="note" x="1300" y="154">ready</text>
 <rect class="pr-draft" x="1630" y="566" width="120" height="24" rx="5" stroke-dasharray="5 3"/>
@@ -103,44 +103,44 @@
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="250" y="400">drafts and</tspan><tspan x="250" y="415">FEATURE.md</tspan></text>
 <g class="node human"><circle cx="330" cy="370" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="330" y="400">git mv into</tspan><tspan x="330" y="415">ongoing/</tspan></text>
-<g class="node agent"><circle cx="390" cy="230" r="9" stroke-width="2.2"/></g>
-<text class="lbl lbl-flow" text-anchor="middle"><tspan x="390" y="197">intake: claim,</tspan><tspan x="390" y="212">draft PR</tspan></text>
-<g class="node agent"><circle cx="490" cy="230" r="9" stroke-width="2.2"/></g>
+<g class="node code"><circle cx="390" cy="230" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="390" y="197">intake starts,</tspan><tspan x="390" y="212">draft PR</tspan></text>
+<g class="node code"><circle cx="490" cy="230" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="490" y="197">ready</tspan><tspan x="490" y="212">→ tests</tspan></text>
-<g class="node agent"><circle cx="590" cy="230" r="9" stroke-width="2.2"/></g>
+<g class="node code"><circle cx="590" cy="230" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="590" y="197">tests</tspan><tspan x="590" y="212">→ doing</tspan></text>
 <g class="node human"><circle cx="630" cy="370" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="630" y="400">another</tspan><tspan x="630" y="415">draft</tspan></text>
-<g class="node disp"><circle cx="710" cy="230" r="9" stroke-width="2.2"/></g>
+<g class="node code"><circle cx="710" cy="230" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="710" y="197">merge main in,</tspan><tspan x="710" y="212">every stage</tspan></text>
 <g class="node agent"><circle cx="810" cy="230" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="810" y="197">feat:</tspan><tspan x="810" y="212">…</tspan></text>
 <g class="node agent"><circle cx="900" cy="230" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="900" y="197">refactor:</tspan><tspan x="900" y="212">…</tspan></text>
-<g class="node agent"><circle cx="990" cy="230" r="9" stroke-width="2.2"/></g>
+<g class="node code"><circle cx="990" cy="230" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="990" y="197">doing</tspan><tspan x="990" y="212">→ review</tspan></text>
-<g class="node agent"><circle cx="1090" cy="230" r="9" stroke-width="2.2"/></g>
+<g class="node code"><circle cx="1090" cy="230" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="1090" y="197">review</tspan><tspan x="1090" y="212">→ docs</tspan></text>
-<g class="node agent"><circle cx="1190" cy="230" r="9" stroke-width="2.2"/></g>
+<g class="node code"><circle cx="1190" cy="230" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="1190" y="197">docs</tspan><tspan x="1190" y="212">→ demo</tspan></text>
-<g class="node agent"><circle cx="1290" cy="230" r="9" stroke-width="2.2"/></g>
-<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1290" y="197">demo</tspan><tspan x="1290" y="212">→ accept</tspan></text>
+<g class="node code"><circle cx="1290" cy="230" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1290" y="197">demo → accept,</tspan><tspan x="1290" y="212">PR ready</tspan></text>
 <g class="node human"><circle cx="1390" cy="370" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="1390" y="400">human merges:</tspan><tspan x="1390" y="415">a merge commit,</tspan><tspan x="1390" y="430">never a squash</tspan></text>
-<g class="node disp"><circle cx="1490" cy="370" r="9" stroke-width="2.2"/></g>
+<g class="node code"><circle cx="1490" cy="370" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="1490" y="400">archive: done/,</tspan><tspan x="1490" y="415">branch deleted</tspan></text>
-<g class="node agent"><circle cx="1630" cy="510" r="9" stroke-width="2.2"/></g>
-<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1630" y="540">acceptor: claim,</tspan><tspan x="1630" y="555">draft PR</tspan></text>
-<g class="node agent"><circle cx="1750" cy="510" r="9" stroke-width="2.2"/></g>
+<g class="node code"><circle cx="1630" cy="510" r="9" stroke-width="2.2"/></g>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1630" y="540">acceptance starts,</tspan><tspan x="1630" y="555">draft PR</tspan></text>
+<g class="node code"><circle cx="1750" cy="510" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="1750" y="540">feature</tspan><tspan x="1750" y="555">→ accept</tspan></text>
 <g class="node human"><circle cx="1870" cy="370" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="1870" y="337">human merges</tspan><tspan x="1870" y="352">the report</tspan></text>
-<g class="node disp"><circle cx="1970" cy="370" r="9" stroke-width="2.2"/></g>
+<g class="node code"><circle cx="1970" cy="370" r="9" stroke-width="2.2"/></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="1970" y="337">outcome:</tspan><tspan x="1970" y="352">accepted</tspan></text>
 <g class="node human"><rect x="40" y="608" width="26" height="16" rx="4"/></g>
 <text class="note" x="74" y="620">the human</text>
 <g class="node agent"><rect x="149" y="608" width="26" height="16" rx="4"/></g>
-<text class="note" x="183" y="620">an agent</text>
-<g class="node disp"><rect x="251" y="608" width="26" height="16" rx="4"/></g>
-<text class="note" x="285" y="620">the dispatcher</text>
+<text class="note" x="183" y="620">the coder&#x27;s work</text>
+<g class="node code"><rect x="307" y="608" width="26" height="16" rx="4"/></g>
+<text class="note" x="341" y="620">the factory (code)</text>
 </svg>

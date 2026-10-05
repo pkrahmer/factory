@@ -86,14 +86,14 @@
 <text class="note" x="74" y="560">agent</text>
 <g class="node human"><rect x="121" y="548" width="26" height="16" rx="4"/></g>
 <text class="note" x="155" y="560">human</text>
-<g class="node disp"><rect x="202" y="548" width="26" height="16" rx="4"/></g>
-<text class="note" x="236" y="560">dispatcher</text>
-<g class="node quiet"><rect x="318" y="548" width="26" height="16" rx="4"/></g>
-<text class="note" x="352" y="560">nothing happens</text>
-<path class="e e-flow" d="M 469 556 L 495 556" marker-end="url(#a-flow)"/>
-<text class="note" x="503" y="560">moves on</text>
-<path class="e e-back" d="M 571 556 L 597 556" marker-end="url(#a-back)"/>
-<text class="note" x="605" y="560">loops</text>
+<g class="node code"><rect x="202" y="548" width="26" height="16" rx="4"/></g>
+<text class="note" x="236" y="560">the factory (code)</text>
+<g class="node quiet"><rect x="374" y="548" width="26" height="16" rx="4"/></g>
+<text class="note" x="408" y="560">nothing happens</text>
+<path class="e e-flow" d="M 525 556 L 551 556" marker-end="url(#a-flow)"/>
+<text class="note" x="559" y="560">moves on</text>
+<path class="e e-back" d="M 627 556 L 653 556" marker-end="url(#a-back)"/>
+<text class="note" x="661" y="560">loops</text>
 <path class="e e-flow" d="M 20 234 L 110 234" marker-end="url(#a-flow)"/>
 <path class="e e-flow" d="M 250 234 L 330 234" marker-end="url(#a-flow)"/>
 <path class="e e-stall" d="M 180 289 L 180 404" marker-end="url(#a-stall)"/>
@@ -107,19 +107,19 @@
 <path class="e e-back" d="M 1905 256 L 1905 126 Q 1905 116 1895 116 L 190 116 Q 180 116 180 126 L 180 179" marker-end="url(#a-back)"/>
 <g class="node code"><polygon points="180.0,179.0 250,234.0 180.0,289.0 110,234.0"/><text class="l" x="180" y="232.5" text-anchor="middle">acceptance</text><text class="l" x="180" y="248.5" text-anchor="middle">due?</text></g>
 <g class="node quiet"><rect x="85" y="404" width="190" height="72" rx="10"/><text class="t" x="180" y="435" text-anchor="middle">nothing to do</text><text class="l" x="180" y="456" text-anchor="middle">for this feature</text></g>
-<g class="node agent"><rect x="330" y="170" width="190" height="128" rx="10"/><text class="t" x="425" y="196.5" text-anchor="middle">branch and claim</text><text class="s" x="425" y="213.5" text-anchor="middle">ACCEPTOR</text><text class="l" x="425" y="234.5" text-anchor="middle">acceptance/&lt;feature&gt;</text><text class="l" x="425" y="250.5" text-anchor="middle">from main; report with</text><text class="l" x="425" y="266.5" text-anchor="middle">stories: [ids];</text><text class="l" x="425" y="282.5" text-anchor="middle">draft PR</text></g>
+<g class="node code"><rect x="330" y="170" width="190" height="128" rx="10"/><text class="t" x="425" y="204.5" text-anchor="middle">branch and draft PR</text><text class="s" x="425" y="221.5" text-anchor="middle">FACTORY</text><text class="l" x="425" y="242.5" text-anchor="middle">acceptance/&lt;feature&gt;</text><text class="l" x="425" y="258.5" text-anchor="middle">from main; the report&#x27;s</text><text class="l" x="425" y="274.5" text-anchor="middle">head with stories: [ids]</text></g>
 <g class="node agent"><rect x="600" y="170" width="190" height="128" rx="10"/><text class="t" x="695" y="196.5" text-anchor="middle">eight checks</text><text class="s" x="695" y="213.5" text-anchor="middle">ACCEPTOR</text><text class="l" x="695" y="234.5" text-anchor="middle">scope, feature demo,</text><text class="l" x="695" y="250.5" text-anchor="middle">make mutants, noticed</text><text class="l" x="695" y="266.5" text-anchor="middle">items, docs, decisions,</text><text class="l" x="695" y="282.5" text-anchor="middle">slow checks, cost</text></g>
 <g class="node agent"><rect x="870" y="170" width="190" height="128" rx="10"/><text class="t" x="965" y="204.5" text-anchor="middle">report and drafts</text><text class="s" x="965" y="221.5" text-anchor="middle">ACCEPTOR</text><text class="l" x="965" y="242.5" text-anchor="middle">verdict and eight</text><text class="l" x="965" y="258.5" text-anchor="middle">sections; proposed</text><text class="l" x="965" y="274.5" text-anchor="middle">stories into drafts/</text></g>
 <g class="node human"><rect x="1160" y="170" width="190" height="270" rx="10"/><text class="t" x="1255" y="283.5" text-anchor="middle">accept</text><text class="s" x="1255" y="300.5" text-anchor="middle">HUMAN</text><text class="l" x="1255" y="321.5" text-anchor="middle">reads the report</text><text class="l" x="1255" y="337.5" text-anchor="middle">and the drafts</text></g>
-<g class="node disp"><rect x="1470" y="136" width="230" height="128" rx="10"/><text class="t" x="1585" y="162.5" text-anchor="middle">accepted</text><text class="s" x="1585" y="179.5" text-anchor="middle">DISPATCHER</text><text class="l" x="1585" y="200.5" text-anchor="middle">on main: stage done,</text><text class="l" x="1585" y="216.5" text-anchor="middle">outcome: accepted;</text><text class="l" x="1585" y="232.5" text-anchor="middle">report and drafts stay,</text><text class="l" x="1585" y="248.5" text-anchor="middle">branch deleted</text></g>
-<g class="node disp"><rect x="1470" y="326" width="230" height="128" rx="10"/><text class="t" x="1585" y="352.5" text-anchor="middle">refused</text><text class="s" x="1585" y="369.5" text-anchor="middle">DISPATCHER</text><text class="l" x="1585" y="390.5" text-anchor="middle">on main: the report,</text><text class="l" x="1585" y="406.5" text-anchor="middle">outcome: refused, your</text><text class="l" x="1585" y="422.5" text-anchor="middle">comment under the verdict;</text><text class="l" x="1585" y="438.5" text-anchor="middle">drafts dropped</text></g>
+<g class="node code"><rect x="1470" y="136" width="230" height="128" rx="10"/><text class="t" x="1585" y="162.5" text-anchor="middle">accepted</text><text class="s" x="1585" y="179.5" text-anchor="middle">FACTORY</text><text class="l" x="1585" y="200.5" text-anchor="middle">on main: stage done,</text><text class="l" x="1585" y="216.5" text-anchor="middle">outcome: accepted;</text><text class="l" x="1585" y="232.5" text-anchor="middle">report and drafts stay,</text><text class="l" x="1585" y="248.5" text-anchor="middle">branch deleted</text></g>
+<g class="node code"><rect x="1470" y="326" width="230" height="128" rx="10"/><text class="t" x="1585" y="352.5" text-anchor="middle">refused</text><text class="s" x="1585" y="369.5" text-anchor="middle">FACTORY</text><text class="l" x="1585" y="390.5" text-anchor="middle">on main: the report,</text><text class="l" x="1585" y="406.5" text-anchor="middle">outcome: refused, your</text><text class="l" x="1585" y="422.5" text-anchor="middle">comment under the verdict;</text><text class="l" x="1585" y="438.5" text-anchor="middle">drafts dropped</text></g>
 <g class="node quiet"><rect x="1800" y="256" width="210" height="92" rx="10"/><text class="t" x="1905" y="281" text-anchor="middle">feature status</text><text class="l" x="1905" y="302" text-anchor="middle">accepted or refused,</text><text class="l" x="1905" y="318" text-anchor="middle">until another story</text><text class="l" x="1905" y="334" text-anchor="middle">is archived</text></g>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="65" y="209">watcher:</tspan><tspan x="65" y="224">a tick</tspan></text>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="290" y="225">yes</tspan></text>
 <text class="lbl lbl-stall" text-anchor="start"><tspan x="189" y="350.5">no</tspan></text>
-<text class="lbl lbl-flow" text-anchor="middle"><tspan x="560" y="210">claim</tspan><tspan x="560" y="225">pushed</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="560" y="210">the task:</tspan><tspan x="560" y="225">stories, cost</tspan></text>
 
-<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1110" y="210">PR ready;</tspan><tspan x="1110" y="225">stage: accept</tspan></text>
+<text class="lbl lbl-flow" text-anchor="middle"><tspan x="1110" y="210">outcome accept;</tspan><tspan x="1110" y="225">PR body, ready</tspan></text>
 <text class="lbl lbl-flow" text-anchor="middle"><tspan x="1410" y="191">merges</tspan></text>
 <text class="lbl lbl-stall" text-anchor="middle"><tspan x="1410" y="366">closes, with a</tspan><tspan x="1410" y="381">comment: why</tspan></text>
 
