@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="704" viewBox="0 0 1120 704" role="img" aria-labelledby="title desc">
+<title id="title">Where the principles act</title>
+<desc id="desc">The parts of the factory from Figure 1-1, each labeled with the principles that govern it. The human (P3, P4) starts and accepts, and acts in two places. The pull request (P4, P9) is the human's channel and where questions go. The repository (P2, P6, P8) is the only truth; the story in it is the memory and is specified down to the failing side. The factory's code is a group of three: the tick (P13) spends on events, not on time; the watcher (P5) takes the lowest identifier first and keeps the work in flight bounded; the dispatcher (P10, P11, P12, P14) enforces, observes, stops on the unknown and recovers. The stage agent below the dispatcher (P7, P9) does not judge its own work and asks instead of guessing. Unlabeled arrows orient the reader as in Figure 1-1: the human to the pull request and the repository, tick to watcher to dispatcher, dispatcher to agent and back, and the dispatcher to both places. A band below holds what belongs to the factory itself: the project contract (P15: control surface, lanes, project guide), the cost records (P16: every agent run measured) and the decision log (P17: why, and what was rejected). P1, sort every step, governs the whole picture: the boxes' colors are its three kinds of work, amber the human, blue a model, green code.</desc>
+<style>
+text.tag { font-size: 12px; letter-spacing: 0.06em; }
+.b { font-weight: 600; }
+text { font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+.code { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 0.92em; }
+.ttl { font-size: 20px; font-weight: 600; }
+.sub { font-size: 13.5px; font-weight: 400; }
+.tag { font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; }
+.nt { font-size: 14.5px; font-weight: 700; }
+.nb { font-size: 12.5px; font-weight: 400; }
+.lb { font-size: 12px; font-weight: 400; }
+.lane-h { font-size: 13px; font-weight: 700; }
+.lane-n { font-size: 12px; font-weight: 400; }
+.col-h { font-size: 12.5px; font-weight: 700; }
+.grp-c { font-size: 12px; font-weight: 600; }
+.tx { font-size: 13px; font-weight: 400; }
+.tx-bold { font-size: 13px; font-weight: 700; }
+.tx-mono { font-size: 12px; font-weight: 400; font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; }
+.tx-note { font-size: 12px; font-weight: 400; }
+.tx-small { font-size: 11px; font-weight: 400; }
+.lg { font-size: 12px; font-weight: 400; }
+.sh, .fold { stroke-width: 1.5; stroke-linejoin: round; }
+.n-end .sh { stroke-dasharray: 5 3; }
+.e { fill: none; stroke-linejoin: round; }
+.lb { paint-order: stroke fill; stroke-width: 4px; stroke-linejoin: round; }
+.rule, .lane-a, .lane-b { stroke-width: 1; shape-rendering: crispEdges; }
+.rule, .col-u { fill: none; } .col-r { stroke-dasharray: 2 3; }
+.col-u { stroke-width: 1; shape-rendering: crispEdges; }
+.grp { stroke-width: 1; } .grp-d { stroke-dasharray: 5 4; }
+.e-flow { stroke-width: 1.5; }
+.bg { fill: #ffffff; }
+.ttl, .nt, .lane-h, .col-h, .tx-bold { fill: #1b1f24; }
+.sub, .lane-n, .grp-c, .tx-note, .tx-small { fill: #5d6470; }
+.nb, .tx, .tx-mono, .lg { fill: #363b43; }
+.lb { stroke: #ffffff; } .lb.on-lane { stroke: #f5f7f9; }
+.lane-a { fill: #f5f7f9; stroke: #dde1e6; }
+.lane-b { fill: #ffffff; stroke: #dde1e6; }
+.rule { stroke: #dde1e6; }
+.grp { fill: #ffffff; stroke: #b4bac3; } .col-u { stroke: #b4bac3; }
+.n-agent .sh { fill: #eaf2fc; stroke: #2f6db5; }
+.n-agent .fold { fill: #c5d7ee; stroke: #2f6db5; }
+.n-agent .tag, .k-agent { fill: #2862a5; }
+.g-agent { stroke: #2f6db5; }
+.n-human .sh { fill: #fff4df; stroke: #c27400; }
+.n-human .fold { fill: #f3dab2; stroke: #c27400; }
+.n-human .tag, .k-human { fill: #965a00; }
+.g-human { stroke: #c27400; }
+.n-code .sh { fill: #e8f5ef; stroke: #2a8a6e; }
+.n-code .fold { fill: #c2e0d5; stroke: #2a8a6e; }
+.n-code .tag, .k-code { fill: #1e6f58; }
+.g-code { stroke: #2a8a6e; }
+.n-concept .sh { fill: #eef1f6; stroke: #5d6f8c; }
+.n-concept .fold { fill: #d1d7e1; stroke: #5d6f8c; }
+.n-concept .tag, .k-concept { fill: #4b5b76; }
+.g-concept { stroke: #5d6f8c; }
+.n-store .sh { fill: #f4f1ea; stroke: #8a7a5c; }
+.n-store .fold { fill: #dfd9ce; stroke: #8a7a5c; }
+.n-store .tag, .k-store { fill: #6c5e44; }
+.g-store { stroke: #8a7a5c; }
+.e-flow { stroke: #4b515c; } .ah-flow { fill: #4b515c; }
+.lb-flow { fill: #2b3038; }
+@media (prefers-color-scheme: dark) {
+  .bg { fill: #0f141a; }
+  .ttl, .nt, .lane-h, .col-h, .tx-bold { fill: #e6edf3; }
+  .sub, .lane-n, .grp-c, .tx-note, .tx-small { fill: #9da7b3; }
+  .nb, .tx, .tx-mono, .lg { fill: #c9d1d9; }
+  .lb { stroke: #0f141a; } .lb.on-lane { stroke: #151b22; }
+  .lane-a { fill: #151b22; stroke: #2a313b; }
+  .lane-b { fill: #0f141a; stroke: #2a313b; }
+  .rule { stroke: #2a313b; }
+  .grp { fill: #0f141a; stroke: #3d4651; } .col-u { stroke: #3d4651; }
+  .n-agent .sh { fill: #13263d; stroke: #5b9be6; }
+  .n-agent .fold { fill: #213d5f; stroke: #5b9be6; }
+  .n-agent .tag, .k-agent { fill: #8dbdf4; }
+  .g-agent { stroke: #5b9be6; }
+  .n-human .sh { fill: #33260f; stroke: #e0a33a; }
+  .n-human .fold { fill: #563f18; stroke: #e0a33a; }
+  .n-human .tag, .k-human { fill: #f2bd63; }
+  .g-human { stroke: #e0a33a; }
+  .n-code .sh { fill: #0f2e26; stroke: #3fb68f; }
+  .n-code .fold { fill: #19493b; stroke: #3fb68f; }
+  .n-code .tag, .k-code { fill: #72d3b0; }
+  .g-code { stroke: #3fb68f; }
+  .n-concept .sh { fill: #1b2331; stroke: #8a9bb8; }
+  .n-concept .fold { fill: #313b4c; stroke: #8a9bb8; }
+  .n-concept .tag, .k-concept { fill: #afbdd5; }
+  .g-concept { stroke: #8a9bb8; }
+  .n-store .sh { fill: #27241d; stroke: #b0a17f; }
+  .n-store .fold { fill: #423d31; stroke: #b0a17f; }
+  .n-store .tag, .k-store { fill: #cdbf9d; }
+  .g-store { stroke: #b0a17f; }
+  .e-flow { stroke: #bcc4ce; } .ah-flow { fill: #bcc4ce; }
+  .lb-flow { fill: #dfe6ee; }
+}
+</style>
+<defs><marker id="ah-flow" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-flow" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker></defs>
+<rect class="bg" width="1120" height="704"/>
+<text class="ttl" x="40" y="48" text-anchor="start">Where the principles act</text>
+<text class="sub" x="40" y="72" text-anchor="start">The parts of the factory from Figure 1-1, each tagged with the principles that govern it; below, what belongs to the factory as a whole.</text>
+<rect class="lane-a" x="40" y="496" width="1040" height="152" rx="0"/><path class="rule" d="M 184 496 V 648"/><text class="lane-h" x="56" y="568.5" text-anchor="start">The factory itself</text><text class="lane-n" x="56" y="588" text-anchor="start">belongs to the whole</text>
+<rect class="grp" x="480" y="128" width="600" height="168" rx="12"/><text class="grp-c" x="494" y="149" text-anchor="start">The factory's code</text>
+<path class="e e-flow" d="M 192 280 L 208 280 Q 216 280 216 272 L 216 224 Q 216 216 224 216 L 245 216" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 192 328 L 208 328 Q 216 328 216 336 L 216 384 Q 216 392 224 392 L 245 392" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 656 216 L 701 216" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 856 216 L 901 216" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 964 272 L 964 341" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 996 344 L 996 275" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 924 272 L 924 312 Q 924 320 916 320 L 464 320 Q 456 320 456 312 L 456 224 Q 456 216 448 216 L 427 216" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 924 272 L 924 312 Q 924 320 916 320 L 464 320 Q 456 320 456 328 L 456 384 Q 456 392 448 392 L 427 392" marker-end="url(#ah-flow)"/>
+<g class="n-human"><rect class="sh" x="40" y="240" width="152" height="128" rx="8"/><text class="tag" x="116" y="278.57" text-anchor="middle">P3 · P4</text><text class="nt" x="116" y="297.43" text-anchor="middle">The human</text><text class="nb" x="116" y="319.25" text-anchor="middle">starts and accepts</text><text class="nb" x="116" y="336.25" text-anchor="middle">acts in two places</text></g>
+<g class="n-store"><path class="sh" d="M 252 168 H 408 L 424 184 V 260 Q 424 264 420 264 H 252 Q 248 264 248 260 V 172 Q 248 168 252 168 Z"/><path class="fold" d="M 408 168 V 182 Q 408 184 410 184 H 424 Z"/><text class="tag" x="336" y="190.57" text-anchor="middle">P4 · P9</text><text class="nt" x="336" y="209.43" text-anchor="middle">Pull request</text><text class="nb" x="336" y="231.25" text-anchor="middle">the human's channel</text><text class="nb" x="336" y="248.25" text-anchor="middle">where questions go</text></g>
+<g class="n-store"><path class="sh" d="M 248 330 A 88 10 0 0 1 424 330 V 454 A 88 10 0 0 1 248 454 Z"/><ellipse class="fold" cx="336" cy="330" rx="88" ry="10"/><text class="tag" x="336" y="359.57" text-anchor="middle">P2 · P6 · P8</text><text class="nt" x="336" y="378.43" text-anchor="middle">Repository</text><text class="nb" x="336" y="400.25" text-anchor="middle">the only truth</text><text class="nb" x="336" y="417.25" text-anchor="middle">the story is the memory</text><text class="nb" x="336" y="434.25" text-anchor="middle">specified down to</text><text class="nb" x="336" y="451.25" text-anchor="middle">the failing side</text></g>
+<g class="n-code"><rect class="sh" x="504" y="160" width="152" height="112" rx="8"/><text class="tag" x="580" y="190.57" text-anchor="middle">P13</text><text class="nt" x="580" y="209.43" text-anchor="middle">Tick</text><text class="nb" x="580" y="231.25" text-anchor="middle">spends on events,</text><text class="nb" x="580" y="248.25" text-anchor="middle">not on time</text></g>
+<g class="n-code"><rect class="sh" x="704" y="160" width="152" height="112" rx="8"/><text class="tag" x="780" y="190.57" text-anchor="middle">P5</text><text class="nt" x="780" y="209.43" text-anchor="middle">Watcher</text><text class="nb" x="780" y="231.25" text-anchor="middle">lowest identifier first;</text><text class="nb" x="780" y="248.25" text-anchor="middle">work in flight bounded</text></g>
+<g class="n-code"><rect class="sh" x="904" y="160" width="152" height="112" rx="8"/><text class="tag" x="980" y="182.07" text-anchor="middle">P10 · P11 · P12 · P14</text><text class="nt" x="980" y="200.93" text-anchor="middle">Dispatcher</text><text class="nb" x="980" y="222.75" text-anchor="middle">enforces · observes</text><text class="nb" x="980" y="239.75" text-anchor="middle">stops on the unknown</text><text class="nb" x="980" y="256.75" text-anchor="middle">recovers</text></g>
+<g class="n-agent"><rect class="sh" x="880" y="344" width="200" height="96" rx="8"/><text class="tag" x="980" y="366.57" text-anchor="middle">P7 · P9</text><text class="nt" x="980" y="385.43" text-anchor="middle">Stage agent</text><text class="nb" x="980" y="407.25" text-anchor="middle">does not judge its own work</text><text class="nb" x="980" y="424.25" text-anchor="middle">asks instead of guessing</text></g>
+<g class="n-concept"><rect class="sh" x="224" y="528" width="240" height="96" rx="8"/><text class="tag" x="344" y="559.07" text-anchor="middle">P15</text><text class="nt" x="344" y="577.93" text-anchor="middle">Project contract</text><text class="nb" x="344" y="599.75" text-anchor="middle">control surface · lanes · project guide</text></g>
+<g class="n-code"><path class="sh" d="M 512 522 A 120 10 0 0 1 752 522 V 614 A 120 10 0 0 1 512 614 Z"/><ellipse class="fold" cx="632" cy="522" rx="120" ry="10"/><text class="tag" x="632" y="561.07" text-anchor="middle">P16</text><text class="nt" x="632" y="579.93" text-anchor="middle">Cost records</text><text class="nb" x="632" y="601.75" text-anchor="middle">every agent run measured</text></g>
+<g class="n-concept"><path class="sh" d="M 804 528 H 1024 L 1040 544 V 620 Q 1040 624 1036 624 H 804 Q 800 624 800 620 V 532 Q 800 528 804 528 Z"/><path class="fold" d="M 1024 528 V 542 Q 1024 544 1026 544 H 1040 Z"/><text class="tag" x="920" y="559.07" text-anchor="middle">P17</text><text class="nt" x="920" y="577.93" text-anchor="middle">Decision log</text><text class="nb" x="920" y="599.75" text-anchor="middle">why, and what was rejected</text></g>
+<text class="tx" x="40" y="104" text-anchor="start"><tspan class="tx-bold">P1 Sort every step:</tspan> <tspan class="k-human b">amber the human</tspan>, <tspan class="k-agent b">blue a model</tspan>, <tspan class="k-code b">green code</tspan></text>
+<g class="n-agent"><rect class="sh" x="40" y="669.5" width="26" height="13" rx="3"/></g><text class="lg" x="74" y="680" text-anchor="start">a model</text>
+<g class="n-human"><rect class="sh" x="146.39" y="669.5" width="26" height="13" rx="3"/></g><text class="lg" x="180.39" y="680" text-anchor="start">the human</text>
+<g class="n-code"><rect class="sh" x="267.36" y="669.5" width="26" height="13" rx="3"/></g><text class="lg" x="301.36" y="680" text-anchor="start">code</text>
+<g class="n-concept"><rect class="sh" x="356.42" y="669.5" width="26" height="13" rx="3"/></g><text class="lg" x="390.42" y="680" text-anchor="start">concept</text>
+<g class="n-store"><rect class="sh" x="462.12" y="669.5" width="26" height="13" rx="3"/></g><text class="lg" x="496.12" y="680" text-anchor="start">stored state</text>
+</svg>
