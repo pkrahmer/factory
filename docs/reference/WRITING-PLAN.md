@@ -383,7 +383,7 @@ Found while writing Parts I and II, verified against the code. Each belongs in t
 - **`uv` is assumed** (ch. 12). The preflight requires `uv` and `.venv`, and the entrypoint runs `uv sync`. `guard.NEVER_FILES` names Python, uv, make and Claude Code files. `template/tasks/.gitkeep` is a leftover of the flat `tasks/` folder of contract version 3. The template's guide says "the pipeline knows only these three targets" while the acceptor runs `make mutants`. R10 points agents to `docs/branching.md`, which exists only in the factory's repository.
 - **The `version:` field in `stages.yml`** went 1 → 2 → 4 → 5 (ch. 16). Generation 3 changed the loop, not the contract. No code reads the field (ch. 5 says so).
 - **Stale v1 documents** (ch. 16, 17). `README.md` still describes the dispatcher as a model session; `demo/README.md` still gives $1.50–2.20 a story; the `max_attempts` comment in `stages.yml` (ch. 5); `template/TICKET.md`'s Demo text (ch. 4); `docs/review-comments.md` reads as unbuilt at `537fc20` (ch. 10; fixed on 2026-10-07, see `RETARGET.md`); `stage-review` says the factory runs `make check` after the reviewer (ch. 9).
-- **The reverted plans** (ch. 17). Two plans of 2026-10-05 (*fewer commits*, *review comments*) were built and reverted the same day. The revert is in neither `docs/decisions.md` nor the history, because `main` was reset.
+- **The reverted plans** (ch. 17). Two plans of 2026-10-05 (*fewer commits*, *review comments*) were built and reverted the same day. At `537fc20` the revert is in neither `docs/decisions.md` nor the history, because `main` was reset; since 2026-10-07 the decision log has an entry for it (see `RETARGET.md`).
 - **Chapter 17's table** collects every `v1 limit` box of Parts I–III, about 40 from Part II alone, each with a pointer.
 
 ## Tools and pitfalls
@@ -410,7 +410,7 @@ Found while writing Parts I and II, verified against the code. Each belongs in t
 
 ## Open decisions for the user
 
-1. Add a design decision to `docs/decisions.md` for the reverted plans of 2026-10-05?
+1. ~~Add a design decision to `docs/decisions.md` for the reverted plans of 2026-10-05?~~ Done on 2026-10-07 (the last entry, dated 2026-10-05). The book, describing `537fc20`, still states the gap; `RETARGET.md` lists the places.
 2. ~~Keep run 4's cost records as a data file for chapter 16?~~ Done on 2026-10-07: `data/demo-dispatches.jsonl`.
 3. Redraw Part I's five figures at most 850 px wide, so that they print upright in the text instead of on pages of their own?
 4. When to merge `docs/reference` into `main`?
