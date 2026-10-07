@@ -154,7 +154,7 @@ def front_pages(planner: bool, found: list[Chapter]) -> list[str]:
     edition = "" if planner else " · reader's edition"
     whole = complete(found)
     draft = f"Draft · {span(found)}{edition}"
-    state = ("Complete" if planner else "Reader's edition") if whole else draft
+    state = ("With the planner boxes" if planner else "Reader's edition") if whole else draft
     contents = (
         []
         if whole
