@@ -35,13 +35,13 @@ Generation 5 wrote `test_dispatch.py` from the dispatcher skill it replaced; its
 The suite stops at every process boundary: `entrypoint.sh`, `scripts/demo-check.sh`, the skills' effect on a model, Claude Code's behavior and `gh`'s real output are not tested. The fakes are written from what the code expects, not recorded from the services.
 
 > [!WARNING]
-> **v1 limit:** nothing tests the containment of [chapter 15](../15-safety/README.md) or a project's own checks. The guard is tested on its input, and the undo on a fake agent's writes, but no test starts an agent and tries a denied command, a write from the shell outside the lane, or a push. The demonstration project's `layers` target could never fail ([chapter 12](../12-project-contract/README.md)), and nobody noticed until this book was written, by breaking the contract on purpose. A check that has never failed is not known to work.
+> **v1 limit:** nothing tests the containment of [chapter 15](../15-safety/README.md) or a project's own checks. The guard is tested on its input, and the undo on a fake agent's writes, but no test starts an agent and tries a denied command, a write from the shell outside the lane, or a push. The demonstration project's `layers` target could never fail ([chapter 12](../12-project-contract/README.md)), and no run noticed. A check that has never failed is not known to work.
 
 ### The demonstration
 
 [`demo/README.md`](../../../demo/README.md) is v1's end-to-end test: a Claude Code session, given one prompt, plays the human against an empty GitHub repository and the demonstration project ([chapter 12](../12-project-contract/README.md)). Before it starts, [`scripts/demo-check.sh`](../../../scripts/demo-check.sh) prints one `ok`, `missing` or `note` line per prerequisite, among them an empty target, a fresh work volume and an image newer than the factory's checkout.
 
-The session copies one feature at a time, promotes the lowest story, waits for its archive, answers questions "as a sensible single-user to-do service would", and merges or closes. It never edits product code, the target's `.claude/` or pushed history, and never runs a stage's commands by hand. It stops at $40 of spending, after four hours, at a stall that looks like the factory's fault, or before merging something it believes wrong. A further run on the same target starts from a commit that removes everything and from a fresh work volume, so that cost records keyed by a story's path do not mix two runs.
+The session copies one feature at a time, promotes the lowest story, waits for its archive, answers questions "as a sensible single-user to-do service would", and merges or closes. It never edits product code, the target's `.claude/` or pushed history, and never runs a stage's commands by hand. It stops at $40 of spending, after four hours, at a stall that looks like the factory's fault, or before merging something it believes wrong. A further run on the same target starts from a commit that removes everything and from a fresh work volume, so that cost records keyed by a story's path do not mix two runs. The README's cost figure, "about 1.50 to 2.20 USD" a story, is generation 4's.
 
 ### Hardening mode
 
@@ -60,7 +60,7 @@ All four ran against the demonstration project in `pkrahmer/factory-demo-todo`; 
 | 3 | 4 | 5 Oct, 08:59–11:42 | 3 acceptances; then 4 stories archived, a fifth left at the gate, 1 acceptance refused | #19–#29 | 6 + 75 | about $26 | 14–17 |
 | 4 | 5 | 5 Oct, 16:47–19:38 | 8 stories, 3 acceptances | #30–#40 | 59 | $15.89 | none |
 
-The times run from the first promotion to the last archive; run 4's cost records span 16:49 to 19:36. The records of runs 1 to 3 were lost with their work volumes; their numbers survive in the maintainer's run log and in the cost tables on their pull requests. Run 4's records are kept in this book's `data/` folder, as `demo-dispatches.jsonl`.
+The times run from a run's start to its last archive (run 3: to the stop at 11:42); run 4's cost records span 16:49 to 19:36. The records of runs 1 to 3 were lost with their work volumes; their numbers survive in the maintainer's run log and in the cost tables on their pull requests. Run 4's records are kept in this book's `data/` folder, as `demo-dispatches.jsonl`.
 
 ### Seventeen fixes
 
@@ -92,8 +92,8 @@ The seven defects in code stayed fixed; three of them (6, 14, 15) are pinned by 
 
 | Path | What it walks | Generation 4 (runs 1–3) | Generation 5 (run 4 and after) |
 | :- | :- | :- | :- |
-| 1 | intake asks: a behavior without a criterion; a demonstration without `Expect:` | runs 1, 3 | run 4 |
-| 2 | intake asks for a failing side | run 3 | — |
+| 1 | intake asks: a behavior without a criterion; a demonstration without `Expect:` | runs 1, 3 | — |
+| 2 | intake asks for a failing side | run 3 | run 4 |
 | 3 | the tester finds a criterion against the interface | — (intake caught it a stage earlier) | — |
 | 4 | a review rework | runs 1, 3 | run 4 |
 | 5 | a documenter finding | — (intake caught the planted defects) | — |
@@ -146,7 +146,7 @@ Run 2's cost tables give whole dispatcher starts, the stage agent included. A st
 | archive | $0.12 | — | — | — |
 | **a clean story** | **$0.78** | **$1.09** | **$1.16** | |
 
-The dispatcher's 42% is gone; the agents cost about what they did. In run 3's second part, with questions, reworks and closes, the dispatcher's share was about 40%, $8.40 of $21.18. Run 4's 59 agent runs read 8.2 million tokens from the cache, wrote 1.5 million to it and produced 0.2 million.
+The stage averages are rounded; the totals are the stories' own. The dispatcher's 42% is gone; the agents cost about what they did. In run 3's second part, with questions, reworks and closes, the dispatcher's share was about 40%, $8.40 of $21.18. Run 4's 59 agent runs read 8.2 million tokens from the cache, wrote 1.5 million to it and produced 0.2 million.
 
 ### The measurements behind three changes
 
@@ -158,11 +158,10 @@ After run 4, its records and its 59 transcripts, which five analysts read for wh
 
 ### What is not verified
 
-- **The commit this book describes.** `537fc20` had no full run; its last code changes ran on one story and two acceptances.
+Beyond the narrow evidence of [chapter 1](../01-why-a-factory/README.md) (one project, a simulated human, one machine, no full run of `537fc20`):
+
 - **The effect of the last two changes.** S0006 and S0007 wrote 7,600 to 9,800 tokens to the cache per agent run, against 22,000 for run 4's stories, which fits the connector change; but they were smaller stories, and no full run has measured either change.
 - **The human.** Every run had a simulated human, who was never notified by GitHub ([chapter 10](../10-human-at-the-gate/README.md)).
-- **Scale.** One project of three features, one machine, one repository at a time.
-- **The demonstration's own numbers.** `demo/README.md` still gives generation 4's figures: "roughly 15 USD" for a run and "about 1.50 to 2.20 USD" a story.
 
 > [!WARNING]
 > **v1 limit:** the evidence is not in the repository. The defect list and runs 1 to 3 are recorded in a run log in the factory's earlier, unpublished history, and v1 has no procedure that keeps a run's cost records, its tag in the demonstration repository and its summary together in version control.
@@ -170,7 +169,7 @@ After run 4, its records and its 59 transcripts, which five analysts read for wh
 > [!IMPORTANT]
 > **Planner:** what this chapter fixes.
 > - **Essential:**
->   - for each hardening path, the plan names its unit test and the live run that walked it on the generation being shipped, `reject` included;
+>   - for each hardening path, the plan names its unit test and requires a live run on the shipped code that walks it, `reject` included;
 >   - every defect found in a run gets a row saying where the fault sat; a row outside code is moved into code, or its exception recorded (P1);
 >   - a baseline is quoted with its conditions: the tick's pause, the human's answer times, the story's size. Run 4's: a clean story about six agent runs, $1.16, seven to nine minutes under a two-minute pause; an acceptance $0.87 to $1.59 ([chapter 1](../01-why-a-factory/README.md) says how narrow this evidence is).
 > - **Incidental to v1:** pytest, the demonstration project, a Claude Code session as the human, the $40 and four-hour stops.

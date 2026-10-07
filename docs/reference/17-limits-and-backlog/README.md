@@ -132,37 +132,40 @@ At `537fc20` v1's open ideas are in [`docs/backlog.md`](https://github.com/pkrah
 - **A changelog**, one user-facing line per story, written by the documenter.
 - **Mutation survivors** of the first product repository: material for stories.
 - **A language server for the agents**: not now, because agents find code cheaply with `grep`; if it comes back, one type checker for both the agent and the check. Trigger: agents that search in several rounds.
-- **Running the Demo blocks in code**, part E of the deterministic core: not built, because a misbehaving block is where a model recovers. Trigger: a demo agent that alters a command.
+- **Running the Demo blocks in code**, part E of the deterministic core (in that plan at `537fc20`, in the backlog since 2026-10-07): not built, because a misbehaving block is where a model recovers. Trigger: a demo agent that alters a command.
 - **Paths never run live**: v1's list is stale (see the documents table); what stands is L73.
 - **Not covered elsewhere**: a watchdog for a dead container (L64), Claude Code's version pinned in the image (L66), browser applications.
 
-*History:* the *fewer commits* plan was built and reverted on 2026-10-05, then withdrawn, because part D of the deterministic core left no claim commits to fold away ([chapter 3](../03-principles/README.md), P10).
+*History:* the *fewer commits* plan was built, reverted and withdrawn on 2026-10-05 ([chapter 3](../03-principles/README.md), P10).
 
 ## Design decisions left open
 
-v1 left these to the human, or settled them only for itself. A plan for the next implementation takes each one explicitly, and records why (P17):
+v1 left these to the human, or settled them only for itself. A plan puts each one to the human with options and a recommendation, and records the answer and why (P17):
 
-| Design decision | What v1 did, or found | Where |
-| :- | :- | :- |
-| *An identity for the factory* | used the human's token; the review-comments plan needs another account or another signal | [10](../10-human-at-the-gate/README.md), [13](../13-git-and-github/README.md), [15](../15-safety/README.md) |
-| *Where a stop without a pull request goes* | to the factory's log file or the container's output (L11, L19, L26, L55, L58, L64, L65); P4 allows no third place, P12 wants every stop seen | [3](../03-principles/README.md), [14](../14-runtime/README.md) |
-| *The factory's commits on the main branch* | promotion is the human's commit there, archives and discards the factory's, so no ruleset can require a pull request (L57) | [13](../13-git-and-github/README.md) |
-| *Where the bill lives* | machine state until the archive; P2 against P16 left open | [3](../03-principles/README.md), [14](../14-runtime/README.md) |
-| *Leftovers and the undo* | partial work kept without the undo; P14 against P10 left open | [3](../03-principles/README.md), [8](../08-stage-run/README.md) |
-| *Containment* | lanes after the stage, lists before it; Claude Code's sandbox unused and untested in the image | [15](../15-safety/README.md) |
-| *Work in flight* | one agent run per machine; a planned second machine never set up | [3](../03-principles/README.md) (P5), [14](../14-runtime/README.md) |
-| *A project's toolchain* | the factory's image; nothing declares it | [12](../12-project-contract/README.md) |
-| *The agent runtime as a dependency* | `CLAUDE.md`, flags and result format built in; its version unpinned (L30, L35, L66) | [8](../08-stage-run/README.md), [9](../09-agents-and-skills/README.md), [14](../14-runtime/README.md) |
-| *A configurable line* | names fixed in code; roles installed with the image | [5](../05-stage-machine/README.md) |
-| *Comments while the stages work* | no meaning; the human can only close | [10](../10-human-at-the-gate/README.md) |
-| *Mutation testing* | at the acceptance, as drafts; in the story loop, parked | [11](../11-feature-acceptance/README.md) |
+| Design decision | What v1 did, or found | Limits | Where |
+| :- | :- | :- | :- |
+| *An identity for the factory* | used the human's token; the review-comments plan needs another account or another signal | L38, L39, L56, L57, L67, L70 | [10](../10-human-at-the-gate/README.md), [13](../13-git-and-github/README.md), [15](../15-safety/README.md) |
+| *Where a stop the pull request does not show goes* | to the factory's log file or the container's output; P4 allows no third place, P12 wants every stop seen | L11, L19, L26, L33, L55, L58, L64, L65 | [3](../03-principles/README.md), [14](../14-runtime/README.md) |
+| *The factory's commits on the main branch* | promotion is the human's commit there, archives and discards the factory's, so no ruleset can require a pull request | L57 | [13](../13-git-and-github/README.md) |
+| *Where the bill lives* | machine state until the archive; P2 against P16 left open | L62, L63, L74 | [3](../03-principles/README.md), [14](../14-runtime/README.md) |
+| *Leftovers and the undo* | partial work kept without the undo; P14 against P10 left open | L32 | [3](../03-principles/README.md), [8](../08-stage-run/README.md) |
+| *Containment* | lanes after the stage, lists before it; Claude Code's sandbox unused and untested in the image | L31, L32, L52, L68, L69, L72 | [15](../15-safety/README.md) |
+| *Work in flight* | one agent run per machine; a planned second machine never set up | L60 | [3](../03-principles/README.md) (P5), [14](../14-runtime/README.md) |
+| *A project's toolchain* | the factory's image; nothing declares it | L50, L51, L54 | [12](../12-project-contract/README.md) |
+| *The agent runtime as a dependency* | `CLAUDE.md`, flags and result format built in; its version unpinned | L30, L35, L66 | [8](../08-stage-run/README.md), [9](../09-agents-and-skills/README.md), [14](../14-runtime/README.md) |
+| *The hosting service as a dependency* | GitHub reached three ways; identity, notifications and settings are GitHub's | L29, L38, L56, L59 | [7](../07-dispatcher/README.md), [10](../10-human-at-the-gate/README.md), [13](../13-git-and-github/README.md) |
+| *A configurable line* | names fixed in code; roles installed with the image | L8, L13, L14 | [5](../05-stage-machine/README.md) |
+| *Comments while the stages work* | no meaning; the human can only close | L23, L40 | [10](../10-human-at-the-gate/README.md) |
+| *Mutation testing* | at the acceptance, as drafts; in the story loop, parked | L44 | [11](../11-feature-acceptance/README.md) |
 
 > [!IMPORTANT]
 > **Planner:** what this chapter fixes.
-> - **Every row of the limit table is an acceptance test for a plan**: the plan closes it, keeps it with a reason, or shows it no longer applies. Keeping a high limit needs the human's explicit design decision.
+> - **Every row of the limit table is an acceptance test for a plan**: the plan closes it, keeps it with a reason, or shows it no longer applies. A row is closed only when every clause of its box is. Keeping a high limit needs the human's explicit design decision.
+> - **Limits of the evidence** (L1, L72 to L74) are not closed by a mechanism; the plan names the verification that closes them (the Planner box of [chapter 16](../16-evidence/README.md)).
 > - **The groups are testable:**
 >   - no plan closes L57, L67 or L70 while one token serves the factory, the agents and the human;
->   - every stop in L11, L19, L26, L55, L58, L64 and L65 reaches the human in the plan, or the plan says where else it goes.
+>   - no plan closes L31, L32, L52, L68 or L69 without a test that starts an agent and tries a shell write outside the lane, outside the tracked tree, into the lane's configuration and into a check's configuration (L72);
+>   - the human's comment or close is recorded in the work item before the factory posts or checks out (L23, L27);
+>   - every stop in L11, L19, L26, L33, L55, L58, L64 and L65 reaches the human, or the plan says where else it goes.
 > - **The documents table is a warning:** read none of v1's documents as specification where the book or the code says otherwise; read `docs/archive/` as history only, as its `README.md` says.
 > - **The backlog is not a plan.** Take the two ideas with triggers only when the trigger is seen; the rest the human picks, in the backlog's own words.
-> - **Every open design decision is the human's** (P17): a plan proposes, with options and a recommendation, and the human decides.

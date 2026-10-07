@@ -119,7 +119,7 @@ After every handled event that started an agent, `tick.record` appends one JSON 
 
 ### What the human sees of the machine
 
-The container's output (`docker compose logs`) holds the entrypoint's lines, without time stamps (`factory ticking on … doubling to …`, `cloning …`, `waiting for …`, `… is ready`, `factory stopping`), a crashing tick's traceback, and the tick log, which the tick also appends to `factory-tick.log`. Every tick log line starts with a UTC time stamp:
+The container's output (`docker compose logs`) holds the entrypoint's lines, without time stamps (`factory ticking on … doubling to …`, `cloning …`, `waiting for …`, `… is ready`, `factory stopping`), a crashing tick's traceback, and the tick log, which the tick also appends to `factory-tick.log`, the factory's log file. Every tick log line starts with a UTC time stamp:
 
 | Line | When |
 | :- | :- |
@@ -137,7 +137,7 @@ The board, `factory-watch --board` run inside the container, shows every feature
 
 ### Changes made on measured grounds
 
-Two changes after run 4 came from reading the cost records and the agents' transcripts in `claude-home`, not from a failure. *Connectors:* the login's claude.ai connectors changed the start of every agent run's request after its first call, so the cached prefix was written again; `--strict-mcp-config` went in ([chapter 8](../08-stage-run/README.md)). *Fewer turns:* every model call re-reads the whole conversation, so the stage skills were changed to read less and chain commands ([chapter 9](../09-agents-and-skills/README.md)). Both are design decisions of 2026-10-05; [chapter 16](../16-evidence/README.md) has the measurements, and no full run has measured the effect yet.
+Three changes after run 4 came from reading the cost records and the agents' transcripts in `claude-home`, not from a failure. *The pause:* every story of run 4 waited out the full two minutes three times; the pause now starts at 15 seconds after activity (above). *Connectors:* the login's claude.ai connectors changed the start of every agent run's request after its first call, so the cached prefix was written again; `--strict-mcp-config` went in ([chapter 8](../08-stage-run/README.md)). *Fewer turns:* every model call re-reads the whole conversation, so the stage skills were changed to read less and chain commands ([chapter 9](../09-agents-and-skills/README.md)). All three are design decisions of 2026-10-05; [chapter 16](../16-evidence/README.md) has the measurements, and no full run has measured the effect of the last two yet.
 
 > [!WARNING]
 > **v1 limit:** one machine does one thing at a time. The entrypoint ticks its repositories one after another, and a tick waits for its agent run, which may take two leases plus one per check ([chapter 8](../08-stage-run/README.md)). A coder working on one project holds up questions, merges and answers in every other. v1 has no setup for a second machine; the design decision of 2026-10-04 planned one service per repository, on a NAS.
