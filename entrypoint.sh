@@ -16,7 +16,7 @@ cp -r /opt/factory/claude/skills /opt/factory/claude/agents "$HOME/.claude/"
 cp /opt/factory/claude/settings.json "$HOME/.claude/settings.json"
 
 git config --global user.name "${GIT_USER_NAME:-factory}"
-git config --global user.email "${GIT_USER_EMAIL:-factory@users.noreply.github.com}"
+git config --global user.email "${GIT_USER_EMAIL:-factory@noreply.invalid}"
 git config --global pull.ff only
 gh auth setup-git >/dev/null
 
