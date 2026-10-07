@@ -40,13 +40,13 @@ The same as in Figure 1-1, without labels; they only orient the reader:
 
 ## Layout
 
-The upper part is the same arrangement as Figure 1-1:
+A narrow figure, 848 px wide, read from the top down:
 
-- the human on the left;
-- the pull request (top) and the repository (bottom) in the middle;
-- the factory's code as a group on the right, with the tick, the watcher and the dispatcher in a row, and the stage agent below the dispatcher.
-
-Below it, in a shaded band headed "The factory itself", sits a row of three: project contract, cost records, decision log.
+- the one-line P1 banner under the subtitle;
+- a row of three: the pull request on the left, the human in the middle, the repository on the right; the human's two arrows run left to the pull request and right to the repository;
+- below it the factory's code as a group in one full-width row, with the tick, the watcher and the dispatcher from left to right; the dispatcher's two writes leave its top, one straight up to the repository, the other along the channel under the row of three to the pull request;
+- the stage agent under the dispatcher, outside the group, with the two arrows between them;
+- at the foot, in a shaded band headed "The factory itself", a row of three: project contract, cost records, decision log.
 
 The principle numbers are the tag line of each box (for example "P3 · P4 · P5"), and the body names each principle in a few words. Keep the edges few and quiet; they are context, not content. Legend: human, model, code, store, concept.
 

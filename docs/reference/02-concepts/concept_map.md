@@ -75,12 +75,12 @@ The relations say which concept contains, defines, reads, starts or acts on whic
 
 ## Layout
 
-Three bands, left to right:
-- **Left:** the work, with the human's side below it. The feature acceptance sits beside the feature, and the branch beside the story.
-- **Center:** the line, with the agent run below it.
-- **Right:** the control loop as one column (tick, watcher, event, dispatcher), with the run record beside the dispatcher.
+A canvas 848 px wide and 1256 px tall, in two columns of clusters above a strip:
+- **Right column, top:** the work, as one chain on its left (project, feature, story, log), with the feature acceptance beside the feature and the branch beside the story. Below it, in the same column, the human's side: the pull request under the branch, the human to its left.
+- **Left column, top:** the line, to the left of the work: the stage table, the stage and the role in one column, with the check beside the stage and the lane beside the role. Below it the agent run: the task above the stage agent, the instructions below the role and the outcome beside the stage agent.
+- **Bottom strip:** the control loop, read from right to left: the watcher under the human's side, then the event, then the dispatcher under the agent run. The tick stands under the watcher and the run record under the dispatcher.
 
-Containment edges run vertically inside a cluster; cross-cluster edges bend around the clusters. The figure leaves out two relations it cannot draw without crossing: stage agent → story ("works on") and watcher → pull request ("reads"). The table above is complete.
+Containment edges run vertically inside a cluster. The story sits level with the stage, so "is in" is one short line; the project's "carries" line bends over the top of the line to the stage table. The watcher's "reads" line to the project runs up the right edge; its line to the pull request is the short one above it. The dispatcher's line to the pull request runs between the human's side and the loop. The figure leaves out one relation it cannot draw without crossing: stage agent → story ("works on"). The table above is complete.
 
 Colors follow the kinds: the work and the line in calm slate (data), the agent run in blue (the model), the loop in green (code), the human in amber, and the pull request as a store. A legend goes at the bottom.
 

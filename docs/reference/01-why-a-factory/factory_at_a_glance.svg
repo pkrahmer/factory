@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1152" height="600" viewBox="0 0 1152 600" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="912" viewBox="0 0 850 912" role="img" aria-labelledby="title desc">
 <title id="title">The factory at a glance</title>
-<desc id="desc">The human, on the left, works only through two places in the middle: the repository, where they write and start stories, and the pull request, where they answer questions and merge or close. On the right, the factory's code runs on a schedule: a tick wakes it, the watcher reads both places and names the one next event, and the dispatcher handles that event, committing and pushing to the repository and opening, commenting on and marking ready the pull request. When a stage is due, the dispatcher starts a stage agent, the only place a model runs, which hands back an outcome and a log entry. A merge of the pull request lands on main. The human and the agents never talk directly.</desc>
+<desc id="desc">The human, at the top, works only through two places below: the repository, where they write and start stories, and the pull request, where they answer questions and merge or close. Below them, the factory's code runs on a schedule: a tick wakes it, the watcher reads both places and names the one next event, and the dispatcher handles that event, committing and pushing to the repository and opening, commenting on and marking ready the pull request. When a stage is due, the dispatcher starts a stage agent, the only place a model runs, which hands back an outcome and a log entry. A merge of the pull request lands on main. The human and the agents never talk directly.</desc>
 <style>
 text { font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif; }
 .code { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 0.92em; }
@@ -97,44 +97,44 @@ text { font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, san
 }
 </style>
 <defs><marker id="ah-flow" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-flow" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker><marker id="ah-plain" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7.5" markerHeight="7.5" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-plain" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker><marker id="ah-dashed" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-dashed" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker></defs>
-<rect class="bg" width="1152" height="600"/>
+<rect class="bg" width="850" height="912"/>
 <text class="ttl" x="40" y="48" text-anchor="start">The factory at a glance</text>
-<text class="sub" x="40" y="72" text-anchor="start">The human works only through the repository and the pull request; the factory's code reads both, keeps the books and starts a stage agent.</text>
-<rect class="grp g-code" x="440" y="200" width="672" height="160" rx="12"/><text class="grp-c k-code" x="454" y="221" text-anchor="start">The factory's code</text>
-<path class="e e-flow" d="M 112 232 L 112 160 Q 112 152 120 152 L 229 152" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 112 344 L 112 408 Q 112 416 120 416 L 229 416" marker-end="url(#ah-flow)"/>
-<path class="e e-dashed" d="M 312 200 L 312 341" marker-end="url(#ah-dashed)"/>
-<path class="e e-flow" d="M 632 288 L 693 288" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 856 288 L 917 288" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 1008 232 L 1008 136 Q 1008 128 1000 128 L 395 128" marker-end="url(#ah-flow)"/>
-<path class="e e-plain" d="M 776 232 L 776 184 Q 776 176 768 176 L 395 176" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 776 344 L 776 384 Q 776 392 768 392 L 395 392" marker-end="url(#ah-plain)"/>
-<path class="e e-flow" d="M 920 320 L 896 320 Q 888 320 888 328 L 888 432 Q 888 440 880 440 L 395 440" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 984 344 L 984 421" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 1032 424 L 1032 347" marker-end="url(#ah-flow)"/>
-<g class="n-store"><path class="sh" d="M 236 104 H 376 L 392 120 V 196 Q 392 200 388 200 H 236 Q 232 200 232 196 V 108 Q 232 104 236 104 Z"/><path class="fold" d="M 376 104 V 118 Q 376 120 378 120 H 392 Z"/><text class="nt" x="312" y="129.43" text-anchor="middle">Pull request</text><text class="nb" x="312" y="151.25" text-anchor="middle">one per story</text><text class="nb" x="312" y="168.25" text-anchor="middle">questions and answers</text><text class="nb" x="312" y="185.25" text-anchor="middle">the result, waiting</text></g>
-<g class="n-store"><path class="sh" d="M 232 354 A 80 10 0 0 1 392 354 V 478 A 80 10 0 0 1 232 478 Z"/><ellipse class="fold" cx="312" cy="354" rx="80" ry="10"/><text class="nt" x="312" y="394.93" text-anchor="middle">Repository</text><text class="nb" x="312" y="416.75" text-anchor="middle">features and stories</text><text class="nb" x="312" y="433.75" text-anchor="middle">code, tests, docs</text><text class="nb" x="312" y="450.75" text-anchor="middle"><tspan class="code">main</tspan> and one</text><text class="nb" x="312" y="467.75" text-anchor="middle">branch per story</text></g>
-<g class="n-human"><rect class="sh" x="40" y="232" width="144" height="112" rx="8"/><text class="nt" x="112" y="256.93" text-anchor="middle">The human</text><text class="nb" x="112" y="278.75" text-anchor="middle">writes stories</text><text class="nb" x="112" y="295.75" text-anchor="middle">decides what starts</text><text class="nb" x="112" y="312.75" text-anchor="middle">answers questions</text><text class="nb" x="112" y="329.75" text-anchor="middle">merges or closes</text></g>
-<g class="n-code"><rect class="sh" x="456" y="232" width="176" height="112" rx="8"/><text class="nt" x="544" y="256.93" text-anchor="middle">Tick</text><text class="nb" x="544" y="278.75" text-anchor="middle">on a schedule:</text><text class="nb" x="544" y="295.75" text-anchor="middle">seconds after activity,</text><text class="nb" x="544" y="312.75" text-anchor="middle">up to 2 minutes if quiet;</text><text class="nb" x="544" y="329.75" text-anchor="middle">fetches, then evaluates</text></g>
-<g class="n-code"><rect class="sh" x="696" y="232" width="160" height="112" rx="8"/><text class="nt" x="776" y="265.43" text-anchor="middle">Watcher</text><text class="nb" x="776" y="287.25" text-anchor="middle">repository and</text><text class="nb" x="776" y="304.25" text-anchor="middle">pull request state</text><text class="nb" x="776" y="321.25" text-anchor="middle">→ the one next event</text></g>
-<g class="n-code"><rect class="sh" x="920" y="232" width="176" height="112" rx="8"/><text class="nt" x="1008" y="265.43" text-anchor="middle">Dispatcher</text><text class="nb" x="1008" y="287.25" text-anchor="middle">handles the event:</text><text class="nb" x="1008" y="304.25" text-anchor="middle">branches, checks,</text><text class="nb" x="1008" y="321.25" text-anchor="middle">commits, pushes, posts</text></g>
-<g class="n-agent"><rect class="sh" x="920" y="424" width="176" height="112" rx="8"/><text class="nt" x="1008" y="448.93" text-anchor="middle">Stage agent</text><text class="nb" x="1008" y="470.75" text-anchor="middle">one stage of one story</text><text class="nb" x="1008" y="487.75" text-anchor="middle">reads the story</text><text class="nb" x="1008" y="504.75" text-anchor="middle">writes its lane</text><text class="nb" x="1008" y="521.75" text-anchor="middle">ends with an outcome</text></g>
-<text class="lb lb-flow" x="172" y="128.58" text-anchor="middle">answers ·</text><text class="lb lb-flow" x="172" y="143.58" text-anchor="middle">merges · closes</text>
-<text class="lb lb-flow" x="172" y="432.58" text-anchor="middle">writes and</text><text class="lb lb-flow" x="172" y="447.58" text-anchor="middle">starts stories</text>
-<text class="lb lb-dashed" x="320" y="268.58" text-anchor="start">a merge lands</text><text class="lb lb-dashed" x="320" y="283.58" text-anchor="start">on <tspan class="code">main</tspan></text>
-<text class="lb lb-flow" x="664" y="279.58" text-anchor="middle">evaluate</text>
-<text class="lb lb-flow" x="888" y="264.58" text-anchor="middle">one</text><text class="lb lb-flow" x="888" y="279.58" text-anchor="middle">event</text>
-<text class="lb lb-flow" x="544" y="119.58" text-anchor="middle">opens · comments · marks ready</text>
-<text class="lb lb-plain" x="544" y="167.58" text-anchor="middle">reads</text>
-<text class="lb lb-plain" x="544" y="383.58" text-anchor="middle">reads</text>
-<text class="lb lb-flow" x="544" y="431.58" text-anchor="middle">commits, pushes</text>
-<text class="lb lb-flow" x="976" y="388.58" text-anchor="end">starts,</text><text class="lb lb-flow" x="976" y="403.58" text-anchor="end">with a task</text>
-<text class="lb lb-flow" x="1040" y="388.58" text-anchor="start">outcome +</text><text class="lb lb-flow" x="1040" y="403.58" text-anchor="start">log entry</text>
-<g class="n-agent"><rect class="sh" x="40" y="565.5" width="26" height="13" rx="3"/></g><text class="lg" x="74" y="576" text-anchor="start">agent: a model runs</text>
-<g class="n-human"><rect class="sh" x="212.3" y="565.5" width="26" height="13" rx="3"/></g><text class="lg" x="246.3" y="576" text-anchor="start">the human</text>
-<g class="n-code"><rect class="sh" x="333.27" y="565.5" width="26" height="13" rx="3"/></g><text class="lg" x="367.27" y="576" text-anchor="start">the factory's code</text>
-<g class="n-store"><rect class="sh" x="492.69" y="565.5" width="26" height="13" rx="3"/></g><text class="lg" x="526.69" y="576" text-anchor="start">stored state</text>
-<path class="e e-flow" d="M 619.89 572 L 642.89 572" marker-end="url(#ah-flow)"/><text class="lg" x="653.89" y="576" text-anchor="start">acts or hands over</text>
-<path class="e e-plain" d="M 784.55 572 L 807.55 572" marker-end="url(#ah-plain)"/><text class="lg" x="818.55" y="576" text-anchor="start">reads</text>
-<path class="e e-dashed" d="M 877.77 572 L 900.77 572" marker-end="url(#ah-dashed)"/><text class="lg" x="911.77" y="576" text-anchor="start">asynchronous</text>
+<text class="sub" x="40" y="72" text-anchor="start">The human works only through two places; the factory's code reads both and starts a stage agent.</text>
+<rect class="grp g-code" x="40" y="512" width="770" height="160" rx="12"/><text class="grp-c k-code" x="54" y="533" text-anchor="start">The factory's code</text>
+<path class="e e-flow" d="M 296 148 L 168 148 Q 160 148 160 156 L 160 253" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 552 148 L 688 148 Q 696 148 696 156 L 696 253" marker-end="url(#ah-flow)"/>
+<path class="e e-dashed" d="M 280 316 L 573 316" marker-end="url(#ah-dashed)"/>
+<path class="e e-flow" d="M 240 600 L 333 600" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 512 600 L 605 600" marker-end="url(#ah-flow)"/>
+<path class="e e-plain" d="M 400 544 L 400 488 Q 400 480 392 480 L 144 480 Q 136 480 136 472 L 136 379" marker-end="url(#ah-plain)"/>
+<path class="e e-flow" d="M 672 544 L 672 456 Q 672 448 664 448 L 192 448 Q 184 448 184 440 L 184 379" marker-end="url(#ah-flow)"/>
+<path class="e e-plain" d="M 448 544 L 448 424 Q 448 416 456 416 L 624 416 Q 632 416 632 408 L 632 377.46" marker-end="url(#ah-plain)"/>
+<path class="e e-flow" d="M 720 544 L 720 378.8" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 672 656 L 672 736 Q 672 744 664 744 L 491 744" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 488 776 L 712 776 Q 720 776 720 768 L 720 659" marker-end="url(#ah-flow)"/>
+<g class="n-human"><rect class="sh" x="296" y="104" width="256" height="88" rx="8"/><text class="nt" x="424" y="133.93" text-anchor="middle">The human</text><text class="nb" x="424" y="155.75" text-anchor="middle">writes stories · decides what starts</text><text class="nb" x="424" y="172.75" text-anchor="middle">answers questions · merges or closes</text></g>
+<g class="n-store"><path class="sh" d="M 44 256 H 264 L 280 272 V 372 Q 280 376 276 376 H 44 Q 40 376 40 372 V 260 Q 40 256 44 256 Z"/><path class="fold" d="M 264 256 V 270 Q 264 272 266 272 H 280 Z"/><text class="nt" x="160" y="293.43" text-anchor="middle">Pull request</text><text class="nb" x="160" y="315.25" text-anchor="middle">one per story</text><text class="nb" x="160" y="332.25" text-anchor="middle">questions and answers</text><text class="nb" x="160" y="349.25" text-anchor="middle">the result, waiting</text></g>
+<g class="n-store"><path class="sh" d="M 576 266 A 120 10 0 0 1 816 266 V 366 A 120 10 0 0 1 576 366 Z"/><ellipse class="fold" cx="696" cy="266" rx="120" ry="10"/><text class="nt" x="696" y="303.43" text-anchor="middle">Repository</text><text class="nb" x="696" y="325.25" text-anchor="middle">features and stories</text><text class="nb" x="696" y="342.25" text-anchor="middle">code, tests, docs</text><text class="nb" x="696" y="359.25" text-anchor="middle"><tspan class="code">main</tspan> and one branch per story</text></g>
+<g class="n-code"><rect class="sh" x="64" y="544" width="176" height="112" rx="8"/><text class="nt" x="152" y="568.93" text-anchor="middle">Tick</text><text class="nb" x="152" y="590.75" text-anchor="middle">on a schedule:</text><text class="nb" x="152" y="607.75" text-anchor="middle">seconds after activity,</text><text class="nb" x="152" y="624.75" text-anchor="middle">up to 2 minutes if quiet;</text><text class="nb" x="152" y="641.75" text-anchor="middle">fetches, then evaluates</text></g>
+<g class="n-code"><rect class="sh" x="336" y="544" width="176" height="112" rx="8"/><text class="nt" x="424" y="577.43" text-anchor="middle">Watcher</text><text class="nb" x="424" y="599.25" text-anchor="middle">repository and</text><text class="nb" x="424" y="616.25" text-anchor="middle">pull request state</text><text class="nb" x="424" y="633.25" text-anchor="middle">→ the one next event</text></g>
+<g class="n-code"><rect class="sh" x="608" y="544" width="176" height="112" rx="8"/><text class="nt" x="696" y="577.43" text-anchor="middle">Dispatcher</text><text class="nb" x="696" y="599.25" text-anchor="middle">handles the event:</text><text class="nb" x="696" y="616.25" text-anchor="middle">branches, checks,</text><text class="nb" x="696" y="633.25" text-anchor="middle">commits, pushes, posts</text></g>
+<g class="n-agent"><rect class="sh" x="248" y="704" width="240" height="112" rx="8"/><text class="nt" x="368" y="728.93" text-anchor="middle">Stage agent</text><text class="nb" x="368" y="750.75" text-anchor="middle">one stage of one story</text><text class="nb" x="368" y="767.75" text-anchor="middle">reads the story</text><text class="nb" x="368" y="784.75" text-anchor="middle">writes its lane</text><text class="nb" x="368" y="801.75" text-anchor="middle">ends with an outcome</text></g>
+<text class="lb lb-flow" x="168" y="198.58" text-anchor="start">answers ·</text><text class="lb lb-flow" x="168" y="213.58" text-anchor="start">merges · closes</text>
+<text class="lb lb-flow" x="704" y="198.58" text-anchor="start">writes and</text><text class="lb lb-flow" x="704" y="213.58" text-anchor="start">starts stories</text>
+<text class="lb lb-dashed" x="428" y="307.58" text-anchor="middle">a merge lands on <tspan class="code">main</tspan></text>
+<text class="lb lb-flow" x="288" y="591.58" text-anchor="middle">evaluate</text>
+<text class="lb lb-flow" x="560" y="576.58" text-anchor="middle">one</text><text class="lb lb-flow" x="560" y="591.58" text-anchor="middle">event</text>
+<text class="lb lb-plain" x="270" y="471.58" text-anchor="middle">reads</text>
+<text class="lb lb-flow" x="560" y="439.58" text-anchor="middle">opens · comments · marks ready</text>
+<text class="lb lb-plain" x="536" y="407.58" text-anchor="middle">reads</text>
+<text class="lb lb-flow" x="728" y="452.08" text-anchor="start">commits, pushes</text>
+<text class="lb lb-flow" x="560" y="720.58" text-anchor="middle">starts,</text><text class="lb lb-flow" x="560" y="735.58" text-anchor="middle">with a task</text>
+<text class="lb lb-flow" x="560" y="792.58" text-anchor="middle">outcome +</text><text class="lb lb-flow" x="560" y="807.58" text-anchor="middle">log entry</text>
+<g class="n-agent"><rect class="sh" x="40" y="853.5" width="26" height="13" rx="3"/></g><text class="lg" x="74" y="864" text-anchor="start">agent: a model runs</text>
+<g class="n-human"><rect class="sh" x="212.3" y="853.5" width="26" height="13" rx="3"/></g><text class="lg" x="246.3" y="864" text-anchor="start">the human</text>
+<g class="n-code"><rect class="sh" x="333.27" y="853.5" width="26" height="13" rx="3"/></g><text class="lg" x="367.27" y="864" text-anchor="start">the factory's code</text>
+<g class="n-store"><rect class="sh" x="492.69" y="853.5" width="26" height="13" rx="3"/></g><text class="lg" x="526.69" y="864" text-anchor="start">stored state</text>
+<path class="e e-flow" d="M 40 884 L 63 884" marker-end="url(#ah-flow)"/><text class="lg" x="74" y="888" text-anchor="start">acts or hands over</text>
+<path class="e e-plain" d="M 204.66 884 L 227.66 884" marker-end="url(#ah-plain)"/><text class="lg" x="238.66" y="888" text-anchor="start">reads</text>
+<path class="e e-dashed" d="M 297.87 884 L 320.87 884" marker-end="url(#ah-dashed)"/><text class="lg" x="331.87" y="888" text-anchor="start">asynchronous</text>
 </svg>

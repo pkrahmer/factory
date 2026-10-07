@@ -40,7 +40,7 @@ The three columns, below. Each is a group with a header, the example steps, and 
 
 ## Layout
 
-The decision flow runs across the top, left to right: the step pill, then q1, then q2. Under it sit three equal columns, left to right: human, model, code. q1 stands above the human column, or between the human and model columns. Its "yes" goes down to the human column, and its "no" goes right to q2. q2 stands above the boundary between the model and code columns. Its "yes" goes down-right to the code column, and its "no" goes down-left to the model column. Arrange the arrows so that none cross.
+The canvas is 848 by 696 px. The decision flow runs down the left and then across: the step pill at the top left, q1 below it, and q2 to the right of q1. Under them sit three equal columns, left to right: human, model, code. q1 stands directly above the human column, and q2 above the boundary between the model and code columns. The step pill's arrow goes straight down to q1. q1's "yes" goes straight down to the human column, and its "no" goes right to q2. q2's "yes" goes right and then down to the code column, and its "no" goes down and then left to the model column. No arrows cross.
 
 Each column has:
 - a header box in the owner's color;

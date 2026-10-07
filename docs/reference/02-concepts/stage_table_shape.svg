@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1176" height="680" viewBox="0 0 1176 680" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="1200" viewBox="0 0 850 1200" role="img" aria-labelledby="title desc">
 <title id="title">The shape of a stage table</title>
-<desc id="desc">The general pattern of a stage table, drawn with v1's line. A story starts as the human's draft. Promoted, it passes the forward line: check the story, write the tests, write the code, review, document, demonstrate, then the human's gate, and it is archived when merged. The line wraps once, after the tests. Review, documentation, demonstration and the human at the gate can send the story back to the coding stage, each at the cost of a round; the coding stage can return it to the tests stage after an approved test change, at no cost. Any working stage can ask the human a question, and the answer returns to the same stage. Closing the pull request before the gate discards the story back to the drafts. Each box names the stage, its role and v1's key for it.</desc>
+<desc id="desc">The general pattern of a stage table, drawn with v1's line. A story starts as the human's draft. Promoted, it passes the forward line, drawn as a column from top to bottom: check the story, write the tests, write the code, review, document, demonstrate, then the human's gate, and it is archived when merged. Review, documentation, demonstration and the human at the gate can send the story back to the coding stage, each at the cost of a round; the coding stage can return it to the tests stage after an approved test change, at no cost. Any working stage can ask the human a question, and the answer returns to the same stage. Closing the pull request before the gate discards the story back to the drafts. Each box names the stage, its role and v1's key for it.</desc>
 <style>
 text { font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif; }
 .code { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 0.92em; }
@@ -110,58 +110,58 @@ text { font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, san
 }
 </style>
 <defs><marker id="ah-flow" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-flow" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker><marker id="ah-back" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-back" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker><marker id="ah-ask" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-ask" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker><marker id="ah-stall" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-stall" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker></defs>
-<rect class="bg" width="1176" height="680"/>
+<rect class="bg" width="850" height="1200"/>
 <text class="ttl" x="40" y="48" text-anchor="start">The shape of a stage table</text>
 <text class="sub" x="40" y="72" text-anchor="start">The general pattern, drawn with v1's line: forward to the human's gate, rework back to the code, questions to the human.</text>
-<path class="e e-flow" d="M 224 160 L 293 160" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 456 160 L 517 160" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 576 216 L 576 248 Q 576 256 568 256 L 128 256 Q 120 256 120 264 L 120 333" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 224 392 L 293 392" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 456 392 L 517 392" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 680 392 L 749 392" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 912 392 L 973 392" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 1056 336 L 1056 195" marker-end="url(#ah-flow)"/>
-<path class="e e-back" d="M 376 448 L 376 472 Q 376 480 368 480 L 188 480 Q 180 480 180 472 L 180 451" marker-end="url(#ah-back)"/>
-<path class="e e-back" d="M 600 448 L 600 504 Q 600 512 592 512 L 164 512 Q 156 512 156 504 L 156 451" marker-end="url(#ah-back)"/>
-<path class="e e-back" d="M 832 448 L 832 536 Q 832 544 824 544 L 140 544 Q 132 544 132 536 L 132 451" marker-end="url(#ah-back)"/>
-<path class="e e-back" d="M 1056 448 L 1056 568 Q 1056 576 1048 576 L 116 576 Q 108 576 108 568 L 108 451" marker-end="url(#ah-back)"/>
-<path class="e e-back" d="M 168 336 L 168 304 Q 168 296 176 296 L 616 296 Q 624 296 624 288 L 624 219" marker-end="url(#ah-back)"/>
-<path class="e e-ask" d="M 816 336 L 816 219" marker-end="url(#ah-ask)"/>
-<path class="e e-ask" d="M 848 216 L 848 333" marker-end="url(#ah-ask)"/>
-<path class="e e-stall" d="M 944 616 L 48 616 Q 40 616 40 608 L 40 168 Q 40 160 48 160 L 61 160" marker-end="url(#ah-stall)"/>
-<g class="n-human"><path class="sh" d="M 68 104 H 208 L 224 120 V 212 Q 224 216 220 216 H 68 Q 64 216 64 212 V 108 Q 64 104 68 104 Z"/><path class="fold" d="M 208 104 V 118 Q 208 120 210 120 H 224 Z"/><text class="tag" x="144" y="134.57" text-anchor="middle">HUMAN · <tspan class="code">drafts/</tspan></text><text class="nt" x="144" y="153.43" text-anchor="middle">Draft</text><text class="nb" x="144" y="175.25" text-anchor="middle">the human's text;</text><text class="nb" x="144" y="192.25" text-anchor="middle">not worked on</text></g>
-<g class="n-agent"><rect class="sh" x="296" y="104" width="160" height="112" rx="8"/><text class="tag" x="376" y="126.07" text-anchor="middle">INTAKE · <tspan class="code">ready</tspan></text><text class="nt" x="376" y="144.93" text-anchor="middle">Vet the story</text><text class="nb" x="376" y="166.75" text-anchor="middle">buildable? exact</text><text class="nb" x="376" y="183.75" text-anchor="middle">interface, testable</text><text class="nb" x="376" y="200.75" text-anchor="middle">criteria, failing sides</text></g>
-<g class="n-agent"><rect class="sh" x="520" y="104" width="160" height="112" rx="8"/><text class="tag" x="600" y="134.57" text-anchor="middle">TESTER · <tspan class="code">tests</tspan></text><text class="nt" x="600" y="153.43" text-anchor="middle">Write the tests</text><text class="nb" x="600" y="175.25" text-anchor="middle">one test per criterion,</text><text class="nb" x="600" y="192.25" text-anchor="middle">red on purpose</text></g>
-<g class="n-agent"><rect class="sh" x="64" y="336" width="160" height="112" rx="8"/><text class="tag" x="144" y="366.57" text-anchor="middle">CODER · <tspan class="code">doing</tspan></text><text class="nt" x="144" y="385.43" text-anchor="middle">Write the code</text><text class="nb" x="144" y="407.25" text-anchor="middle">until the full check</text><text class="nb" x="144" y="424.25" text-anchor="middle">is green; refactor once</text></g>
-<g class="n-agent"><rect class="sh" x="296" y="336" width="160" height="112" rx="8"/><text class="tag" x="376" y="358.07" text-anchor="middle">REVIEWER · <tspan class="code">review</tspan></text><text class="nt" x="376" y="376.93" text-anchor="middle">Review</text><text class="nb" x="376" y="398.75" text-anchor="middle">the diff against the</text><text class="nb" x="376" y="415.75" text-anchor="middle">story and the</text><text class="nb" x="376" y="432.75" text-anchor="middle">architecture</text></g>
-<g class="n-agent"><rect class="sh" x="520" y="336" width="160" height="112" rx="8"/><text class="tag" x="600" y="366.57" text-anchor="middle">DOCUMENTER · <tspan class="code">docs</tspan></text><text class="nt" x="600" y="385.43" text-anchor="middle">Document</text><text class="nb" x="600" y="407.25" text-anchor="middle">what the reader must</text><text class="nb" x="600" y="424.25" text-anchor="middle">know; stale text fixed</text></g>
-<g class="n-agent"><rect class="sh" x="752" y="336" width="160" height="112" rx="8"/><text class="tag" x="832" y="358.07" text-anchor="middle">DEMO · <tspan class="code">demo</tspan></text><text class="nt" x="832" y="376.93" text-anchor="middle">Demonstrate</text><text class="nb" x="832" y="398.75" text-anchor="middle">run the commands,</text><text class="nb" x="832" y="415.75" text-anchor="middle">compare with the</text><text class="nb" x="832" y="432.75" text-anchor="middle">expected output</text></g>
-<g class="n-human"><rect class="sh" x="976" y="336" width="160" height="112" rx="8"/><text class="tag" x="1056" y="366.57" text-anchor="middle">GATE · <tspan class="code">accept</tspan></text><text class="nt" x="1056" y="385.43" text-anchor="middle">Accept</text><text class="nb" x="1056" y="407.25" text-anchor="middle">the human merges,</text><text class="nb" x="1056" y="424.25" text-anchor="middle">or sends back</text></g>
-<g class="n-ask"><rect class="sh" x="712" y="104" width="240" height="112" rx="56"/><text class="tag" x="832" y="126.07" text-anchor="middle">QUESTION</text><text class="nt" x="832" y="144.93" text-anchor="middle">The human answers</text><text class="nb" x="832" y="166.75" text-anchor="middle">from any working stage,</text><text class="nb" x="832" y="183.75" text-anchor="middle">on the pull request; the stage</text><text class="nb" x="832" y="200.75" text-anchor="middle">that asked runs again</text></g>
-<g class="n-end"><rect class="sh" x="1000" y="128" width="112" height="64" rx="32"/><text class="tag" x="1056" y="153.57" text-anchor="middle"><tspan class="code">done</tspan></text><text class="nt" x="1056" y="172.43" text-anchor="middle">Archived</text></g>
-<text class="tx-note k-stall" x="956" y="620" text-anchor="start">any stage before the gate</text>
-<text class="lb lb-flow" x="260" y="151.58" text-anchor="middle">promoted</text>
-<text class="lb lb-flow" x="488" y="151.58" text-anchor="middle">buildable</text>
-<text class="lb lb-flow" x="480" y="247.58" text-anchor="middle">checks green (lint)</text>
-<text class="lb lb-flow" x="260" y="368.58" text-anchor="middle">checks</text><text class="lb lb-flow" x="260" y="383.58" text-anchor="middle">green (full)</text>
-<text class="lb lb-flow" x="488" y="368.58" text-anchor="middle">no</text><text class="lb lb-flow" x="488" y="383.58" text-anchor="middle">findings</text>
-<text class="lb lb-flow" x="716" y="368.58" text-anchor="middle">checks</text><text class="lb lb-flow" x="716" y="383.58" text-anchor="middle">green (full)</text>
-<text class="lb lb-flow" x="944" y="368.58" text-anchor="middle">output as</text><text class="lb lb-flow" x="944" y="383.58" text-anchor="middle">expected</text>
-<text class="lb lb-flow" x="1064" y="268.08" text-anchor="start">merged</text>
-<text class="lb lb-back" x="298.75" y="471.58" text-anchor="middle">findings · round + 1</text>
-<text class="lb lb-back" x="473.16" y="503.58" text-anchor="middle">code contradicts the story · round + 1</text>
-<text class="lb lb-back" x="740.18" y="535.58" text-anchor="middle">output wrong · round + 1</text>
-<text class="lb lb-back" x="943.38" y="567.58" text-anchor="middle">closed with a reason · round + 1</text>
-<text class="lb lb-back" x="400" y="287.58" text-anchor="middle">approved test change · no round</text>
-<text class="lb lb-ask" x="808" y="280.08" text-anchor="end">question</text>
-<text class="lb lb-ask" x="856" y="280.08" text-anchor="start">answer</text>
-<text class="lb lb-stall" x="827.74" y="607.58" text-anchor="middle">closed before the gate: discarded</text>
-<g class="n-agent"><rect class="sh" x="40" y="645.5" width="26" height="13" rx="3"/></g><text class="lg" x="74" y="656" text-anchor="start">agent</text>
-<g class="n-human"><rect class="sh" x="133.22" y="645.5" width="26" height="13" rx="3"/></g><text class="lg" x="167.22" y="656" text-anchor="start">the human</text>
-<g class="n-ask"><rect class="sh" x="254.19" y="645.5" width="26" height="13" rx="3"/></g><text class="lg" x="288.19" y="656" text-anchor="start">question</text>
-<g class="n-end"><rect class="sh" x="363.37" y="645.5" width="26" height="13" rx="3"/></g><text class="lg" x="397.37" y="656" text-anchor="start">end</text>
-<path class="e e-flow" d="M 446.18 652 L 469.18 652" marker-end="url(#ah-flow)"/><text class="lg" x="480.18" y="656" text-anchor="start">forward</text>
-<path class="e e-back" d="M 549.79 652 L 572.79 652" marker-end="url(#ah-back)"/><text class="lg" x="583.79" y="656" text-anchor="start">rework</text>
-<path class="e e-ask" d="M 649.23 652 L 672.23 652" marker-end="url(#ah-ask)"/><text class="lg" x="683.23" y="656" text-anchor="start">question, answer</text>
-<path class="e e-stall" d="M 805.57 652 L 828.57 652" marker-end="url(#ah-stall)"/><text class="lg" x="839.57" y="656" text-anchor="start">discard</text>
+<path class="e e-flow" d="M 272 176 L 272 213" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 272 312 L 272 349" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 272 544 L 272 581" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 272 656 L 272 693" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 272 768 L 272 805" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 272 880 L 272 941" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 272 1016 L 272 1053" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 248 424 L 248 469" marker-end="url(#ah-flow)"/>
+<path class="e e-back" d="M 448 620 L 640 620 Q 648 620 648 612 L 648 540 Q 648 532 640 532 L 451 532" marker-end="url(#ah-back)"/>
+<path class="e e-back" d="M 448 732 L 672 732 Q 680 732 680 724 L 680 524 Q 680 516 672 516 L 451 516" marker-end="url(#ah-back)"/>
+<path class="e e-back" d="M 448 844 L 704 844 Q 712 844 712 836 L 712 508 Q 712 500 704 500 L 451 500" marker-end="url(#ah-back)"/>
+<path class="e e-back" d="M 448 980 L 736 980 Q 744 980 744 972 L 744 492 Q 744 484 736 484 L 451 484" marker-end="url(#ah-back)"/>
+<path class="e e-back" d="M 296 472 L 296 427" marker-end="url(#ah-back)"/>
+<path class="e e-ask" d="M 448 248 L 543.33 248" marker-end="url(#ah-ask)"/>
+<path class="e e-ask" d="M 546.33 280 L 451 280" marker-end="url(#ah-ask)"/>
+<path class="e e-stall" d="M 272 912 L 48 912 Q 40 912 40 904 L 40 148 Q 40 140 48 140 L 93 140" marker-end="url(#ah-stall)"/>
+<g class="n-human"><path class="sh" d="M 100 104 H 432 L 448 120 V 172 Q 448 176 444 176 H 100 Q 96 176 96 172 V 108 Q 96 104 100 104 Z"/><path class="fold" d="M 432 104 V 118 Q 432 120 434 120 H 448 Z"/><text class="tag" x="272" y="123.07" text-anchor="middle">HUMAN · <tspan class="code">drafts/</tspan></text><text class="nt" x="272" y="141.93" text-anchor="middle">Draft</text><text class="nb" x="272" y="163.75" text-anchor="middle">the human's text; not worked on</text></g>
+<g class="n-agent"><rect class="sh" x="96" y="216" width="352" height="96" rx="8"/><text class="tag" x="272" y="238.57" text-anchor="middle">INTAKE · <tspan class="code">ready</tspan></text><text class="nt" x="272" y="257.43" text-anchor="middle">Vet the story</text><text class="nb" x="272" y="279.25" text-anchor="middle">buildable? exact interface,</text><text class="nb" x="272" y="296.25" text-anchor="middle">testable criteria, failing sides</text></g>
+<g class="n-agent"><rect class="sh" x="96" y="352" width="352" height="72" rx="8"/><text class="tag" x="272" y="371.07" text-anchor="middle">TESTER · <tspan class="code">tests</tspan></text><text class="nt" x="272" y="389.93" text-anchor="middle">Write the tests</text><text class="nb" x="272" y="411.75" text-anchor="middle">one test per criterion, red on purpose</text></g>
+<g class="n-agent"><rect class="sh" x="96" y="472" width="352" height="72" rx="8"/><text class="tag" x="272" y="491.07" text-anchor="middle">CODER · <tspan class="code">doing</tspan></text><text class="nt" x="272" y="509.93" text-anchor="middle">Write the code</text><text class="nb" x="272" y="531.75" text-anchor="middle">until the full check is green; refactor once</text></g>
+<g class="n-agent"><rect class="sh" x="96" y="584" width="352" height="72" rx="8"/><text class="tag" x="272" y="603.07" text-anchor="middle">REVIEWER · <tspan class="code">review</tspan></text><text class="nt" x="272" y="621.93" text-anchor="middle">Review</text><text class="nb" x="272" y="643.75" text-anchor="middle">the diff against the story and the architecture</text></g>
+<g class="n-agent"><rect class="sh" x="96" y="696" width="352" height="72" rx="8"/><text class="tag" x="272" y="715.07" text-anchor="middle">DOCUMENTER · <tspan class="code">docs</tspan></text><text class="nt" x="272" y="733.93" text-anchor="middle">Document</text><text class="nb" x="272" y="755.75" text-anchor="middle">what the reader must know; stale text fixed</text></g>
+<g class="n-agent"><rect class="sh" x="96" y="808" width="352" height="72" rx="8"/><text class="tag" x="272" y="827.07" text-anchor="middle">DEMO · <tspan class="code">demo</tspan></text><text class="nt" x="272" y="845.93" text-anchor="middle">Demonstrate</text><text class="nb" x="272" y="867.75" text-anchor="middle">run the commands, compare with the expected output</text></g>
+<g class="n-human"><rect class="sh" x="96" y="944" width="352" height="72" rx="8"/><text class="tag" x="272" y="963.07" text-anchor="middle">GATE · <tspan class="code">accept</tspan></text><text class="nt" x="272" y="981.93" text-anchor="middle">Accept</text><text class="nb" x="272" y="1003.75" text-anchor="middle">the human merges, or sends back</text></g>
+<g class="n-ask"><rect class="sh" x="544" y="208" width="256" height="112" rx="56"/><text class="tag" x="672" y="230.07" text-anchor="middle">QUESTION</text><text class="nt" x="672" y="248.93" text-anchor="middle">The human answers</text><text class="nb" x="672" y="270.75" text-anchor="middle">from any working stage,</text><text class="nb" x="672" y="287.75" text-anchor="middle">on the pull request; the stage</text><text class="nb" x="672" y="304.75" text-anchor="middle">that asked runs again</text></g>
+<g class="n-end"><rect class="sh" x="216" y="1056" width="112" height="64" rx="32"/><text class="tag" x="272" y="1081.57" text-anchor="middle"><tspan class="code">done</tspan></text><text class="nt" x="272" y="1100.43" text-anchor="middle">Archived</text></g>
+<text class="tx-note k-stall" x="163.74" y="930" text-anchor="middle">any stage before the gate</text>
+<text class="lb lb-flow" x="280" y="200.08" text-anchor="start">promoted</text>
+<text class="lb lb-flow" x="280" y="336.08" text-anchor="start">buildable</text>
+<text class="lb lb-flow" x="280" y="568.08" text-anchor="start">checks green (full)</text>
+<text class="lb lb-flow" x="280" y="680.08" text-anchor="start">no findings</text>
+<text class="lb lb-flow" x="280" y="792.08" text-anchor="start">checks green (full)</text>
+<text class="lb lb-flow" x="280" y="916.08" text-anchor="start">output as expected</text>
+<text class="lb lb-flow" x="280" y="1040.08" text-anchor="start">merged</text>
+<text class="lb lb-flow" x="240" y="452.08" text-anchor="end">checks green (lint)</text>
+<text class="lb lb-back" x="570.75" y="611.58" text-anchor="middle">findings · round + 1</text>
+<text class="lb lb-back" x="553.16" y="723.58" text-anchor="middle">code contradicts the story · round + 1</text>
+<text class="lb lb-back" x="620.18" y="835.58" text-anchor="middle">output wrong · round + 1</text>
+<text class="lb lb-back" x="631.38" y="971.58" text-anchor="middle">closed with a reason · round + 1</text>
+<text class="lb lb-back" x="304" y="452.08" text-anchor="start">approved test change · no round</text>
+<text class="lb lb-ask" x="497.17" y="239.58" text-anchor="middle">question</text>
+<text class="lb lb-ask" x="497.17" y="296.58" text-anchor="middle">answer</text>
+<text class="lb lb-stall" x="163.74" y="903.58" text-anchor="middle">closed before the gate: discarded</text>
+<g class="n-agent"><rect class="sh" x="40" y="1141.5" width="26" height="13" rx="3"/></g><text class="lg" x="74" y="1152" text-anchor="start">agent</text>
+<g class="n-human"><rect class="sh" x="133.22" y="1141.5" width="26" height="13" rx="3"/></g><text class="lg" x="167.22" y="1152" text-anchor="start">the human</text>
+<g class="n-ask"><rect class="sh" x="254.19" y="1141.5" width="26" height="13" rx="3"/></g><text class="lg" x="288.19" y="1152" text-anchor="start">question</text>
+<g class="n-end"><rect class="sh" x="363.37" y="1141.5" width="26" height="13" rx="3"/></g><text class="lg" x="397.37" y="1152" text-anchor="start">end</text>
+<path class="e e-flow" d="M 40 1172 L 63 1172" marker-end="url(#ah-flow)"/><text class="lg" x="74" y="1176" text-anchor="start">forward</text>
+<path class="e e-back" d="M 143.61 1172 L 166.61 1172" marker-end="url(#ah-back)"/><text class="lg" x="177.61" y="1176" text-anchor="start">rework</text>
+<path class="e e-ask" d="M 243.05 1172 L 266.05 1172" marker-end="url(#ah-ask)"/><text class="lg" x="277.05" y="1176" text-anchor="start">question, answer</text>
+<path class="e e-stall" d="M 399.38 1172 L 422.38 1172" marker-end="url(#ah-stall)"/><text class="lg" x="433.38" y="1176" text-anchor="start">discard</text>
 </svg>

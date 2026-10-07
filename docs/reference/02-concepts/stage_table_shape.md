@@ -44,13 +44,12 @@ The general pattern of a stage table, using v1's line as the example. A story st
 
 ## Layout
 
-The forward line wraps once, after the tests stage.
-- **Top row:** Draft → Vet the story → Write the tests. The question pill sits above Demonstrate, and Archived sits above Accept.
-- **Bottom row:** Write the code → Review → Document → Demonstrate → Accept. The columns are aligned with the top row.
-- **The wrap:** the arrow `tests → doing` ("checks green (lint)") runs from the tests box down to the code box. The back arrow `doing → tests` ("approved test change · no round") rises beside it without crossing.
-- **Rework arcs:** the four arcs run below the bottom row and nest without crossing. Review's arc is the innermost and the gate's the outermost. Their labels form a staircase.
-- **Questions:** one representative question/answer pair, drawn as dashed purple arrows, connects Demonstrate with the pill. The pill's body says it comes "from any working stage".
-- **Discard:** the arrow starts just before the gate (marked "any stage before the gate"), runs along the bottom, climbs the left edge and enters Draft.
+The canvas is 850 px wide and 1,200 px tall. The forward line runs down one column, from the top.
+- **Column:** Draft → Vet the story → Write the tests → Write the code → Review → Document → Demonstrate → Accept → Archived, each arrow labelled to its right.
+- **The step into the code:** the arrow `tests → doing` ("checks green (lint)") runs down the left side of the gap, labelled to its left. The back arrow `doing → tests` ("approved test change · no round") rises beside it on the right, without crossing.
+- **Rework arcs:** the four arcs leave the right edge of Review, Document, Demonstrate and Accept, climb on the right and enter the right edge of the code box. They nest without crossing. Review's arc is the innermost and the gate's the outermost. Each label sits on the arc's first stretch, just before its climb.
+- **Questions:** one representative question/answer pair, drawn as dashed purple arrows, connects Vet the story with the pill, which sits to its right above the arcs. The pill's body says it comes "from any working stage".
+- **Discard:** the arrow leaves the forward line between Demonstrate and Accept (marked "any stage before the gate"), runs left, climbs the left edge and enters Draft.
 - **Legend:** agent, the human, question, end; forward, rework, question and answer, discard.
 
 ## Reading

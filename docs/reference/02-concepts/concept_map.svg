@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="992" viewBox="0 0 1200 992" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="848" height="1256" viewBox="0 0 848 1256" role="img" aria-labelledby="title desc">
 <title id="title">The concepts and how they relate</title>
-<desc id="desc">A map of the factory's concepts in five clusters. The work: a project contains features, a feature contains stories and has a feature acceptance when complete, a story has a log and lives on a branch, which is proposed by a pull request. The line: the project carries the stage table, which defines stages; a story is in a stage; a stage names a role and moves forward only after its checks; a role may write its lane and is defined by its instructions. The agent run: a task is given to the stage agent, which plays the role and ends with an outcome. The control loop: a tick runs the watcher, which reads the project and yields an event; the event is handled by the dispatcher, which starts the stage agent, records a run record, applies the outcome and opens, posts to and hands over the pull request. The human writes and promotes stories and merges, closes or comments on the pull request.</desc>
+<desc id="desc">A map of the factory's concepts in five clusters. The work: a project contains features, a feature contains stories and has a feature acceptance when complete, a story has a log and lives on a branch, which is proposed by a pull request. The line: the project carries the stage table, which defines stages; a story is in a stage; a stage names a role and moves forward only after its checks; a role may write its lane and is defined by its instructions. The agent run: a task is given to the stage agent, which plays the role and ends with an outcome. The control loop: a tick runs the watcher, which reads the project and the pull request and yields an event; the event is handled by the dispatcher, which starts the stage agent, records a run record, applies the outcome and opens, posts to and hands over the pull request. The human writes and promotes stories and merges, closes or comments on the pull request.</desc>
 <style>
 text { font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif; }
 .code { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 0.92em; }
@@ -100,93 +100,95 @@ text { font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, san
 }
 </style>
 <defs><marker id="ah-flow" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-flow" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker><marker id="ah-plain" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7.5" markerHeight="7.5" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-plain" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker></defs>
-<rect class="bg" width="1200" height="992"/>
+<rect class="bg" width="848" height="1256"/>
 <text class="ttl" x="40" y="48" text-anchor="start">The concepts and how they relate</text>
 <text class="sub" x="40" y="72" text-anchor="start">The factory's vocabulary in five clusters: the work, the line, the agent run, the control loop and the human's side.</text>
-<rect class="grp g-concept" x="40" y="104" width="416" height="512" rx="12"/><text class="grp-c k-concept" x="54" y="125" text-anchor="start">The work</text>
-<rect class="grp g-human" x="40" y="648" width="416" height="144" rx="12"/><text class="grp-c k-human" x="54" y="669" text-anchor="start">The human's side</text>
-<rect class="grp g-concept" x="488" y="232" width="416" height="384" rx="12"/><text class="grp-c k-concept" x="502" y="253" text-anchor="start">The line</text>
-<rect class="grp g-agent" x="488" y="648" width="416" height="256" rx="12"/><text class="grp-c k-agent" x="502" y="669" text-anchor="start">The agent run</text>
-<rect class="grp g-code" x="944" y="104" width="216" height="800" rx="12"/><text class="grp-c k-code" x="958" y="125" text-anchor="start">The control loop</text>
-<path class="e e-plain" d="M 368 216 L 368 261" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 368 344 L 368 389" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 368 472 L 368 517" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 296 304 L 227 304" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 296 420 L 227 420" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 180 472 L 180 677" marker-end="url(#ah-plain)"/>
-<path class="e e-flow" d="M 296 704 L 268 704 Q 260 704 260 696 L 260 452 Q 260 444 268 444 L 293 444" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 296 728 L 227 728" marker-end="url(#ah-flow)"/>
-<path class="e e-plain" d="M 440 188 L 568 188 Q 576 188 576 196 L 576 261" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 440 432 L 501 432" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 576 344 L 576 389" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 648 432 L 741 432" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 576 472 L 576 517" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 648 548 L 741 548" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 608 600 L 608 677" marker-end="url(#ah-plain)"/>
-<path class="e e-plain" d="M 744 708 L 720 708 Q 712 708 712 700 L 712 580 Q 712 572 704 572 L 651 572" marker-end="url(#ah-plain)"/>
-<path class="e e-flow" d="M 648 848 L 672 848 Q 680 848 680 840 L 680 740 Q 680 732 688 732 L 741 732" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 816 760 L 816 805" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 1040 216 L 1040 317" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 1040 400 L 1040 501" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 1040 584 L 1040 677" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 960 720 L 891 720" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 888 848 L 968 848 Q 976 848 976 840 L 976 763" marker-end="url(#ah-flow)"/>
-<path class="e e-flow" d="M 1056 760 L 1056 805" marker-end="url(#ah-flow)"/>
-<path class="e e-plain" d="M 960 360 L 932 360 Q 924 360 924 352 L 924 172 Q 924 164 916 164 L 443 164" marker-end="url(#ah-plain)"/>
-<path class="e e-flow" d="M 1120 720 L 1128 720 Q 1136 720 1136 728 L 1136 928 Q 1136 936 1128 936 L 148 936 Q 140 936 140 928 L 140 763" marker-end="url(#ah-flow)"/>
-<g class="n-concept"><rect class="sh" x="296" y="136" width="144" height="80" rx="8"/><text class="nt" x="368" y="161.93" text-anchor="middle">Project</text><text class="nb" x="368" y="183.75" text-anchor="middle">the repository</text><text class="nb" x="368" y="200.75" text-anchor="middle">being built</text></g>
-<g class="n-concept"><rect class="sh" x="296" y="264" width="144" height="80" rx="8"/><text class="nt" x="368" y="289.93" text-anchor="middle">Feature</text><text class="nb" x="368" y="311.75" text-anchor="middle">goal, scope,</text><text class="nb" x="368" y="328.75" text-anchor="middle">out of scope</text></g>
-<g class="n-concept"><rect class="sh" x="296" y="392" width="144" height="80" rx="8"/><text class="nt" x="368" y="417.93" text-anchor="middle">Story</text><text class="nb" x="368" y="439.75" text-anchor="middle">specification ·</text><text class="nb" x="368" y="456.75" text-anchor="middle">state · memory</text></g>
-<g class="n-concept"><rect class="sh" x="296" y="520" width="144" height="80" rx="8"/><text class="nt" x="368" y="545.93" text-anchor="middle">Log</text><text class="nb" x="368" y="567.75" text-anchor="middle">append-only,</text><text class="nb" x="368" y="584.75" text-anchor="middle">numbered</text></g>
-<g class="n-concept"><rect class="sh" x="56" y="264" width="168" height="80" rx="8"/><text class="nt" x="140" y="289.93" text-anchor="middle">Feature acceptance</text><text class="nb" x="140" y="311.75" text-anchor="middle">judges a complete</text><text class="nb" x="140" y="328.75" text-anchor="middle">feature</text></g>
-<g class="n-concept"><rect class="sh" x="56" y="392" width="168" height="80" rx="8"/><text class="nt" x="140" y="417.93" text-anchor="middle">Branch</text><text class="nb" x="140" y="439.75" text-anchor="middle">one per work item,</text><text class="nb" x="140" y="456.75" text-anchor="middle">until the merge</text></g>
-<g class="n-store"><rect class="sh" x="56" y="680" width="168" height="80" rx="8"/><text class="nt" x="140" y="705.93" text-anchor="middle">Pull request</text><text class="nb" x="140" y="727.75" text-anchor="middle">merge · close ·</text><text class="nb" x="140" y="744.75" text-anchor="middle">comment</text></g>
-<g class="n-human"><rect class="sh" x="296" y="680" width="144" height="80" rx="8"/><text class="nt" x="368" y="705.93" text-anchor="middle">The human</text><text class="nb" x="368" y="727.75" text-anchor="middle">intent and</text><text class="nb" x="368" y="744.75" text-anchor="middle">acceptance</text></g>
-<g class="n-concept"><rect class="sh" x="504" y="264" width="144" height="80" rx="8"/><text class="nt" x="576" y="289.93" text-anchor="middle">Stage table</text><text class="nb" x="576" y="311.75" text-anchor="middle">the factory's</text><text class="nb" x="576" y="328.75" text-anchor="middle">program</text></g>
-<g class="n-concept"><rect class="sh" x="504" y="392" width="144" height="80" rx="8"/><text class="nt" x="576" y="417.93" text-anchor="middle">Stage</text><text class="nb" x="576" y="439.75" text-anchor="middle">role · next ·</text><text class="nb" x="576" y="456.75" text-anchor="middle">checks · caps</text></g>
-<g class="n-concept"><rect class="sh" x="744" y="392" width="144" height="80" rx="8"/><text class="nt" x="816" y="417.93" text-anchor="middle">Check</text><text class="nb" x="816" y="439.75" text-anchor="middle">a control-surface</text><text class="nb" x="816" y="456.75" text-anchor="middle">command</text></g>
-<g class="n-concept"><rect class="sh" x="504" y="520" width="144" height="80" rx="8"/><text class="nt" x="576" y="545.93" text-anchor="middle">Role</text><text class="nb" x="576" y="567.75" text-anchor="middle">instructions · model ·</text><text class="nb" x="576" y="584.75" text-anchor="middle">tools · budget</text></g>
-<g class="n-concept"><rect class="sh" x="744" y="520" width="144" height="80" rx="8"/><text class="nt" x="816" y="545.93" text-anchor="middle">Lane</text><text class="nb" x="816" y="567.75" text-anchor="middle">the paths a role</text><text class="nb" x="816" y="584.75" text-anchor="middle">may write</text></g>
-<g class="n-agent"><rect class="sh" x="504" y="680" width="144" height="80" rx="8"/><text class="nt" x="576" y="705.93" text-anchor="middle">Instructions</text><text class="nb" x="576" y="727.75" text-anchor="middle">rules · role · stage ·</text><text class="nb" x="576" y="744.75" text-anchor="middle">project guide</text></g>
-<g class="n-agent"><rect class="sh" x="744" y="680" width="144" height="80" rx="8"/><text class="nt" x="816" y="705.93" text-anchor="middle">Stage agent</text><text class="nb" x="816" y="727.75" text-anchor="middle">one role, one stage,</text><text class="nb" x="816" y="744.75" text-anchor="middle">one work item</text></g>
-<g class="n-agent"><rect class="sh" x="504" y="808" width="144" height="80" rx="8"/><text class="nt" x="576" y="833.93" text-anchor="middle">Task</text><text class="nb" x="576" y="855.75" text-anchor="middle">the facts</text><text class="nb" x="576" y="872.75" text-anchor="middle">of this run</text></g>
-<g class="n-agent"><rect class="sh" x="744" y="808" width="144" height="80" rx="8"/><text class="nt" x="816" y="833.93" text-anchor="middle">Outcome</text><text class="nb" x="816" y="855.75" text-anchor="middle">decision +</text><text class="nb" x="816" y="872.75" text-anchor="middle">log entry</text></g>
-<g class="n-code"><rect class="sh" x="960" y="136" width="160" height="80" rx="8"/><text class="nt" x="1040" y="161.93" text-anchor="middle">Tick</text><text class="nb" x="1040" y="183.75" text-anchor="middle">wakes on</text><text class="nb" x="1040" y="200.75" text-anchor="middle">a schedule</text></g>
-<g class="n-code"><rect class="sh" x="960" y="320" width="160" height="80" rx="8"/><text class="nt" x="1040" y="345.93" text-anchor="middle">Watcher</text><text class="nb" x="1040" y="367.75" text-anchor="middle">snapshot →</text><text class="nb" x="1040" y="384.75" text-anchor="middle">one event</text></g>
-<g class="n-code"><rect class="sh" x="960" y="504" width="160" height="80" rx="8"/><text class="nt" x="1040" y="529.93" text-anchor="middle">Event</text><text class="nb" x="1040" y="551.75" text-anchor="middle">first match</text><text class="nb" x="1040" y="568.75" text-anchor="middle">wins</text></g>
-<g class="n-code"><rect class="sh" x="960" y="680" width="160" height="80" rx="8"/><text class="nt" x="1040" y="705.93" text-anchor="middle">Dispatcher</text><text class="nb" x="1040" y="727.75" text-anchor="middle">a handler</text><text class="nb" x="1040" y="744.75" text-anchor="middle">per event</text></g>
-<g class="n-code"><rect class="sh" x="992" y="808" width="128" height="80" rx="8"/><text class="nt" x="1056" y="833.93" text-anchor="middle">Run record</text><text class="nb" x="1056" y="855.75" text-anchor="middle">which work item,</text><text class="nb" x="1056" y="872.75" text-anchor="middle">since when</text></g>
-<text class="lb lb-plain" x="376" y="244.08" text-anchor="start">contains</text>
-<text class="lb lb-plain" x="376" y="372.08" text-anchor="start">contains</text>
-<text class="lb lb-plain" x="376" y="500.08" text-anchor="start">has</text>
-<text class="lb lb-plain" x="260" y="280.58" text-anchor="middle">when</text><text class="lb lb-plain" x="260" y="295.58" text-anchor="middle">complete</text>
-<text class="lb lb-plain" x="260" y="411.58" text-anchor="middle">lives on</text>
-<text class="lb lb-plain" x="172" y="504.08" text-anchor="end">proposed by</text>
-<text class="lb lb-flow" x="252" y="548.58" text-anchor="end">writes ·</text><text class="lb lb-flow" x="252" y="563.58" text-anchor="end">promotes</text>
-<text class="lb lb-flow" x="260" y="744.58" text-anchor="middle">merges ·</text><text class="lb lb-flow" x="260" y="759.58" text-anchor="middle">closes ·</text><text class="lb lb-flow" x="260" y="774.58" text-anchor="middle">comments</text>
-<text class="lb lb-plain" x="584" y="214.08" text-anchor="start">carries</text>
-<text class="lb lb-plain" x="472" y="423.58" text-anchor="middle">is in</text>
-<text class="lb lb-plain" x="584" y="372.08" text-anchor="start">defines</text>
-<text class="lb lb-plain" x="696" y="408.58" text-anchor="middle">moves forward</text><text class="lb lb-plain" x="696" y="423.58" text-anchor="middle">only after</text>
-<text class="lb lb-plain" x="584" y="500.08" text-anchor="start">names</text>
-<text class="lb lb-plain" x="696" y="539.58" text-anchor="middle">may write</text>
-<text class="lb lb-plain" x="616" y="636.08" text-anchor="start">defined by</text>
-<text class="lb lb-plain" x="680" y="588.58" text-anchor="middle">plays</text>
-<text class="lb lb-flow" x="712" y="748.58" text-anchor="middle">given to</text>
-<text class="lb lb-flow" x="824" y="788.08" text-anchor="start">ends with</text>
-<text class="lb lb-flow" x="1048" y="272.08" text-anchor="start">runs</text>
-<text class="lb lb-flow" x="1048" y="456.08" text-anchor="start">yields</text>
-<text class="lb lb-flow" x="1048" y="636.08" text-anchor="start">handled by</text>
-<text class="lb lb-flow" x="924" y="711.58" text-anchor="middle">starts</text>
-<text class="lb lb-flow" x="984" y="788.08" text-anchor="start">applied by</text>
-<text class="lb lb-flow" x="1064" y="788.08" text-anchor="start">records</text>
-<text class="lb lb-plain" x="760" y="155.58" text-anchor="middle">reads</text>
-<text class="lb lb-flow" x="600" y="927.58" text-anchor="middle">opens · posts · hands over</text>
-<g class="n-agent"><rect class="sh" x="40" y="957.5" width="26" height="13" rx="3"/></g><text class="lg" x="74" y="968" text-anchor="start">the model: the agent run</text>
-<g class="n-human"><rect class="sh" x="237.28" y="957.5" width="26" height="13" rx="3"/></g><text class="lg" x="271.28" y="968" text-anchor="start">the human</text>
-<g class="n-code"><rect class="sh" x="358.25" y="957.5" width="26" height="13" rx="3"/></g><text class="lg" x="392.25" y="968" text-anchor="start">code: the control loop</text>
-<g class="n-concept"><rect class="sh" x="539.57" y="957.5" width="26" height="13" rx="3"/></g><text class="lg" x="573.57" y="968" text-anchor="start">data: files in the project</text>
-<g class="n-store"><rect class="sh" x="729.9" y="957.5" width="26" height="13" rx="3"/></g><text class="lg" x="763.9" y="968" text-anchor="start">stored state</text>
-<path class="e e-flow" d="M 857.11 964 L 880.11 964" marker-end="url(#ah-flow)"/><text class="lg" x="891.11" y="968" text-anchor="start">an action</text>
-<path class="e e-plain" d="M 969.76 964 L 992.76 964" marker-end="url(#ah-plain)"/><text class="lg" x="1003.76" y="968" text-anchor="start">a structural relation</text>
+<rect class="grp g-concept" x="424" y="104" width="384" height="496" rx="12"/><text class="grp-c k-concept" x="438" y="125" text-anchor="start">The work</text>
+<rect class="grp g-concept" x="40" y="232" width="352" height="368" rx="12"/><text class="grp-c k-concept" x="54" y="253" text-anchor="start">The line</text>
+<rect class="grp g-agent" x="40" y="632" width="352" height="256" rx="12"/><text class="grp-c k-agent" x="54" y="653" text-anchor="start">The agent run</text>
+<rect class="grp g-human" x="424" y="760" width="384" height="128" rx="12"/><text class="grp-c k-human" x="438" y="781" text-anchor="start">The human's side</text>
+<rect class="grp g-code" x="248" y="928" width="560" height="248" rx="12"/><text class="grp-c k-code" x="262" y="949" text-anchor="start">The control loop</text>
+<path class="e e-plain" d="M 496 216 L 496 253" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 496 336 L 496 373" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 496 456 L 496 493" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 544 296 L 605 296" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 552 404 L 637 404" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 700 464 L 700 789" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 440 176 L 328 176 Q 320 176 320 184 L 320 253" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 440 404 L 379 404" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 320 336 L 320 373" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 320 456 L 320 485" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 264 416 L 187 416" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 264 524 L 187 524" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 320 584 L 320 661" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 200 816 L 224 816 Q 232 816 232 808 L 232 556 Q 232 548 240 548 L 261 548" marker-end="url(#ah-plain)"/>
+<path class="e e-flow" d="M 128 752 L 128 789" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 200 848 L 261 848" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 440 832 L 416 832 Q 408 832 408 824 L 408 436 Q 408 428 416 428 L 437 428" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 552 832 L 637 832" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 700 1080 L 700 1043" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 640 1000 L 571 1000" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 456 1016 L 379 1016" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 328 1040 L 328 1077" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 264 1000 L 136 1000 Q 128 1000 128 992 L 128 875" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 320 872 L 320 957" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 376 984 L 392 984 Q 400 984 400 976 L 400 924 Q 400 916 408 916 L 676 916 Q 684 916 684 908 L 684 875" marker-end="url(#ah-flow)"/>
+<path class="e e-plain" d="M 716 960 L 716 875" marker-end="url(#ah-plain)"/>
+<path class="e e-plain" d="M 760 1000 L 784 1000 Q 792 1000 792 992 L 792 184 Q 792 176 784 176 L 555 176" marker-end="url(#ah-plain)"/>
+<g class="n-concept"><rect class="sh" x="440" y="136" width="112" height="80" rx="8"/><text class="nt" x="496" y="161.93" text-anchor="middle">Project</text><text class="nb" x="496" y="183.75" text-anchor="middle">the repository</text><text class="nb" x="496" y="200.75" text-anchor="middle">being built</text></g>
+<g class="n-concept"><rect class="sh" x="448" y="256" width="96" height="80" rx="8"/><text class="nt" x="496" y="281.93" text-anchor="middle">Feature</text><text class="nb" x="496" y="303.75" text-anchor="middle">goal, scope,</text><text class="nb" x="496" y="320.75" text-anchor="middle">out of scope</text></g>
+<g class="n-concept"><rect class="sh" x="440" y="376" width="112" height="80" rx="8"/><text class="nt" x="496" y="401.93" text-anchor="middle">Story</text><text class="nb" x="496" y="423.75" text-anchor="middle">specification ·</text><text class="nb" x="496" y="440.75" text-anchor="middle">state · memory</text></g>
+<g class="n-concept"><rect class="sh" x="440" y="496" width="112" height="80" rx="8"/><text class="nt" x="496" y="521.93" text-anchor="middle">Log</text><text class="nb" x="496" y="543.75" text-anchor="middle">append-only,</text><text class="nb" x="496" y="560.75" text-anchor="middle">numbered</text></g>
+<g class="n-concept"><rect class="sh" x="608" y="256" width="168" height="80" rx="8"/><text class="nt" x="692" y="281.93" text-anchor="middle">Feature acceptance</text><text class="nb" x="692" y="303.75" text-anchor="middle">judges a complete</text><text class="nb" x="692" y="320.75" text-anchor="middle">feature</text></g>
+<g class="n-concept"><rect class="sh" x="640" y="368" width="120" height="96" rx="8"/><text class="nt" x="700" y="393.43" text-anchor="middle">Branch</text><text class="nb" x="700" y="415.25" text-anchor="middle">one per work</text><text class="nb" x="700" y="432.25" text-anchor="middle">item, until</text><text class="nb" x="700" y="449.25" text-anchor="middle">the merge</text></g>
+<g class="n-concept"><rect class="sh" x="264" y="256" width="112" height="80" rx="8"/><text class="nt" x="320" y="281.93" text-anchor="middle">Stage table</text><text class="nb" x="320" y="303.75" text-anchor="middle">the factory's</text><text class="nb" x="320" y="320.75" text-anchor="middle">program</text></g>
+<g class="n-concept"><rect class="sh" x="264" y="376" width="112" height="80" rx="8"/><text class="nt" x="320" y="401.93" text-anchor="middle">Stage</text><text class="nb" x="320" y="423.75" text-anchor="middle">role · next ·</text><text class="nb" x="320" y="440.75" text-anchor="middle">checks · caps</text></g>
+<g class="n-concept"><rect class="sh" x="264" y="488" width="112" height="96" rx="8"/><text class="nt" x="320" y="513.43" text-anchor="middle">Role</text><text class="nb" x="320" y="535.25" text-anchor="middle">instructions ·</text><text class="nb" x="320" y="552.25" text-anchor="middle">model · tools ·</text><text class="nb" x="320" y="569.25" text-anchor="middle">budget</text></g>
+<g class="n-concept"><rect class="sh" x="56" y="376" width="128" height="80" rx="8"/><text class="nt" x="120" y="401.93" text-anchor="middle">Check</text><text class="nb" x="120" y="423.75" text-anchor="middle">a control-surface</text><text class="nb" x="120" y="440.75" text-anchor="middle">command</text></g>
+<g class="n-concept"><rect class="sh" x="56" y="496" width="128" height="80" rx="8"/><text class="nt" x="120" y="521.93" text-anchor="middle">Lane</text><text class="nb" x="120" y="543.75" text-anchor="middle">the paths a role</text><text class="nb" x="120" y="560.75" text-anchor="middle">may write</text></g>
+<g class="n-agent"><rect class="sh" x="56" y="672" width="128" height="80" rx="8"/><text class="nt" x="120" y="697.93" text-anchor="middle">Task</text><text class="nb" x="120" y="719.75" text-anchor="middle">the facts</text><text class="nb" x="120" y="736.75" text-anchor="middle">of this run</text></g>
+<g class="n-agent"><rect class="sh" x="264" y="664" width="112" height="96" rx="8"/><text class="nt" x="320" y="689.43" text-anchor="middle">Instructions</text><text class="nb" x="320" y="711.25" text-anchor="middle">rules · role ·</text><text class="nb" x="320" y="728.25" text-anchor="middle">stage · project</text><text class="nb" x="320" y="745.25" text-anchor="middle">guide</text></g>
+<g class="n-agent"><rect class="sh" x="56" y="792" width="144" height="80" rx="8"/><text class="nt" x="128" y="817.93" text-anchor="middle">Stage agent</text><text class="nb" x="128" y="839.75" text-anchor="middle">one role, one stage,</text><text class="nb" x="128" y="856.75" text-anchor="middle">one work item</text></g>
+<g class="n-agent"><rect class="sh" x="264" y="792" width="112" height="80" rx="8"/><text class="nt" x="320" y="817.93" text-anchor="middle">Outcome</text><text class="nb" x="320" y="839.75" text-anchor="middle">decision +</text><text class="nb" x="320" y="856.75" text-anchor="middle">log entry</text></g>
+<g class="n-human"><rect class="sh" x="440" y="792" width="112" height="80" rx="8"/><text class="nt" x="496" y="817.93" text-anchor="middle">The human</text><text class="nb" x="496" y="839.75" text-anchor="middle">intent and</text><text class="nb" x="496" y="856.75" text-anchor="middle">acceptance</text></g>
+<g class="n-store"><rect class="sh" x="640" y="792" width="120" height="80" rx="8"/><text class="nt" x="700" y="817.93" text-anchor="middle">Pull request</text><text class="nb" x="700" y="839.75" text-anchor="middle">merge · close ·</text><text class="nb" x="700" y="856.75" text-anchor="middle">comment</text></g>
+<g class="n-code"><rect class="sh" x="264" y="960" width="112" height="80" rx="8"/><text class="nt" x="320" y="985.93" text-anchor="middle">Dispatcher</text><text class="nb" x="320" y="1007.75" text-anchor="middle">a handler</text><text class="nb" x="320" y="1024.75" text-anchor="middle">per event</text></g>
+<g class="n-code"><rect class="sh" x="456" y="960" width="112" height="80" rx="8"/><text class="nt" x="512" y="985.93" text-anchor="middle">Event</text><text class="nb" x="512" y="1007.75" text-anchor="middle">first match</text><text class="nb" x="512" y="1024.75" text-anchor="middle">wins</text></g>
+<g class="n-code"><rect class="sh" x="640" y="960" width="120" height="80" rx="8"/><text class="nt" x="700" y="985.93" text-anchor="middle">Watcher</text><text class="nb" x="700" y="1007.75" text-anchor="middle">snapshot →</text><text class="nb" x="700" y="1024.75" text-anchor="middle">one event</text></g>
+<g class="n-code"><rect class="sh" x="264" y="1080" width="128" height="80" rx="8"/><text class="nt" x="328" y="1105.93" text-anchor="middle">Run record</text><text class="nb" x="328" y="1127.75" text-anchor="middle">which work item,</text><text class="nb" x="328" y="1144.75" text-anchor="middle">since when</text></g>
+<g class="n-code"><rect class="sh" x="640" y="1080" width="120" height="80" rx="8"/><text class="nt" x="700" y="1105.93" text-anchor="middle">Tick</text><text class="nb" x="700" y="1127.75" text-anchor="middle">wakes on</text><text class="nb" x="700" y="1144.75" text-anchor="middle">a schedule</text></g>
+<text class="lb lb-plain" x="504" y="240.08" text-anchor="start">contains</text>
+<text class="lb lb-plain" x="504" y="360.08" text-anchor="start">contains</text>
+<text class="lb lb-plain" x="504" y="480.08" text-anchor="start">has</text>
+<text class="lb lb-plain" x="576" y="272.58" text-anchor="middle">when</text><text class="lb lb-plain" x="576" y="287.58" text-anchor="middle">complete</text>
+<text class="lb lb-plain" x="596" y="395.58" text-anchor="middle">lives on</text>
+<text class="lb lb-plain" x="708" y="700.08" text-anchor="start">proposed by</text>
+<text class="lb lb-plain" x="380" y="167.58" text-anchor="middle">carries</text>
+<text class="lb lb-plain" x="408" y="395.58" text-anchor="middle">is in</text>
+<text class="lb lb-plain" x="328" y="360.08" text-anchor="start">defines</text>
+<text class="lb lb-plain" x="328" y="476.08" text-anchor="start">names</text>
+<text class="lb lb-plain" x="224" y="377.58" text-anchor="middle">moves</text><text class="lb lb-plain" x="224" y="392.58" text-anchor="middle">forward</text><text class="lb lb-plain" x="224" y="407.58" text-anchor="middle">only after</text>
+<text class="lb lb-plain" x="224" y="515.58" text-anchor="middle">may write</text>
+<text class="lb lb-plain" x="328" y="620.08" text-anchor="start">defined by</text>
+<text class="lb lb-plain" x="240" y="620.08" text-anchor="start">plays</text>
+<text class="lb lb-flow" x="136" y="776.08" text-anchor="start">given to</text>
+<text class="lb lb-flow" x="232" y="839.58" text-anchor="middle">ends with</text>
+<text class="lb lb-flow" x="416" y="696.58" text-anchor="start">writes ·</text><text class="lb lb-flow" x="416" y="711.58" text-anchor="start">promotes</text>
+<text class="lb lb-flow" x="596" y="793.58" text-anchor="middle">merges ·</text><text class="lb lb-flow" x="596" y="808.58" text-anchor="middle">closes ·</text><text class="lb lb-flow" x="596" y="823.58" text-anchor="middle">comments</text>
+<text class="lb lb-flow" x="708" y="1064.08" text-anchor="start">runs</text>
+<text class="lb lb-flow" x="604" y="991.58" text-anchor="middle">yields</text>
+<text class="lb lb-flow" x="416" y="1007.58" text-anchor="middle">handled by</text>
+<text class="lb lb-flow" x="336" y="1064.08" text-anchor="start">records</text>
+<text class="lb lb-flow" x="196" y="991.58" text-anchor="middle">starts</text>
+<text class="lb lb-flow" x="328" y="912.08" text-anchor="start">applied by</text>
+<text class="lb lb-flow" x="542" y="907.58" text-anchor="middle">opens · posts · hands over</text>
+<text class="lb lb-plain" x="724" y="920.08" text-anchor="start">reads</text>
+<text class="lb lb-plain" x="672" y="167.58" text-anchor="middle">reads</text>
+<g class="n-agent"><rect class="sh" x="40" y="1197.5" width="26" height="13" rx="3"/></g><text class="lg" x="74" y="1208" text-anchor="start">the model: agent run</text>
+<g class="n-human"><rect class="sh" x="216.47" y="1197.5" width="26" height="13" rx="3"/></g><text class="lg" x="250.47" y="1208" text-anchor="start">the human</text>
+<g class="n-code"><rect class="sh" x="337.43" y="1197.5" width="26" height="13" rx="3"/></g><text class="lg" x="371.43" y="1208" text-anchor="start">code: control loop</text>
+<g class="n-concept"><rect class="sh" x="497.94" y="1197.5" width="26" height="13" rx="3"/></g><text class="lg" x="531.94" y="1208" text-anchor="start">data: project files</text>
+<g class="n-store"><rect class="sh" x="654.28" y="1197.5" width="26" height="13" rx="3"/></g><text class="lg" x="688.28" y="1208" text-anchor="start">stored state</text>
+<path class="e e-flow" d="M 40 1228 L 63 1228" marker-end="url(#ah-flow)"/><text class="lg" x="74" y="1232" text-anchor="start">an action</text>
+<path class="e e-plain" d="M 152.64 1228 L 175.64 1228" marker-end="url(#ah-plain)"/><text class="lg" x="186.64" y="1232" text-anchor="start">a structural relation</text>
 </svg>

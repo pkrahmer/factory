@@ -1,9 +1,9 @@
 """Figure 2-2: the factory's concepts in five clusters and the relations between them.
 
-The description in concept_map.md is authoritative. Five clusters in three bands, left to right:
-the work with the human's side below it, the line with the agent run below it, and the control
-loop. Two relations are left out of the picture: the stage agent works on the story, and the
-watcher reads the pull request.
+The description in concept_map.md is authoritative. Five clusters on a canvas 848 px wide: the
+work and the human's side on the right, the line and the agent run on the left, and the control
+loop as a strip along the bottom, read from right to left. One relation is left out of the
+picture: the stage agent works on the story.
 """
 
 import sys
@@ -12,24 +12,24 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from diagram_kit import Diagram, Edge, Group, Legend, Node, save  # noqa: E402
 
-W, H = 1200, 992
-NODE_H = 80
+W, H = 848, 1256
 
-# Column left edges and widths: the work's side column, its main column, the line's two
-# columns (the agent run below them), and the control loop.
-C0, C0W = 56, 168
-C1, C2, C3, CW = 296, 504, 744, 144
-C4, C4W = 960, 160
+# Column left edges: the line's two columns, then the work's chain; the work's right column
+# (feature acceptance, branch, pull request, watcher) is centered on X_D.
+X_A, X_B, X_C = 56, 264, 440
+X_D = 700  # center of the right column
+LANE = 792  # the watcher's line up to the project runs here, right of every node
 
-# Row tops: the work and the line (R0-R3), the human's side and the agent run (R4-R5).
-R0, R1, R2, R3, R4, R5 = 136, 264, 392, 520, 680, 808
-LOOP = (R0, 320, 504, R4)  # tick, watcher, event, dispatcher
-CHANNEL = 936  # the bottom channel of the line from the dispatcher to the pull request
+# Row centers: the work and the line (R0-R3), the agent run and the human's side (R4-R5),
+# the control loop (R6-R7).
+R0, R1, R2, R3, R4, R5, R6, R7 = 176, 296, 416, 536, 712, 832, 1000, 1120
+CHANNEL = 916  # the dispatcher's line to the pull request, between the human's side and the loop
 
 
-def box(x: int, y: int, w: int, kind: str, title: str, *body: str) -> Node:
-    """A node with a title and two body lines."""
-    return Node(x, y, w, NODE_H, kind=kind, title=title, lines=body)
+def box(x: int, cy: int, w: int, kind: str, title: str, *body: str) -> Node:
+    """A node with a title and two or three body lines, centered on `cy`."""
+    h = 80 if len(body) < 3 else 96
+    return Node(x, cy - h // 2, w, h, kind=kind, title=title, lines=body)
 
 
 def build() -> Diagram:
@@ -46,15 +46,15 @@ def build() -> Diagram:
         "stage; a stage names a role and moves forward only after its checks; a role may write "
         "its lane and is defined by its instructions. The agent run: a task is given to the stage "
         "agent, which plays the role and ends with an outcome. The control loop: a tick runs the "
-        "watcher, which reads the project and yields an event; the event is handled by the "
-        "dispatcher, which starts the stage agent, records a run record, applies the outcome and "
-        "opens, posts to and hands over the pull request. The human writes and promotes stories "
-        "and merges, closes or comments on the pull request.",
+        "watcher, which reads the project and the pull request and yields an event; the event is "
+        "handled by the dispatcher, which starts the stage agent, records a run record, applies "
+        "the outcome and opens, posts to and hands over the pull request. The human writes and "
+        "promotes stories and merges, closes or comments on the pull request.",
         legend=Legend(
             nodes={
-                "concept": "data: files in the project",
-                "agent": "the model: the agent run",
-                "code": "code: the control loop",
+                "concept": "data: project files",
+                "agent": "the model: agent run",
+                "code": "code: control loop",
                 "human": "the human",
                 "store": "stored state",
             },
@@ -62,164 +62,146 @@ def build() -> Diagram:
         ),
     )
     d.add(
-        Group(40, 104, 416, 512, caption="The work", kind="concept"),
-        Group(40, 648, 416, 144, caption="The human's side", kind="human"),
-        Group(488, 232, 416, 384, caption="The line", kind="concept"),
-        Group(488, 648, 416, 256, caption="The agent run", kind="agent"),
-        Group(944, 104, 216, 800, caption="The control loop", kind="code"),
+        Group(424, 104, 384, 496, caption="The work", kind="concept"),
+        Group(40, 232, 352, 368, caption="The line", kind="concept"),
+        Group(40, 632, 352, 256, caption="The agent run", kind="agent"),
+        Group(424, 760, 384, 128, caption="The human's side", kind="human"),
+        Group(248, 928, 560, 248, caption="The control loop", kind="code"),
     )
 
-    # The work: the main column, with feature acceptance and the branch on the left.
-    project = d.add(box(C1, R0, CW, "concept", "Project", "the repository", "being built"))
-    feature = d.add(box(C1, R1, CW, "concept", "Feature", "goal, scope,", "out of scope"))
-    story = d.add(box(C1, R2, CW, "concept", "Story", "specification ·", "state · memory"))
-    log = d.add(box(C1, R3, CW, "concept", "Log", "append-only,", "numbered"))
+    # The work: the chain in the middle column, feature acceptance and the branch on its right.
+    project = d.add(box(X_C, R0, 112, "concept", "Project", "the repository", "being built"))
+    feature = d.add(box(X_C + 8, R1, 96, "concept", "Feature", "goal, scope,", "out of scope"))
+    story = d.add(box(X_C, R2, 112, "concept", "Story", "specification ·", "state · memory"))
+    log = d.add(box(X_C, R3, 112, "concept", "Log", "append-only,", "numbered"))
     accept = d.add(
-        box(C0, R1, C0W, "concept", "Feature acceptance", "judges a complete", "feature")
+        box(608, R1, 168, "concept", "Feature acceptance", "judges a complete", "feature")
     )
-    branch = d.add(box(C0, R2, C0W, "concept", "Branch", "one per work item,", "until the merge"))
+    branch = d.add(
+        box(X_D - 60, R2, 120, "concept", "Branch", "one per work", "item, until", "the merge")
+    )
 
-    # The human's side, below the work.
-    request = d.add(box(C0, R4, C0W, "store", "Pull request", "merge · close ·", "comment"))
-    human = d.add(box(C1, R4, CW, "human", "The human", "intent and", "acceptance"))
-
-    # The line.
-    table = d.add(box(C2, R1, CW, "concept", "Stage table", "the factory's", "program"))
-    stage = d.add(box(C2, R2, CW, "concept", "Stage", "role · next ·", "checks · caps"))
-    check = d.add(box(C3, R2, CW, "concept", "Check", "a control-surface", "command"))
-    role = d.add(box(C2, R3, CW, "concept", "Role", "instructions · model ·", "tools · budget"))
-    lane = d.add(box(C3, R3, CW, "concept", "Lane", "the paths a role", "may write"))
+    # The line: the stage table, the stage and the role in one column, the rest to its left.
+    table = d.add(box(X_B, R1, 112, "concept", "Stage table", "the factory's", "program"))
+    stage = d.add(box(X_B, R2, 112, "concept", "Stage", "role · next ·", "checks · caps"))
+    role = d.add(
+        box(X_B, R3, 112, "concept", "Role", "instructions ·", "model · tools ·", "budget")
+    )
+    check = d.add(box(X_A, R2, 128, "concept", "Check", "a control-surface", "command"))
+    lane = d.add(box(X_A, R3, 128, "concept", "Lane", "the paths a role", "may write"))
 
     # The agent run, below the line.
+    task = d.add(box(X_A, R4, 128, "agent", "Task", "the facts", "of this run"))
     instructions = d.add(
-        box(C2, R4, CW, "agent", "Instructions", "rules · role · stage ·", "project guide")
+        box(X_B, R4, 112, "agent", "Instructions", "rules · role ·", "stage · project", "guide")
     )
-    agent = d.add(box(C3, R4, CW, "agent", "Stage agent", "one role, one stage,", "one work item"))
-    task = d.add(box(C2, R5, CW, "agent", "Task", "the facts", "of this run"))
-    outcome = d.add(box(C3, R5, CW, "agent", "Outcome", "decision +", "log entry"))
+    agent = d.add(
+        box(X_A, R5, 144, "agent", "Stage agent", "one role, one stage,", "one work item")
+    )
+    outcome = d.add(box(X_B, R5, 112, "agent", "Outcome", "decision +", "log entry"))
 
-    # The control loop.
-    tick = d.add(box(C4, LOOP[0], C4W, "code", "Tick", "wakes on", "a schedule"))
-    watcher = d.add(box(C4, LOOP[1], C4W, "code", "Watcher", "snapshot →", "one event"))
-    event = d.add(box(C4, LOOP[2], C4W, "code", "Event", "first match", "wins"))
-    dispatcher = d.add(box(C4, LOOP[3], C4W, "code", "Dispatcher", "a handler", "per event"))
-    run = d.add(box(C4 + 32, R5, 128, "code", "Run record", "which work item,", "since when"))
+    # The human's side, below the work.
+    human = d.add(box(X_C, R5, 112, "human", "The human", "intent and", "acceptance"))
+    request = d.add(box(X_D - 60, R5, 120, "store", "Pull request", "merge · close ·", "comment"))
 
-    gap0 = (C0 + C0W + C1) / 2  # between the work's two columns
-    gap1 = (C3 + CW + C4) / 2  # between the line and the control loop
+    # The control loop, from the watcher on the right to the dispatcher on the left.
+    dispatcher = d.add(box(X_B, R6, 112, "code", "Dispatcher", "a handler", "per event"))
+    event = d.add(box(456, R6, 112, "code", "Event", "first match", "wins"))
+    watcher = d.add(box(X_D - 60, R6, 120, "code", "Watcher", "snapshot →", "one event"))
+    run = d.add(box(X_B, R7, 128, "code", "Run record", "which work item,", "since when"))
+    tick = d.add(box(X_D - 60, R7, 120, "code", "Tick", "wakes on", "a schedule"))
 
     d.add(
         # The work.
         Edge([project.bottom, feature.top], kind="plain", label="contains"),
         Edge([feature.bottom, story.top], kind="plain", label="contains"),
         Edge([story.bottom, log.top], kind="plain", label="has"),
-        Edge([feature.left, accept.right], kind="plain", label=("when", "complete")),
-        Edge([story.port("left", -12), branch.port("right", -12)], kind="plain", label="lives on"),
+        Edge([feature.right, accept.left], kind="plain", label=("when", "complete")),
+        Edge([story.port("right", -12), branch.port("left", -12)], kind="plain", label="lives on"),
         Edge(
-            [branch.port("bottom", 40), request.port("top", 40)],
+            [branch.bottom, request.top],
             kind="plain",
             label="proposed by",
-            side="left",
-            pos=500,
-        ),
-        # The human.
-        Edge(
-            [
-                human.port("left", -16),
-                (gap0, human.cy - 16),
-                (gap0, story.cy + 12),
-                story.port("left", 12),
-            ],
-            label=("writes ·", "promotes"),
-            side="left",
-            segment=1,
-            pos=552,
-        ),
-        Edge(
-            [human.port("left", 8), request.port("right", 8)],
-            label=("merges ·", "closes ·", "comments"),
-            side="below",
+            pos=696,
         ),
         # The work and the line.
         Edge(
-            [project.port("right", 12), (table.cx, project.cy + 12), table.top],
+            [project.left, (table.cx, project.cy), table.top],
             kind="plain",
             label="carries",
-            segment=1,
-            pos=210,
+            segment=0,
         ),
-        Edge([story.right, stage.left], kind="plain", label="is in"),
+        Edge([story.port("left", -12), stage.port("right", -12)], kind="plain", label="is in"),
         # The line.
         Edge([table.bottom, stage.top], kind="plain", label="defines"),
-        Edge([stage.right, check.left], kind="plain", label=("moves forward", "only after")),
         Edge([stage.bottom, role.top], kind="plain", label="names"),
-        Edge([role.port("right", -12), lane.port("left", -12)], kind="plain", label="may write"),
-        Edge(
-            [role.port("bottom", 32), instructions.port("top", 32)],
-            kind="plain",
-            label="defined by",
-            pos=632,
-        ),
+        Edge([stage.left, check.right], kind="plain", label=("moves", "forward", "only after")),
+        Edge([role.port("left", -12), lane.port("right", -12)], kind="plain", label="may write"),
+        Edge([role.bottom, instructions.top], kind="plain", label="defined by", pos=616),
         Edge(
             [
-                agent.port("left", -12),
-                (C3 - 32, agent.cy - 12),
-                (C3 - 32, role.cy + 12),
-                role.port("right", 12),
+                agent.port("right", -16),
+                (232, agent.cy - 16),
+                (232, role.cy + 12),
+                role.port("left", 12),
             ],
             kind="plain",
             label="plays",
-            segment=2,
-            side="below",
+            segment=1,
+            pos=616,
         ),
         # The agent run.
+        Edge([task.port("bottom", 8), agent.top], label="given to"),
+        Edge([agent.port("right", 16), outcome.port("left", 16)], label="ends with"),
+        # The human.
         Edge(
             [
-                task.right,
-                (C2 + CW + 32, task.cy),
-                (C2 + CW + 32, agent.cy + 12),
-                agent.port("left", 12),
+                human.left,
+                (408, human.cy),
+                (408, story.cy + 12),
+                story.port("left", 12),
             ],
-            label="given to",
-            segment=2,
-            side="below",
-        ),
-        Edge([agent.bottom, outcome.top], label="ends with"),
-        # The control loop.
-        Edge([tick.bottom, watcher.top], label="runs"),
-        Edge([watcher.bottom, event.top], label="yields"),
-        Edge([event.bottom, dispatcher.top], label="handled by"),
-        Edge([dispatcher.left, agent.right], label="starts"),
-        Edge(
-            [outcome.right, (dispatcher.x + 16, outcome.cy), dispatcher.port("bottom", -64)],
-            label="applied by",
+            label=("writes ·", "promotes"),
             segment=1,
-            pos=784,
+            pos=700,
         ),
-        Edge([dispatcher.port("bottom", 16), run.top], label="records"),
+        Edge([human.right, request.left], label=("merges ·", "closes ·", "comments")),
+        # The control loop.
+        Edge([tick.top, watcher.bottom], label="runs"),
+        Edge([watcher.left, event.right], label="yields"),
+        Edge([event.port("left", 16), dispatcher.port("right", 16)], label="handled by"),
+        Edge([dispatcher.port("bottom", 8), run.top], label="records"),
+        Edge(
+            [dispatcher.left, (agent.cx, dispatcher.cy), agent.bottom],
+            label="starts",
+        ),
+        Edge([outcome.bottom, dispatcher.top], label="applied by", pos=908),
         Edge(
             [
-                watcher.left,
-                (gap1, watcher.cy),
-                (gap1, project.cy - 12),
-                project.port("right", -12),
+                dispatcher.port("right", -16),
+                (400, dispatcher.cy - 16),
+                (400, CHANNEL),
+                (request.cx - 16, CHANNEL),
+                request.port("bottom", -16),
+            ],
+            label="opens · posts · hands over",
+            segment=2,
+        ),
+        Edge(
+            [watcher.port("top", 16), request.port("bottom", 16)],
+            kind="plain",
+            label="reads",
+        ),
+        Edge(
+            [
+                watcher.right,
+                (LANE, watcher.cy),
+                (LANE, project.cy),
+                project.right,
             ],
             kind="plain",
             label="reads",
             segment=2,
-            pos=760,
-        ),
-        Edge(
-            [
-                dispatcher.right,
-                (dispatcher.x2 + 16, dispatcher.cy),
-                (dispatcher.x2 + 16, CHANNEL),
-                (request.cx, CHANNEL),
-                request.bottom,
-            ],
-            label="opens · posts · hands over",
-            segment=2,
-            pos=600,
         ),
     )
     return d

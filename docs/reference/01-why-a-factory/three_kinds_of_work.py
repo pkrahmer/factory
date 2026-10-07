@@ -10,19 +10,19 @@ from typing import NamedTuple
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from diagram_kit import Diagram, Edge, Group, Node, Text, route, save  # noqa: E402
 
-WIDTH, HEIGHT = 960, 624
-COLS = (40, 344, 648)  # the left edges of the human, model and code columns
-COL_W, GAP = 272, 32  # every column's width, and the space between two columns
-COL_Y, COL_H = 288, 296  # the columns' top and height
+WIDTH, HEIGHT = 848, 696
+COLS = (40, 304, 568)  # the left edges of the human, model and code columns
+COL_W = 240  # every column's width; 24 px between two columns
+COL_Y, COL_H = 368, 288  # the columns' top and height
 INSET = 16  # the header box inside its column
 HEAD_H = 56  # the header boxes: tag and title
-LIST_Y = 392  # the first step's baseline
-FOOT_Y = 544  # the footer's first baseline
+LIST_Y = 472  # the first step's baseline
+FOOT_Y = 616  # the footer's first baseline
 BULLET, STEP = 24, 40  # x offsets in a column: the bullets and the step texts
-TOP = 104  # the top of the decision row
+PILL_Y = 104  # the step pill, above q1
+TOP = 192  # the top of the question row
 DIA_W, DIA_H = 176, 112  # the question diamonds
-MID = TOP + DIA_H // 2  # the decision row's middle line
-VIA = 256  # the channel where two answers turn towards their columns
+VIA = 336  # the channel where q2's "no" turns towards the model column
 ITALIC_NOTES = ".tx-note { font-style: italic; }\n"
 
 
@@ -109,21 +109,21 @@ def build() -> Diagram:
         "has one right result that must be exact and cheap.",
         legend=None,
     )
-    step = d.add(Node(40, MID - 24, 168, 48, shape="pill", title="A step in the work"))
-    # q1 stands over the gap between the human and model columns, q2 over the next one.
-    q1 = d.add(Node(COLS[1] - GAP // 2 - DIA_W // 2, TOP, DIA_W, DIA_H, shape="diamond"))
+    q1 = d.add(Node(COLS[0] + COL_W // 2 - DIA_W // 2, TOP, DIA_W, DIA_H, shape="diamond"))
     q1.lines = ("Decides", "what is wanted", "or accepted?")
-    q2 = d.add(Node(COLS[2] - GAP // 2 - DIA_W // 2, TOP, DIA_W, DIA_H, shape="diamond"))
+    # the step stands over q1, which stands over the human column; q2 over the model-code gap
+    step = d.add(Node(q1.x, PILL_Y, DIA_W, 48, shape="pill", title="A step in the work"))
+    q2 = d.add(Node(COLS[2] - 16 - DIA_W // 2, TOP, DIA_W, DIA_H, shape="diamond"))
     q2.lines = ("One right", "result, reachable", "by code?")
 
     human, model, code = (_column(d, x, owner) for x, owner in zip(COLS, OWNERS, strict=True))
 
     d.add(
-        Edge(route(step.right, q1.left, "h")),
+        Edge(route(step.bottom, q1.top, "v")),
         Edge(route(q1.right, q2.left, "h"), label="no"),
-        Edge(route(q1.bottom, human.top, "vhv", via=VIA), label="yes", segment=0),
+        Edge(route(q1.bottom, human.top, "v"), label="yes"),
         Edge(route(q2.bottom, model.top, "vhv", via=VIA), label="no", segment=0),
-        Edge(route(q2.right, code.top, "hv"), label="yes", segment=0),
+        Edge(route(q2.right, code.top, "hv"), label="yes", segment=1),
     )
     return d
 

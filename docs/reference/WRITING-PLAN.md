@@ -412,5 +412,5 @@ Found while writing Parts I and II, verified against the code. Each belongs in t
 
 1. ~~Add a design decision to `docs/decisions.md` for the reverted plans of 2026-10-05?~~ Done on 2026-10-07 (the last entry, dated 2026-10-05). The book, describing `537fc20`, still states the gap; `RETARGET.md` lists the places.
 2. ~~Keep run 4's cost records as a data file for chapter 16?~~ Done on 2026-10-07: `data/demo-dispatches.jsonl`.
-3. Redraw Part I's five figures at most 850 px wide, so that they print upright in the text instead of on pages of their own?
+3. ~~Redraw Part I's five figures at most 850 px wide?~~ Done on 2026-10-07: all five are 848–850 px wide and print upright.
 4. When to merge `docs/reference` into `main`?
