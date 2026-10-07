@@ -48,6 +48,7 @@ The book states these as facts about v1 at `537fc20`. At the new commit they are
 | 17 (planned) | the backlog's contents | 2026-10-07: the feature-acceptance entry removed (built); "Running the Demo blocks in code" added (part E of the archived plan); the bigger plans listed as files |
 | 3, P17 (the limit box, the test table, the Planner box) | "the reverted plans under P10 are not in the decision log"; P17 *Partial* | 2026-10-07: `docs/decisions.md` has an entry dated 2026-10-05 for both reverts; P17 then holds |
 | 3, P10 (*In v1*); 10, the note on the reverted plan | "The build and the revert are not in the repository's history" | still true of the Git history, but the decision log now records both; say so |
+| 13, the identity limit; 14, the compose table | the default commit address `factory@users.noreply.github.com`, which GitHub attributes to the organization `factory` | 2026-10-07, branch `fix/commit-identity` (commit `fc72572`, not yet merged): the default is `factory@noreply.invalid`, which matches no account; `.env.example`, `docs/github-settings.md` and a design decision say so |
 | B (planned) | the file map | `docs/archive/` and `docs/backlog/` exist; the repository's `README.md` names them |
 
 ## 5. What drifts with any code change
@@ -62,3 +63,6 @@ These are tied to the code at `537fc20` and must be verified against the code at
 - *Stale-document limits:* the `max_attempts` comment (ch. 5), the template's Demo text (ch. 4), `stage-review`'s claim about `make check` (ch. 9), R10's `docs/branching.md` (ch. 9).
 - *Counts:* tests, design decisions, files (ch. 16, appendices B and C).
 - *Run data:* the four runs are history and stay; a new run after `537fc20` adds a row to chapter 16, not a rewrite.
+- *Part III's tables of v1's machine and settings:* the control surface, the template against the demonstration project and the protected paths (ch. 12); the branches, the commit table, the sync steps and the GitHub settings (ch. 13); the image, the compose variables, the entrypoint's steps, the tick's steps, the preflight's items, the state files and the log lines (ch. 14); the reach table (ch. 15).
+- *Statements about Claude Code's behavior* in chapter 15 (auto mode drops broad run rules, the classifier allows pushes to any branch, protected paths, `settings.local.json` without a trust step): taken from Claude Code's documentation on 2026-10-07, not from v1's code; check them against the documentation and the version the image then installs.
+- *Facts about the running container* (ch. 13, 14, 15): file ownership, the credential helper in `~/.gitconfig`, Claude Code 2.1.289 in the container built on 2026-10-05 at 20:59 UTC, and GitHub attributing `factory@users.noreply.github.com` to the organization `factory`; observed on 2026-10-07, not in the repository.

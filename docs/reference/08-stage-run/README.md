@@ -124,7 +124,7 @@ v1's lanes, from `template/stages.yml`. Every lane includes the story itself, `f
 | documenter | `README.md`, `docs/*` |
 | acceptor | `factory/features/*/ACCEPTANCE.md`, `factory/features/*/drafts/*.md` |
 
-No lane reaches the files the guard reserves for the human: `.claude/`, `pyproject.toml`, `uv.lock`, `Makefile`, `CLAUDE.md`, `factory/stages.yml`, `factory/TICKET.md`, and any file named `FEATURE.md`.
+No lane reaches the files the guard reserves for the human ([chapter 12](../12-project-contract/README.md)).
 
 ![Figure 8-1. The stage protocol](stage_run_sequence.svg)
 
@@ -165,7 +165,7 @@ After the agent run that reached the gate, the tick posts the cost table ([chapt
 > **v1 limit:** the undo and the restore run only when the protocol completes. They see only the work tree's tracked and unignored files: a write to an ignored path, or outside the checkout, is never undone ([chapter 15](../15-safety/README.md)). After a kill, or any raise after the agent (the branch test, the YAML error above), the next tick's `tick.recover_dirty_tree` commits whatever is in the work tree with `git add -A`: out-of-lane writes, and the agent's edits to the frontmatter and the log, survive into the history ([chapter 14](../14-runtime/README.md)). After a branch switch they land on whatever branch is checked out. And an out-of-lane change the coder committed itself stays in the history, reverted by the factory's next commit.
 
 > [!WARNING]
-> **v1 limit:** the hand-over is not retried. `_move` pushes the stage change before `_hand_over` writes the description. If GitHub fails then, the tick counts a failure, but the work item is already at the gate, so the `run` event never returns: the pull request stays a draft with its first description, no cost table is posted, the agent run gets no cost record, and nothing tells the human.
+> **v1 limit:** the hand-over is not retried. `_move` pushes the stage change before `_hand_over` writes the description. If GitHub fails then, the tick counts a failure, but the work item is already at the gate, so the `run` event never returns: the pull request stays a draft with its first description, no cost table is posted, and nothing tells the human.
 
 > [!WARNING]
 > **v1 limit:** each `claude` call, and each `make` call of a check or report, gets the full lease as its timeout. A stage can therefore take two leases for the agent, plus one per check, while its run record expires after one. Only the sequential loop keeps that harmless: the lock of a running tick goes stale only after the lease plus 10 minutes, and no second tick starts in the meantime.

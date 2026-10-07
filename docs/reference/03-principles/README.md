@@ -44,7 +44,7 @@ So the stage is a field in the story, and a transition is a commit, which record
 
 > [!WARNING]
 > **v1 limit:** two shortfalls.
-> - Losing the cost records, for example with the container's work volume, loses the bill of every story not yet archived.
+> - The cost records live outside version control, and are lost with the machine ([chapter 14](../14-runtime/README.md)).
 > - A comment the human writes while the stages work can be skipped entirely: every post of the factory's own advances the count of comments read ([chapter 7](../07-dispatcher/README.md)).
 
 ## The human
@@ -225,7 +225,7 @@ Spending only on events has a price, and v1 paid it once. The watcher reads a pu
 **Any agent run, and any tick, can die at any moment. The factory resumes from versioned state without a human, and calls a human only when the same thing fails again.**
 
 Machines restart, processes are killed and networks drop; a factory that needs a human to clean up after each is not unattended. v1's recovery is a set of small, specific mechanisms:
-- **Locks are reclaimable.** A lock older than its lease belongs to a dead tick and is removed; after a restart every lock goes at once, because nothing can be running yet.
+- **Locks are reclaimable.** A lock older than its lease plus ten minutes belongs to a dead tick and is removed; after a restart every lock goes at once, because nothing can be running yet.
 - **Agent runs are leased and recorded outside the work.** A run record left behind by a killed agent run marks that agent run dead; after a restart, at once, whatever its age.
 - **Partial work is kept.** An interrupted agent run's changes on a story's branch are committed as they are, so the next attempt sees them.
 - **Every handler tolerates being run twice, and the factory avoids running it twice anyway:** it handles the same event in the same repository state once.
