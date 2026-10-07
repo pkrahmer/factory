@@ -46,7 +46,7 @@ A work item **waits** when it has a `pr` and is either at a gate or has `blocked
 
 While a work item waits, the `pr` event comes out on every evaluation, with or without new comments; the tick decides whether it needs handling ([chapter 7](../07-dispatcher/README.md)). That is how waiting holds back all new work in code: nothing below the second tier is ever reached. `busy` blocks new work for a different reason, the one-agent-run rule, and the tick never handles it.
 
-The contract lists the attempts cap with the other `ask`. The code tests it in `_runnable`, after the run record and only for the first work item that has an agent, so a capped work item with a higher identifier is asked about only when no lower one can run.
+The watcher's contract lists the attempts cap with the other `ask`. The code tests it in `_runnable`, after the run record and only for the first work item that has an agent, so a capped work item with a higher identifier is asked about only when no lower one can run.
 
 ### Reading the work items
 
@@ -90,7 +90,7 @@ With v1's own moves, only one work item can wait at a time. A work item starts w
 The run record is `.git/factory-run.json`, outside the work tree:
 
 ```json
-{"path": "factory/features/F0002-operations/ongoing/F0002-S0001-health-endpoint.md", "started": "2026-10-05T17:40:12Z"}
+{"path": "factory/features/F0002-operations/ongoing/F0002-S0001-health-endpoint.md", "started": "2026-10-05T18:58:20Z"}
 ```
 
 `stage.run` writes it immediately before the agent starts and removes it in a `finally` block when the agent returns, so a record left behind belongs to an agent run that was killed. `_leased` turns it into `busy` or `expired` by its age. The tick adds one rule the watcher cannot know: a record older than the machine's start (`FACTORY_STARTED_AT`, set by the entrypoint) is `expired` at once, whatever its age (`tick.outlived_claim`). In the container, `busy` never reaches the tick: a tick that dies leaves its lock, and the next tick evaluates only after `lease_minutes` + 10 minutes, when the record has expired. Only a second process, such as `factory-watch --once` run by hand, sees `busy`.
@@ -135,5 +135,5 @@ The board's counts come from whatever branch the factory last checked out.
 >   - prove that only one work item can wait (the argument above), or read every waiting pull request;
 >   - check every commit since the last evaluation for illegal stage changes, on every branch with work items, and make the factory's own commits legal by construction;
 >   - every stop event must reach the human where they look (P12);
->   - the contract and the code disagree on where the attempts cap sits; a next contract states the order the code implements;
+>   - the watcher's contract and the code disagree on where the attempts cap sits; the next watcher's contract states the order the code implements;
 >   - each reader's cost on every tick (v1 lists the work items twice, runs two `git` calls per branch ref to test ancestry, and one `git show` per work item).

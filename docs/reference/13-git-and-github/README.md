@@ -23,6 +23,10 @@ The hosting service must offer what [chapter 3](../03-principles/README.md) list
 | `ticket/<file stem>` | one story, from its first stage to the human's decision | by `stage._open`, from the main branch, when the story's first stage is due ([chapter 8](../08-stage-run/README.md)) | deleted after a merge or a discard; kept after a send-back |
 | `acceptance/<feature folder>` | one feature's acceptance report and its proposed drafts | the same, when the acceptance is due | deleted after a merge or a refusal |
 
+![Figure 13-1. Branches](branches.svg)
+
+*Figure 13-1. Branches: one clean story and its feature's acceptance in time order, each commit colored by who makes it, and each work item's pull request, draft and then ready, beside its branch.*
+
 The table in `docs/branching.md` says intake and the acceptor create the branches; its own step list, and the code, say the factory does. `repo.delete` removes a branch locally (unless it is checked out), prunes, and deletes it on the remote with `git push origin --delete`; a branch already gone is fine.
 
 The names `main` and `origin` are fixed in the code (`ops.MAIN`, `watch.MAIN_REF`, `tick.sync_main`), and `gh pr create` is called without `--base`, so every pull request targets the repository's default branch, which must be `main`.
@@ -33,7 +37,7 @@ The names `main` and `origin` are fixed in the code (`ops.MAIN`, `watch.MAIN_REF
 | :- | :- | :- |
 | `main` | *the human* | features, drafts, the stage table, the forms, the guide, the build files; the `git mv` that promotes a story |
 | `main` | *the human, on GitHub* | the merge commit of a pull request |
-| `main` | *the factory* | one per event: the archive after a merge, the refusal record, the discard ([chapter 7](../07-dispatcher/README.md)); and `reject`'s correction when the checkout is on the main branch |
+| `main` | *the factory* | one per event: the archive after a merge (for an acceptance, the booking of its `outcome`), the refusal record, the discard ([chapter 7](../07-dispatcher/README.md)); and `reject`'s correction when the checkout is on the main branch |
 | a work item's branch | *the factory* | the first commit; `merge main` before a later stage, when the main branch has moved; one commit per stage result; the bookkeeping of questions, answers, send-backs, corrections, stalls and expired agent runs |
 | a work item's branch | *the coder* | its work commits, `ticket <id>: feat(<layer>): …` |
 | a work item's branch | *the tick* | `work left uncommitted by an interrupted run`: whatever a killed process, or a handler that raised between an edit and its commit, left in the work tree ([chapter 14](../14-runtime/README.md)) |
@@ -77,7 +81,7 @@ Either way, `merged` then deletes the branch, so its commits survive only in Git
 The token in the container, `GH_TOKEN`, is a fine-grained personal access token of the human's, limited to the repositories in `REPOS`, with Contents and Pull requests read and write and Metadata read; Issues read and write if `gh pr comment` is refused, because pull request comments go through the issues API. It should expire. A classic token with `repo` scope works too, and reaches every repository of the account.
 
 > [!WARNING]
-> **v1 limit:** the factory has no identity of its own. It pushes, opens pull requests and comments with the human's token, so GitHub treats it as the human, with the consequences [chapter 10](../10-human-at-the-gate/README.md) states. Its commits carry an address that belongs to nobody it controls: GitHub resolves `factory@users.noreply.github.com` by the login before the `@`, and attributes the demonstration project's commits to an unrelated organization named `factory`. A machine account or an app installation with its own noreply address would fix both.
+> **v1 limit:** the factory has no identity of its own. It pushes, opens pull requests and comments with the human's token, so GitHub treats it as the human, with the consequences [chapter 10](../10-human-at-the-gate/README.md) states. Its commits carry the default address `factory@noreply.invalid`, which matches no account, so GitHub shows them as nobody's (design decision 2026-10-07). Until then the default was `factory@users.noreply.github.com`, which GitHub resolves by the login before the `@`: it attributed the demonstration project's commits to an unrelated organization named `factory`. A machine account or an app installation with its own noreply address would give the factory an identity.
 
 > [!WARNING]
 > **v1 limit:** the main branch accepts any push the token can make. Because the human and the factory commit there directly, the ruleset cannot require a pull request, and a bypass would cover the token's owner, which is the human and everything that holds the token. "Nothing lands without the human" holds on GitHub only because nothing else pushes to `main`; [chapter 15](../15-safety/README.md) shows what else holds the token.

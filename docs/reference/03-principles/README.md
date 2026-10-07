@@ -28,7 +28,7 @@ The principle cuts both ways: code should not judge either. Carrying the human's
 
 *Rules out:* a model doing bookkeeping (counting, numbering, routing, posting, committing, deciding whether a check passed); code interpreting free text.
 
-*In v1:* the dispatcher and the stage protocol are code, and each agent's task names every fact the factory knows (the round, whether this is an approved test change, the form validation's result, the next free story number, the cost so far), so no agent works anything out from version control or the hosting service. v1's plan for this step, [`docs/deterministic-core.md`](https://github.com/pkrahmer/factory/blob/537fc20/docs/deterministic-core.md), tabulates where each fault sat; it is archived in `docs/archive/` since it was built, and [chapter 16](../16-evidence/README.md) carries its findings. Design decisions: 2026-10-05 (dispatcher as code; stage protocol as code; story form checked by code).
+*In v1:* the dispatcher and the stage protocol are code, and each agent's task names every fact the factory knows (the round, whether this is an approved test change, the form validation's result, the next free story number, the cost so far), so no agent works anything out from version control or the hosting service. v1's plan for this step, [`docs/archive/deterministic-core.md`](../../archive/deterministic-core.md), tabulates where each fault sat; it is history now that it is built, and [chapter 16](../16-evidence/README.md) carries its findings. Design decisions: 2026-10-05 (dispatcher as code; stage protocol as code; story form checked by code).
 
 ### P2. Versioned files are the only truth
 
@@ -40,7 +40,7 @@ So the stage is a field in the story, and a transition is a commit, which record
 
 *Rules out:* a database, a dashboard or a long-lived session as the place where a story's status lives; any action taken on a comment before it is in the log.
 
-*In v1:* machine state lives in `.git/`, never committed: the lock a tick holds, the run record (`factory-run.json`), the tick's memo of the last event handled, and the cost records. After a restart the locks and the memo are removed, and the run record left behind expires its agent run. The cost records are neither disposable nor rebuilt. Design decisions: 2026-10-04 (version 3; questions through the pull request), 2026-10-05 (the claim leaves Git).
+*In v1:* machine state lives in `.git/`, never committed: the lock a tick holds, the run record (`factory-run.json`), the tick's memo of the last event handled, and the cost records. After a restart the locks and the memo are removed, and the run record left behind expires its agent run. The cost records are neither disposable nor rebuilt. Design decisions: 2026-10-04 (generation 3; questions through the pull request), 2026-10-05 (the claim leaves Git).
 
 > [!WARNING]
 > **v1 limit:** two shortfalls.
@@ -70,7 +70,7 @@ The factory runs while the human is elsewhere, so a channel that needs a termina
 
 *Rules out:* questions in a chat or an email; a dashboard the human must watch; any action the human can only take at a keyboard while the factory works.
 
-*In v1:* code writes everything on the pull request, marked as its own; the description's closing paragraph says what each of the human's actions does at this stage ([chapter 2](../02-concepts/README.md)). Design decisions: 2026-10-04 (a branch per ticket; questions through the pull request), 2026-10-05 (the closing line; the hidden marker).
+*In v1:* code writes everything on the pull request, marked as its own; the description's closing paragraph says what each of the human's actions does at this stage ([chapter 8](../08-stage-run/README.md)). Design decisions: 2026-10-04 (a branch per ticket; questions through the pull request), 2026-10-05 (the closing line; the hidden marker).
 
 ### P5. Bounded work in flight, in the human's order
 
@@ -172,7 +172,7 @@ Code also keeps the factory changeable. A new rule in prose cannot be tested bef
 
 *Rules out:* a rule whose only defense is a sentence in an agent's instructions, when code could check it.
 
-*In v1:* two plans of 2026-10-05, *fewer commits* ([`docs/fewer-commits.md`](https://github.com/pkrahmer/factory/blob/537fc20/docs/fewer-commits.md)) and *review comments* ([`docs/review-comments.md`](https://github.com/pkrahmer/factory/blob/537fc20/docs/review-comments.md)), were built and reverted the same day although both worked: each added a conditional rule only a model could follow and nobody could test before a live run. The first became pointless the same day: once the claim left Git, there were no claim commits left to fold away, and the plan was withdrawn; it is archived in `docs/archive/`. The build and the revert are not in the repository's history, because the main branch was reset. Design decisions: 2026-10-04 (lanes enforced by a hook), 2026-10-05 (stage protocol as code).
+*In v1:* two plans of 2026-10-05, *fewer commits* ([`docs/archive/fewer-commits.md`](../../archive/fewer-commits.md)) and *review comments* ([`docs/backlog/review-comments.md`](../../backlog/review-comments.md)), were built and reverted the same day although both worked: each added a conditional rule only a model could follow and nobody could test before a live run. The first became pointless the same day: once the claim (generation 4's run record) left Git, there were no claim commits left to fold away, and the plan was withdrawn; it is archived in `docs/archive/`. The build and the revert are not in the repository's history, because the main branch was reset; the decision log has recorded both since 2026-10-07. Design decisions: 2026-10-04 (lanes enforced by a hook), 2026-10-05 (stage protocol as code; the two reverted plans).
 
 > [!WARNING]
 > **v1 limit:** some rules have no enforcement in code:
@@ -201,7 +201,7 @@ A system that improvises past the unexpected hides its defects until someone rea
 
 P9 is this principle for agents: when the specification is silent, ask. P12 is the same principle for code: when the handlers are silent, stop and report.
 
-*Rules out:* a catch-all that carries on; unbounded retries; a failure only the log file knows about.
+*Rules out:* a catch-all that carries on; unbounded retries; a failure only the factory's log file knows about.
 
 *In v1:* a handler's unexpected error is a counted failure, tried three times on the same event and repository state and then reported on the pull request (commit `57fe24f`). Every stall is a comment there when it happens, not only at the attempts cap. Design decisions: 2026-10-04 (every stall a comment), 2026-10-05 (the dispatcher is code).
 
@@ -218,7 +218,7 @@ Spending only on events has a price, and v1 paid it once. The watcher reads a pu
 
 *Rules out:* a model on a timer; an agent session that watches; polling every pull request on every tick.
 
-*In v1:* the tick sleeps 2 seconds after a handled event, then 15 seconds, doubling to 120. Design decisions: 2026-10-04 (version 3), 2026-10-05 (the pull request's state before an agent; the doubling pause).
+*In v1:* the tick sleeps 2 seconds after a handled event, then 15 seconds, doubling to 120. Design decisions: 2026-10-04 (generation 3), 2026-10-05 (the pull request's state before an agent; the doubling pause).
 
 ### P14. Recover by construction
 
@@ -273,7 +273,7 @@ The largest saving in v1's history came from one row of a cost table: the coordi
 *In v1:* the records are free: the agent runtime reports them with every agent run, one line each, summed per story and per stage. The bill is posted on the pull request at the gate and written into the log at the archive; the feature acceptance reads the sum. Three later changes were made on measured grounds; [chapter 14](../14-runtime/README.md) has them. Design decisions: 2026-10-04 (the tick records costs).
 
 > [!WARNING]
-> **v1 limit:** the cost record is written when an agent run returns, so one killed by a restart leaves no record, and its cost is missing from the bill.
+> **v1 limit:** the cost record is written when an agent run returns, so one killed by a restart leaves no record, and its cost is missing from the bill; so are agent runs that ended with an error or whose handler raised afterward ([chapter 14](../14-runtime/README.md)).
 
 ### P17. Change by evidence, and write down why
 
@@ -285,10 +285,7 @@ Two habits keep this honest. Every end-to-end run is also a hardening run: every
 
 *Rules out:* a change made because it is clever; a design decision recorded without the alternatives it beat.
 
-*In v1:* [`docs/decisions.md`](../../decisions.md) is append-only; each design decision also says what happened. [`demo/README.md`](../../../demo/README.md), *Hardening mode*, is the procedure for runs.
-
-> [!WARNING]
-> **v1 limit:** the reverted plans under P10 are not in the decision log.
+*In v1:* [`docs/decisions.md`](../../decisions.md) is append-only; each design decision also says what happened. [`demo/README.md`](../../../demo/README.md), *Hardening mode*, is the procedure for runs. The two plans reverted under P10 reached the decision log two days late, on 2026-10-07 ([chapter 17](../17-limits-and-backlog/README.md), L6).
 
 ## Where the principles pull against each other
 
@@ -331,7 +328,7 @@ A principle is useful to a planner only if a design can fail it. The last column
 | P14 | Killed at any instruction, does the factory resume without a human, without duplicated effects, and with its rules intact? | Partial: a restart costs an attempt; a kill can double-post; leftovers skip the lane undo |
 | P15 | Is the engine free of every language, tool, file name and path of the project? | Partial: `uv`, `.venv`, Python and Claude Code file names, stage names |
 | P16 | Is every agent run recorded with time, tokens and cost, and attributable to a work item and a stage? | Partial: an agent run killed by a restart, or one that ended with an error, is missing from the bill (chapter 14) |
-| P17 | Is every lasting design decision recorded with its reason and the alternatives it beat? | Partial: the reverted plans of 2026-10-05 |
+| P17 | Is every lasting design decision recorded with its reason and the alternatives it beat? | Holds; the reverted plans of 2026-10-05 were recorded two days late |
 
 v1 gives its agents the principles as fifteen rules, R1 to R15, in the `factory-rules` skill. [Chapter 9](../09-agents-and-skills/README.md) maps each rule to its principles and to the code that enforces it.
 
@@ -372,8 +369,7 @@ v1 gives its agents the principles as fifteen rules, R1 to R15, in the `factory-
 >   - P3: scope;
 >   - P7: editable criteria;
 >   - P10: unenforced rules;
->   - P12: stops that reach only the log file;
+>   - P12: stops that reach only the factory's log file;
 >   - P14: three recovery gaps;
 >   - P15: Python, `uv` and stage names in the engine;
->   - P16: no record of a killed agent run;
->   - P17: the unrecorded reverts.
+>   - P16: killed and failed agent runs missing from the bill.

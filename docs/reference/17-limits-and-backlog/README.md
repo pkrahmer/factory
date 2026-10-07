@@ -10,16 +10,16 @@ Each limit has a number for citing, a short form, the chapter whose box states i
 - *Medium:* a work item stops, loops or is misreported, and the human is not told, or a project cannot use v1 as intended; found, it can be repaired.
 - *Low:* a leftover, a narrow constraint, or a wrong word, with no wrong result.
 
-Limits of the evidence (L1, L72 to L74) are rated by what they leave unproven. Chapter 3's boxes under P2, P12, P15 and P16, and two of the three items under P14, sum up limits stated in full elsewhere; they appear here under their own chapters.
+Limits of the evidence (L1, L72 to L74) are rated by what they leave unproven. A limit fixed since keeps its number and is marked *Fixed*, because plans cite the numbers. Chapter 3's boxes under P2, P12, P15 and P16, and two of the three items under P14, sum up limits stated in full elsewhere; they appear here under their own chapters.
 
 | # | Limit | Ch. | Principle | Severity |
 | -: | :- | -: | :- | :- |
 | L1 | The evidence is narrow: one project, stories written in advance, a simulated human, one machine | [1](../01-why-a-factory/README.md) | P17 | Medium |
 | L2 | Scope beyond a story's assignment is held by instructions alone | [3](../03-principles/README.md) | P3 | Medium |
 | L3 | Every story role may edit the criteria its work is judged by | [3](../03-principles/README.md) | P7 | Medium |
-| L4 | Some rules have no code: story numbers in code, commit subjects, the contents of a log entry | [3](../03-principles/README.md) | P10 | Low |
+| L4 | Some rules have no enforcement in code: no story or criterion numbers in code, the coder's commit subjects, a log entry's required contents | [3](../03-principles/README.md) | P10 | Low |
 | L5 | A restart is charged to the story as a failed attempt | [3](../03-principles/README.md) | P14 | Low |
-| L6 | The reverted plans are not in the decision log at `537fc20` | [3](../03-principles/README.md) | P17 | Low |
+| L6 | The reverted plans were missing from the decision log until 2026-10-07 | [3](../03-principles/README.md) | P17 | Fixed |
 | L7 | Log text is parsed back as data in four places; a renamed role or cost line breaks them silently | [4](../04-work-items/README.md) | P1 | Medium |
 | L8 | The identifier format is fixed in code | [4](../04-work-items/README.md) | P15 | Low |
 | L9 | Renaming a story in production orphans its branch, state and costs | [4](../04-work-items/README.md) | P2 | Low |
@@ -29,7 +29,7 @@ Limits of the evidence (L1, L72 to L74) are rated by what they leave unproven. C
 | L13 | The stage table is less configurable than it looks: stage and role names in code; dropping `demo` changes behavior silently | [5](../05-stage-machine/README.md) | P15 | Medium |
 | L14 | `stages.yml` has no schema and `version` is never read; a missing `lease_minutes` fails every tick, other errors surface when reached; the factory's own commits need `done` and `doing` in `accept`'s `next` | [5](../05-stage-machine/README.md) | P12 | Medium |
 | L15 | An acceptance merged before its gate loops between `merged` and `reject` | [5](../05-stage-machine/README.md) | P12 | Medium |
-| L16 | The `max_attempts` comment describes contract version 4 | [5](../05-stage-machine/README.md) | — | Low |
+| L16 | The `max_attempts` comment describes the watcher's contract, version 4 | [5](../05-stage-machine/README.md) | — | Low |
 | L17 | `doing → tests` costs no round only because `doing` has no cap | [5](../05-stage-machine/README.md) | — | Low |
 | L18 | `reject` sees only the last commit of the checked-out branch, and only targets outside `next` | [6](../06-watcher/README.md) | P10 | Medium |
 | L19 | `duplicate`, `error pr-lookup` and an `ask` without a pull request stop the repository and reach only the factory's log file | [6](../06-watcher/README.md) | P12 | Medium |
@@ -69,7 +69,7 @@ Limits of the evidence (L1, L72 to L74) are rated by what they leave unproven. C
 | L53 | The demonstration project's `layers` target cannot fail | [12](../12-project-contract/README.md) | P11 | Medium |
 | L54 | The template does not run as shipped | [12](../12-project-contract/README.md) | P15 | Medium |
 | L55 | Nothing verifies a project's setup before the first story | [12](../12-project-contract/README.md) | P12 | Medium |
-| L56 | The factory has no identity of its own; GitHub attributes its commits to an unrelated organization | [13](../13-git-and-github/README.md) | P4 | Medium |
+| L56 | The factory has no identity of its own; it acts on GitHub with the human's token | [13](../13-git-and-github/README.md) | P4 | Medium |
 | L57 | The main branch accepts any push the token can make | [13](../13-git-and-github/README.md) | P3 | High |
 | L58 | A rejected push stops the work item, mostly in silence | [13](../13-git-and-github/README.md) | P12 | Medium |
 | L59 | Nothing checks the GitHub settings | [13](../13-git-and-github/README.md) | P11 | Low |
@@ -89,7 +89,7 @@ Limits of the evidence (L1, L72 to L74) are rated by what they leave unproven. C
 | L73 | Most hardening paths ran live only on generation 4; `reject` never ran live | [16](../16-evidence/README.md) | P17 | Medium |
 | L74 | The evidence is not in the repository | [16](../16-evidence/README.md) | P2 | Low |
 
-The ten high limits fall into three groups, and a plan that closes the groups closes most of them:
+The ten high limits fall into three groups, and a plan that closes the groups closes all ten, provided it also checks each comment's author (L70):
 
 - *One token for everyone* (L57, L67, L70; its medium cousins are L38, L39 and L56). The factory, every agent and the human act on GitHub as one identity, so nothing on GitHub can tell them apart or protect the main branch against any of them. L70's other half is about authors: a stranger's comment counts as the human's.
 - *What an agent's shell can reach* (L31, L32, L52, L68, L69). Lanes are enforced on tracked paths after the stage, and checks trust files inside the lanes; what the shell reaches beyond them, changes before the undo reads them, or plants inside a lane to weaken a check is not enforced.
@@ -101,10 +101,10 @@ v1's code changed for three days; its documents did not keep up. Where they disa
 
 | Document | What it says | Chapter |
 | :- | :- | -: |
-| `README.md` | the dispatcher is a model session; `uv` is "the only tool assumption left" | [12](../12-project-contract/README.md) |
+| `README.md` | a tick "starts a headless dispatcher", which is code since generation 5; `uv` is "the only tool assumption left" | [7](../07-dispatcher/README.md), [12](../12-project-contract/README.md) |
 | `demo/README.md` | a story costs $1.50 to $2.20 (generation 4's figures) | [16](../16-evidence/README.md) |
 | `docs/WATCH_CONTRACT.md` | the attempts cap sits with the other `ask`; the code tests it later, in `_runnable` | [6](../06-watcher/README.md) |
-| `template/stages.yml` | `max_attempts` counts stage runs without a commit (L16) | [5](../05-stage-machine/README.md) |
+| `template/stages.yml` | `max_attempts` counts "stage runs that ended without a commit" (L16) | [5](../05-stage-machine/README.md) |
 | `template/TICKET.md` | the demo stage pastes its output below each command | [4](../04-work-items/README.md) |
 | `template/README.md`, `template/Makefile` | "lint, types, tests", and a type check that `check` lacks (L54) | [12](../12-project-contract/README.md) |
 | `template/CLAUDE.md` | the pipeline knows only three targets (L36) | [9](../09-agents-and-skills/README.md) |
@@ -112,18 +112,16 @@ v1's code changed for three days; its documents did not keep up. Where they disa
 | `docs/branching.md` | intake and the acceptor create branches; an answer lands on the main branch; a rejected push is a stall | [13](../13-git-and-github/README.md) |
 | `src/factory/preflight.py`, docstring | the dispatcher may offer to run the fixes | [14](../14-runtime/README.md) |
 | `docs/diagrams/README.md`, §06 | a running tick finishes before `docker stop`; chapter 14 states the opposite | [14](../14-runtime/README.md) |
-| `docs/review-comments.md` | reads as unbuilt, though it was built and reverted | [10](../10-human-at-the-gate/README.md) |
-| `docs/deterministic-core.md`, `docs/fewer-commits.md` | plans beside the open ones, though one was built and the other withdrawn | [3](../03-principles/README.md) |
-| `docs/backlog.md` | the feature acceptance as an idea, though it was built; `doing → tests`, the attempts cap and two stories in production as never run live, though run 3 walked all three and run 4 the first | [16](../16-evidence/README.md) |
+| `docs/backlog/README.md` | `doing → tests`, the attempts cap and two stories in production as never run live, though run 3 walked all three and run 4 the first | [16](../16-evidence/README.md) |
 
 ## The backlog
 
-At `537fc20` v1's open ideas are in [`docs/backlog.md`](https://github.com/pkrahmer/factory/blob/537fc20/docs/backlog.md), and two larger plans have documents of their own beside it. Since 2026-10-07 they live in the folder `docs/backlog/`, whose `README.md` is the index, and built or withdrawn plans in `docs/archive/`. Nothing below is in v1's code.
+v1's open ideas and plans are in the folder `docs/backlog/`, whose [`README.md`](../../backlog/README.md) is the index; built and withdrawn plans are in `docs/archive/`, whose `README.md` marks them as history. Nothing below is in v1's code.
 
 *Plans with a document of their own:*
 
-- **Review comments** ([`docs/review-comments.md`](https://github.com/pkrahmer/factory/blob/537fc20/docs/review-comments.md)): built and reverted on 2026-10-05; to be replanned with code over rules; its rework path needs an identity of its own (L39, L56; [chapter 3](../03-principles/README.md), P10; [chapter 10](../10-human-at-the-gate/README.md)). Its third path, notes from the human while the stages work, is v1's only proposal for L40.
-- **Mutation testing in the story loop** ([`docs/mutants-in-story-loop.md`](https://github.com/pkrahmer/factory/blob/537fc20/docs/mutants-in-story-loop.md)), parked: `make mutants` after the coder in every story, instead of the cascade (L44; [chapter 11](../11-feature-acceptance/README.md)).
+- **Review comments** ([`docs/backlog/review-comments.md`](../../backlog/review-comments.md)): built and reverted on 2026-10-05; to be replanned with code over rules; its rework path needs an identity of its own (L39, L56; [chapter 3](../03-principles/README.md), P10; [chapter 10](../10-human-at-the-gate/README.md)). Its third path, notes from the human while the stages work, is v1's only proposal for L40.
+- **Mutation testing in the story loop** ([`docs/backlog/mutants-in-story-loop.md`](../../backlog/mutants-in-story-loop.md)), parked: `make mutants` after the coder in every story, instead of the cascade (L44; [chapter 11](../11-feature-acceptance/README.md)).
 
 *Ideas:*
 
@@ -132,7 +130,7 @@ At `537fc20` v1's open ideas are in [`docs/backlog.md`](https://github.com/pkrah
 - **A changelog**, one user-facing line per story, written by the documenter.
 - **Mutation survivors** of the first product repository: material for stories.
 - **A language server for the agents**: not now, because agents find code cheaply with `grep`; if it comes back, one type checker for both the agent and the check. Trigger: agents that search in several rounds.
-- **Running the Demo blocks in code**, part E of the deterministic core (in that plan at `537fc20`, in the backlog since 2026-10-07): not built, because a misbehaving block is where a model recovers. Trigger: a demo agent that alters a command.
+- **Running the Demo blocks in code**, part E of the deterministic core: not built, because a misbehaving block is where a model recovers. Trigger: a demo agent that alters a command.
 - **Paths never run live**: v1's list is stale (see the documents table); what stands is L73.
 - **Not covered elsewhere**: a watchdog for a dead container (L64), Claude Code's version pinned in the image (L66), browser applications.
 

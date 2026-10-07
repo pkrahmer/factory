@@ -4,7 +4,7 @@
 
 ## The concept
 
-The machine's state is a work item's stage plus three fields that change how the stage is treated: whether a question is open (`blocked`), how many rounds of rework it has used, and how many times it has stalled. The pull request's number and the count of comments read are bookkeeping for the channel to the human; no transition depends on them.
+The machine's state is a work item's stage plus three fields that change how the stage is treated: whether a question is open (`blocked`), how many rounds of rework it has used, and how many times it has stalled. The pull request's number and the count of comments read are bookkeeping for the channel to the human; they decide which events fire, not which stage follows.
 
 Every move has one of four causes:
 - *the human's promotion*, which starts the work item;
@@ -12,7 +12,7 @@ Every move has one of four causes:
 - *the factory's own observation*: a dead agent run, a red check, a broken form, a cap reached, a stage change nobody was allowed to make, a feature that has become complete;
 - *the human's action* on the pull request: merge, close, comment.
 
-Ownership decides where each rule lives. The stages, their order, their checks and caps belong to the project, so they are configuration. What a merge or a close *means* is the same in every project, so it is code: a merge is acceptance, a close says the human does not want this version. *Where* a close at the gate sends the work and which cap it counts against are project decisions, and belong in the table. A table-driven machine is only as configurable as the code that never names a stage; the end of this chapter applies that test to v1.
+Ownership decides where each rule lives. The stages, their order, their checks and caps belong to the project, so they are configuration. What a merge or a close *means* is the same in every project, so it is code: a merge is acceptance, a close says the human does not want this version. *Where* a close at the gate sends the work and which cap it counts against are the project's to decide, and belong in the table. A table-driven machine is only as configurable as the code that never names a stage; the end of this chapter applies that test to v1.
 
 ## In v1
 
@@ -91,7 +91,7 @@ A stall commits the partial work as it is (`ops.stall`), so the next attempt con
 | any stage, `blocked: asked` | a new human comment | unchanged; the stage runs again | `blocked` cleared; at the attempts cap, `attempts` = 0 | `pr` · `dispatch.answers` |
 | `accept` | a new human comment | unchanged | the comment copied into the log; it becomes the reason if the human then closes | `pr` · `dispatch.answers` |
 | `accept` (a story) | closed with a reason, `round` + 1 within `demo`'s cap | `doing` | `round` + 1; the pull request reopened as a draft | `closed` · `_sent_back` |
-| `accept` (a story) | closed without a reason, or past `demo`'s cap | `doing` | `round` + 1; `blocked: asked` with the send-back question | `closed` · `_sent_back` |
+| `accept` (a story) | closed without a reason, or past `demo`'s cap | `doing` | `round` + 1; the pull request reopened as a draft; `blocked: asked` with the send-back question | `closed` · `_sent_back` |
 | any other stage (a story) | closed | back to `drafts/` on the main branch | the branch deleted | `closed` · `_discard` |
 | any stage (an acceptance) | closed | `done` on the main branch | `outcome: refused`; the drafts dropped | `closed` · `_refused` |
 | any stage (a story) | merged | `done`, archived to `done/` | `blocked` cleared; the branch deleted | `merged` · `dispatch.merged` |
@@ -149,7 +149,7 @@ The `gate` key is the one part of the human's side the table controls: any stage
 > **v1 limit:** an acceptance merged before its gate loops. If the human merges an acceptance's pull request while it waits with a question at `feature`, `dispatch.merged` writes `stage: done` on the main branch, which `feature`'s `next` does not allow. By the code, `reject` sets it back to `feature`, the pull request is still merged and still polled, and the two handlers alternate on every tick. A story is safe, because its archive moves the file, and `reject` ignores moved files.
 
 > [!WARNING]
-> **v1 limit:** the comment on `max_attempts` in `template/stages.yml` says it counts "stage runs that ended without a commit". That was contract version 4. In v1 it counts every stall and every expired agent run (`ops.stall`, `dispatch.expired`), whether anything was committed or not.
+> **v1 limit:** the comment on `max_attempts` in `template/stages.yml` says it counts "stage runs that ended without a commit". That was the watcher's contract, version 4. In v1 it counts every stall and every expired agent run (`ops.stall`, `dispatch.expired`), whether anything was committed or not.
 
 > [!WARNING]
 > **v1 limit:** `doing → tests` costs no round only because `doing` has no `max_rounds`. Adding one, to cap the coder's own moves back, would also count the approved test change as rework.

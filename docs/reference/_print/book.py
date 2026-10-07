@@ -33,7 +33,7 @@ from diagram_kit import svg_size, themed  # noqa: E402
 
 TITLE = "The Factory"
 SUBTITLE = "A reference: the idea, the machine, and its first implementation"
-DESCRIBES = "537fc20"  # the commit of v1 the book describes (see the preface)
+DESCRIBES = "930c61a"  # the commit of v1 the book describes (see the preface)
 REPO_URL = f"https://github.com/pkrahmer/factory/blob/{DESCRIBES}"
 CROP_TOP = 84  # px: a figure's own title and subtitle, which the caption replaces
 PARTS = {  # first chapter number -> (part number, title)
@@ -124,9 +124,18 @@ def convert(chapter: Chapter, planner: bool, included: str) -> str:
     return out.name
 
 
+CHAPTERS, APPENDICES = 17, 3  # the whole book; fewer makes a draft
+
+
 def span(found: list[Chapter]) -> str:
     numbered = [c.number for c in found if c.number is not None]
     return f"chapters {min(numbered)} to {max(numbered)}" if numbered else "the preface"
+
+
+def complete(found: list[Chapter]) -> bool:
+    numbered = [c for c in found if c.number is not None]
+    appendices = [c for c in found if c.number is None and c.folder != "preface"]
+    return len(numbered) == CHAPTERS and len(appendices) == APPENDICES
 
 
 def front_pages(planner: bool, found: list[Chapter]) -> list[str]:
@@ -143,16 +152,27 @@ def front_pages(planner: bool, found: list[Chapter]) -> list[str]:
         "with the planner boxes" if planner else "the reader's edition, without the planner boxes"
     )
     edition = "" if planner else " · reader's edition"
+    whole = complete(found)
+    draft = f"Draft · {span(found)}{edition}"
+    state = ("With the planner boxes" if planner else "Reader's edition") if whole else draft
+    contents = (
+        []
+        if whole
+        else [
+            f"This draft contains {span(found)}; the chapters not yet written appear in",
+            "cross-references as plain text.",
+        ]
+    )
     return [
-        f'#title-page("{TITLE}", "{SUBTITLE}", [Draft · {span(found)}{edition} \\',
+        f'#title-page("{TITLE}", "{SUBTITLE}", [{state} \\',
         "github.com/pkrahmer/factory])",
         "#edition-page[",
         f"#strong[{TITLE}] \\",
         SUBTITLE,
         "",
         f"Built on {today} from commit `{built}` of github.com/pkrahmer/factory; {kind}.",
-        f"It describes v1 as of commit `{DESCRIBES}`. This draft contains {span(found)}; the",
-        "chapters not yet written appear in cross-references as plain text.",
+        f"It describes v1 as of commit `{DESCRIBES}`.",
+        *contents,
         "",
         "Every figure in this book is generated from code; its source and a full description",
         "for readers who cannot see it are in the repository beside the chapter. Links to v1's",

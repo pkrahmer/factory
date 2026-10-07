@@ -18,7 +18,7 @@ A **clean** story is one in which every stage passed the first time, with no que
 
 ### The test suite
 
-`make check` in the factory's repository runs ruff's lint and format check, `mypy` in strict mode, `hadolint` on the Dockerfile and `pytest`. At `537fc20` the suite has 183 tests in ten files and takes about 70 seconds on a laptop:
+`make check` in the factory's repository runs ruff's lint and format check, `mypy` in strict mode, `hadolint` on the Dockerfile and `pytest`. At `930c61a` the suite has 183 tests in ten files, unchanged since 5 October, and takes about 70 seconds on a laptop:
 
 | File | Tests | What it covers | How |
 | :- | -: | :- | :- |
@@ -57,7 +57,7 @@ All four ran against the demonstration project in `pkrahmer/factory-demo-todo`; 
 | -: | -: | :- | :- | :- | -: | -: | :- |
 | 1 | 4 | 4 Oct, 21:28–23:28 | 8 stories | #1–#10 | 69 | $17.97 | 1–12 |
 | 2 | 4 | 4–5 Oct, 23:31–00:59 | 8 stories | #11–#18 | 48 | $14.09 | 13, after the run |
-| 3 | 4 | 5 Oct, 08:59–11:42 | 3 acceptances; then 4 stories archived, a fifth left at the gate, 1 acceptance refused | #19–#29 | 6 + 75 | about $26 | 14–17 |
+| 3 | 4 | 5 Oct, 08:59–11:42 | 3 acceptances, 1 refused; then 4 stories archived, a fifth left at the gate, 1 acceptance refused | #19–#29 | 6 + 75 | about $26 | 14–17 |
 | 4 | 5 | 5 Oct, 16:47–19:38 | 8 stories, 3 acceptances | #30–#40 | 59 | $15.89 | none |
 
 The times run from a run's start to its last archive (run 3: to the stop at 11:42); run 4's cost records span 16:49 to 19:36. The records of runs 1 to 3 were lost with their work volumes; their numbers survive in the maintainer's run log and in the cost tables on their pull requests. Run 4's records are kept in this book's `data/` folder, as `demo-dispatches.jsonl`.
@@ -158,7 +158,7 @@ After run 4, its records and its 59 transcripts, which five analysts read for wh
 
 ### What is not verified
 
-Beyond the narrow evidence of [chapter 1](../01-why-a-factory/README.md) (one project, a simulated human, one machine, no full run of `537fc20`):
+Beyond the narrow evidence of [chapter 1](../01-why-a-factory/README.md) (one project, a simulated human, one machine, no full run of the code this book describes):
 
 - **The effect of the last two changes.** S0006 and S0007 wrote 7,600 to 9,800 tokens to the cache per agent run, against 22,000 for run 4's stories, which fits the connector change; but they were smaller stories, and no full run has measured either change.
 - **The human.** Every run had a simulated human, who was never notified by GitHub ([chapter 10](../10-human-at-the-gate/README.md)).
