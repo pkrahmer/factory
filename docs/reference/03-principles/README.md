@@ -232,7 +232,7 @@ Machines restart, processes are killed and networks drop; a factory that needs a
 
 *Rules out:* a cleanup step only a human can do; a lease so long that a restart idles the line; state that a killed process leaves inconsistent.
 
-*In v1:* in the restart tests, the container was killed while a stage held a story; on its first tick after the restart the factory expired the agent run and ran the stage again. Design decisions: 2026-10-05 (a restart recovers by itself; no second-guessing an event).
+*In v1:* run 1's restart test, on generation 4, killed the container while a stage held a story; it found fixes 6 and 7 ([chapter 16](../16-evidence/README.md)), and after them the stage ran again. On generation 5 the restart is tested by unit tests only. Design decisions: 2026-10-05 (a restart recovers by itself; no second-guessing an event).
 
 > [!WARNING]
 > **v1 limit:** three recovery gaps remain:
@@ -270,7 +270,7 @@ The largest saving in v1's history came from one row of a cost table: the coordi
 
 *Rules out:* cost known only from the monthly bill; a change to the factory justified by intuition.
 
-*In v1:* the records are free: the agent runtime reports them with every agent run, one line each, summed per story and per stage. The bill is posted on the pull request at the gate and written into the log at the archive; the feature acceptance reads the sum. Two later changes were made on measured grounds; [chapter 14](../14-runtime/README.md) has them. Design decisions: 2026-10-04 (the tick records costs).
+*In v1:* the records are free: the agent runtime reports them with every agent run, one line each, summed per story and per stage. The bill is posted on the pull request at the gate and written into the log at the archive; the feature acceptance reads the sum. Three later changes were made on measured grounds; [chapter 14](../14-runtime/README.md) has them. Design decisions: 2026-10-04 (the tick records costs).
 
 > [!WARNING]
 > **v1 limit:** the cost record is written when an agent run returns, so one killed by a restart leaves no record, and its cost is missing from the bill.

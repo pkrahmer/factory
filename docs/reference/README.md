@@ -61,7 +61,7 @@ A few words could mean several things in a book about a system built on Git. Eac
 | *agent run* | one start of one stage agent, from task to outcome | — (avoid *session* and *stage run*) |
 | *run record* | the factory's note that an agent run is in progress | the cost records (v1: the *run file*; earlier generations: the *claim*) |
 | *decision* | the first part of an agent's outcome: a next stage, `question` or `stuck` (v1's JSON field is named `outcome`) | the human's decisions, which are named as such; design decisions |
-| *design decision* | an entry in v1's decision log, `docs/decisions.md` | an agent's decision |
+| *design decision* | an entry in a decision log (v1's is `docs/decisions.md`) | an agent's decision |
 | *pull request* | the reviewable proposal to merge a work item's branch, with its description and comments (GitLab: *merge request*) | — |
 | *contract* | the project contract: what a project provides so the factory can build it | the watcher's contract, which is always named in full |
 | *generation* | one of v1's five versions, 1 to 5 | a run |

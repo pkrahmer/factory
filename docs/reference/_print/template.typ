@@ -341,6 +341,17 @@
   block(above: above, below: below, inset: (left: indent), par(hanging-indent: label-width, entry))
 }
 
+// The plain text of a heading's body, for comparing it with a fixed title.
+#let plain-text(it) = {
+  if type(it) == str { it } else if it.has("text") { it.text } else if it.has("children") {
+    it.children.map(plain-text).join()
+  } else if it.has("body") { plain-text(it.body) } else if it == [ ] { " " } else { "" }
+}
+
+// Every chapter of Parts II to IV opens with these two sections; listed under each chapter they
+// would repeat on every line of the contents, usually with the chapter's own page number.
+#let routine-sections = ("The concept", "In v1")
+
 #let contents() = {
   front-chapter[Contents]
   set par(justify: false, leading: 0.52em)
@@ -378,7 +389,7 @@
           above: 1.1em,
           below: 0.55em,
         )
-      } else if in-outlined-chapter {
+      } else if in-outlined-chapter and plain-text(el.body) not in routine-sections {
         toc-line(
           loc,
           0pt,
