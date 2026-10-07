@@ -11,7 +11,7 @@ This file tells a fresh session how to write the rest of the reference in `docs/
 | II · The machine | 4–11 | Written (21,100 words), a lecturer round per chapter and one over the part, 4 figures, in print |
 | III · Around the machine | 12–15 | Written (9,500 words), a lecturer round per chapter and one over the part, 1 figure, in print |
 | IV · Looking back | 16–17 | Written (5,600 words without table syntax), a lecturer round per chapter and one over the part, no figures, in print; chapter 17 numbers the limits L1–L74 |
-| Figure 13-1, the retarget, appendices A–C, the introduction | | **Next**, in one final session: see *Finishing the book* |
+| Figure 13-1, appendices A–C, the introduction, the retarget | | **Next**, in one final session: see *Finishing the book* |
 
 Branch `docs/reference` of github.com/pkrahmer/factory; the book describes v1 at commit `537fc20`. Every session updates this table before it ends. Files that move after `537fc20`, and everything else the final version must retarget to the latest repository, are listed in [`RETARGET.md`](RETARGET.md); add to it in the same commit as the change.
 
@@ -19,7 +19,7 @@ Branch `docs/reference` of github.com/pkrahmer/factory; the book describes v1 at
 
 Parts I to IV were each written in a session of their own, from a prompt naming the part. What is left is one final session, started with this prompt:
 
-> Read `docs/reference/WRITING-PLAN.md` in the factory checkout (C:\Dev\Projects\factory, branch `docs/reference`) and finish the book as its section *Finishing the book* describes: figure 13-1 (the branches), the retarget to the latest repository (`docs/reference/RETARGET.md`), appendices A to C, the introduction, and a last review over the whole book. Follow the plan's process, budgets and rules against filling. Use Sonnet for figure subagents and Opus for lecturer reviews. Commit after each step; at the end, push the branch, merge it into `main` through a pull request with a merge commit, send me both PDFs and report.
+> Read `docs/reference/WRITING-PLAN.md` in the factory checkout (C:\Dev\Projects\factory, branch `docs/reference`) and finish the book as its section *Finishing the book* describes: figure 13-1 (the branches), appendices A to C, the introduction, the retarget to the latest repository (`docs/reference/RETARGET.md`), and a last review over the whole book. Follow the plan's process, budgets and rules against filling. Use Sonnet for figure subagents and Opus for lecturer reviews. Commit after each step; at the end, push the branch, merge it into `main` through a pull request with a merge commit, send me both PDFs and report.
 
 The session then reads, in this order:
 1. this plan;
@@ -273,20 +273,21 @@ One session finishes the book, in this order, and commits after each step. Each 
    - *Verify* every commit and label against the code at the pin (`stage.py`, `dispatch.py`, `ops.py`, `repo.py`) and against chapter 13's commit table, not against v1's picture or `docs/branching.md`. One example: v1's picture says `main` is merged in at "every stage", its README says "whenever it moved"; the code decides. The description lists every deviation from v1's picture, and why.
    - *Place* it in *Branches* with the image line and caption shape the print needs; cite it from the text, and cut any sentence the figure now carries.
    - A figure subagent on Sonnet draws it (brief under *Process for each chapter*); review both renders yourself.
-2. **The retarget.** Work through [`RETARGET.md`](RETARGET.md) section by section.
-   - *Section 1:* set the pin to the newest commit on `main` when the step starts, after Part IV's merge. The code differs from `537fc20` only in `.env.example`, `compose.yml`, `entrypoint.sh` and the `Makefile` (the commit address, `make book`), and the documents in the archive and backlog moves, so most of section 5 is a check, not a rewrite.
-   - *Sections 2 to 4:* every link, path and statement listed there; then `grep -rn "537fc20" docs/reference` for every mention left in prose.
-   - *Section 5:* one Opus lecturer per group of chapters, for accuracy only, against the code at the new pin.
-   - Chapter 17's limit numbers stay stable: a limit that no longer holds keeps its row, marked as history.
-   - Afterwards `RETARGET.md` keeps a dated line naming the commit the book was retargeted to, and section 5 as the checklist for the next retarget.
-3. **Appendices A to C** (outline above), written against the new pin.
+2. **Appendices A to C** (outline above), written from `origin/main` as it is then; the retarget checks them again.
    - *A:* every term set in bold where it is defined, the preface's table *Words with one meaning* included; bold labels such as **Planner:** and the bold leads of list items are not terms.
    - *B:* from `git ls-files` at the pin; `docs/reference/` is one line.
    - *C:* from `docs/decisions.md` at the pin. The chapters cite design decisions by date and topic, so the index maps each entry to the chapters that cite it; the chapters keep their citations as they are.
    - One Opus lecturer per appendix.
-4. **The introduction** (above), about 1,000 words; remove the comment at the top of `README.md`.
+3. **The introduction** (above), about 1,000 words; remove the comment at the top of `README.md`.
+4. **The retarget**, last before the review, so the book describes the newest commit possible and the retarget covers every page, the appendices and the introduction included. Work through [`RETARGET.md`](RETARGET.md) section by section.
+   - *Section 1:* set the pin to the newest commit on `main` when the step starts. The code differs from `537fc20` only in `.env.example`, `compose.yml`, `entrypoint.sh` and the `Makefile` (the commit address, `make book`), and the documents in the archive and backlog moves, so most of section 5 is a check, not a rewrite.
+   - *Sections 2 to 4:* every link, path and statement listed there; then `grep -rn "537fc20" docs/reference` for every mention left in prose.
+   - *Section 5:* one Opus lecturer per group of chapters, for accuracy only, against the code at the new pin.
+   - Chapter 17's limit numbers stay stable: a limit that no longer holds keeps its row, marked as history.
+   - Afterwards `RETARGET.md` keeps a dated line naming the commit the book was retargeted to, and section 5 as the checklist for the next retarget.
 5. **A last review over the whole book**, by two Opus reviewers, one for Parts I and II, one for Parts III and IV and the appendices: terms, cross-references, figure numbers, the limit numbers against the boxes, the introduction against what the book holds.
 6. **Close.**
+   - `git fetch`, then `git log <pin>..origin/main -- . ':!docs/reference'`: if anything outside the book reached `main` since the pin, re-pin and check those changes as in step 4.
    - `make check` green; `make book` and `make book BOOK_FLAGS=--reader` without warnings; look at the overview and at every new page.
    - *Status* marks the book complete; *Known facts* and *Starting a session* say that nothing is left.
    - Push `docs/reference`, open a pull request to `main`, and merge it with a merge commit (`gh pr merge --merge`). GitHub has answered pushes with transient 500 errors before; retry after a few minutes.
