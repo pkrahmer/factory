@@ -48,7 +48,7 @@ The book states these as facts about v1 at `537fc20`. At the new commit they are
 | 17 (planned) | the backlog's contents | 2026-10-07: the feature-acceptance entry removed (built); "Running the Demo blocks in code" added (part E of the archived plan); the bigger plans listed as files |
 | 3, P17 (the limit box, the test table, the Planner box) | "the reverted plans under P10 are not in the decision log"; P17 *Partial* | 2026-10-07: `docs/decisions.md` has an entry dated 2026-10-05 for both reverts; P17 then holds |
 | 3, P10 (*In v1*); 10, the note on the reverted plan | "The build and the revert are not in the repository's history" | still true of the Git history, but the decision log now records both; say so |
-| 13, the identity limit; 14, the compose table; Figure 14-1's description | the default commit address `factory@users.noreply.github.com`, which GitHub attributes to the organization `factory` | 2026-10-07, branch `fix/commit-identity` (commit `fc72572`, not yet merged): the default is `factory@noreply.invalid`, which matches no account; `.env.example`, `docs/github-settings.md` and a design decision say so |
+| 13, the identity limit; 14, the compose table | the default commit address `factory@users.noreply.github.com`, which GitHub attributes to the organization `factory` | 2026-10-07, branch `fix/commit-identity` (commit `fc72572`, not yet merged): the default is `factory@noreply.invalid`, which matches no account; `.env.example`, `docs/github-settings.md` and a design decision say so |
 | B (planned) | the file map | `docs/archive/` and `docs/backlog/` exist; the repository's `README.md` names them |
 
 ## 5. What drifts with any code change
