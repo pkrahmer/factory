@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="848" height="812" viewBox="0 0 848 812" role="img" aria-labelledby="title desc">
+<title id="title">The order of events</title>
+<desc id="desc">A ladder of seven rungs, read from the top. Each rung is a rule of the watcher with the events it can return, and the first rung that matches returns its event and ends the evaluation. Rungs one and two, corrections and integrity: an illegal stage change in the last commit returns reject, two work items with one identifier return duplicate. Rungs three and four, the human's signals: the pull request of the first waiting work item returns error pr-lookup, merged, closed or pr; a question recorded but not yet posted, or a gate without a pull request, returns ask. Rung five, the agent at work: a run record returns busy or expired. Rungs six and seven, new work: the lowest identifier in a stage with an agent returns ask when the attempts cap is reached, otherwise run; if nothing matched, the event is idle. The tick never handles busy, idle, and pr without new human comments. A waiting work item makes rung three match on every tick, so nothing below it runs.</desc>
+<style>
+text { font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+.code { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 0.92em; }
+.ttl { font-size: 20px; font-weight: 600; }
+.sub { font-size: 13.5px; font-weight: 400; }
+.tag { font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; }
+.nt { font-size: 14.5px; font-weight: 700; }
+.nb { font-size: 12.5px; font-weight: 400; }
+.lb { font-size: 12px; font-weight: 400; }
+.lane-h { font-size: 13px; font-weight: 700; }
+.lane-n { font-size: 12px; font-weight: 400; }
+.col-h { font-size: 12.5px; font-weight: 700; }
+.grp-c { font-size: 12px; font-weight: 600; }
+.tx { font-size: 13px; font-weight: 400; }
+.tx-bold { font-size: 13px; font-weight: 700; }
+.tx-mono { font-size: 12px; font-weight: 400; font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; }
+.tx-note { font-size: 12px; font-weight: 400; }
+.tx-small { font-size: 11px; font-weight: 400; }
+.lg { font-size: 12px; font-weight: 400; }
+.sh, .fold { stroke-width: 1.5; stroke-linejoin: round; }
+.n-end .sh { stroke-dasharray: 5 3; }
+.e { fill: none; stroke-linejoin: round; }
+.lb { paint-order: stroke fill; stroke-width: 4px; stroke-linejoin: round; }
+.rule, .lane-a, .lane-b { stroke-width: 1; shape-rendering: crispEdges; }
+.rule, .col-u { fill: none; } .col-r { stroke-dasharray: 2 3; }
+.col-u { stroke-width: 1; shape-rendering: crispEdges; }
+.grp { stroke-width: 1; } .grp-d { stroke-dasharray: 5 4; }
+.e-flow { stroke-width: 1.5; }
+.e-plain { stroke-width: 1.1; }
+.bg { fill: #ffffff; }
+.ttl, .nt, .lane-h, .col-h, .tx-bold { fill: #1b1f24; }
+.sub, .lane-n, .grp-c, .tx-note, .tx-small { fill: #5d6470; }
+.nb, .tx, .tx-mono, .lg { fill: #363b43; }
+.lb { stroke: #ffffff; } .lb.on-lane { stroke: #f5f7f9; }
+.lane-a { fill: #f5f7f9; stroke: #dde1e6; }
+.lane-b { fill: #ffffff; stroke: #dde1e6; }
+.rule { stroke: #dde1e6; }
+.grp { fill: #ffffff; stroke: #b4bac3; } .col-u { stroke: #b4bac3; }
+.n-agent .sh { fill: #eaf2fc; stroke: #2f6db5; }
+.n-agent .fold { fill: #c5d7ee; stroke: #2f6db5; }
+.n-agent .tag, .k-agent { fill: #2862a5; }
+.g-agent { stroke: #2f6db5; }
+.n-human .sh { fill: #fff4df; stroke: #c27400; }
+.n-human .fold { fill: #f3dab2; stroke: #c27400; }
+.n-human .tag, .k-human { fill: #965a00; }
+.g-human { stroke: #c27400; }
+.n-code .sh { fill: #e8f5ef; stroke: #2a8a6e; }
+.n-code .fold { fill: #c2e0d5; stroke: #2a8a6e; }
+.n-code .tag, .k-code { fill: #1e6f58; }
+.g-code { stroke: #2a8a6e; }
+.n-ask .sh { fill: #f3eefb; stroke: #7a4fb5; }
+.n-ask .fold { fill: #dbceed; stroke: #7a4fb5; }
+.n-ask .tag, .k-ask { fill: #673e9f; }
+.g-ask { stroke: #7a4fb5; }
+.n-stall .sh { fill: #fcecec; stroke: #b53a3a; }
+.n-stall .fold { fill: #eec8c8; stroke: #b53a3a; }
+.n-stall .tag, .k-stall { fill: #9f2d2d; }
+.g-stall { stroke: #b53a3a; }
+.n-quiet .sh { fill: #f4f5f7; stroke: #a3a8b2; }
+.n-quiet .fold { fill: #e4e6e9; stroke: #a3a8b2; }
+.n-quiet .tag, .k-quiet { fill: #646b76; }
+.g-quiet { stroke: #a3a8b2; }
+.e-flow { stroke: #4b515c; } .ah-flow { fill: #4b515c; }
+.lb-flow { fill: #2b3038; }
+.e-plain { stroke: #8f96a1; } .ah-plain { fill: #8f96a1; }
+.lb-plain { fill: #5d6470; }
+@media (prefers-color-scheme: dark) {
+  .bg { fill: #0f141a; }
+  .ttl, .nt, .lane-h, .col-h, .tx-bold { fill: #e6edf3; }
+  .sub, .lane-n, .grp-c, .tx-note, .tx-small { fill: #9da7b3; }
+  .nb, .tx, .tx-mono, .lg { fill: #c9d1d9; }
+  .lb { stroke: #0f141a; } .lb.on-lane { stroke: #151b22; }
+  .lane-a { fill: #151b22; stroke: #2a313b; }
+  .lane-b { fill: #0f141a; stroke: #2a313b; }
+  .rule { stroke: #2a313b; }
+  .grp { fill: #0f141a; stroke: #3d4651; } .col-u { stroke: #3d4651; }
+  .n-agent .sh { fill: #13263d; stroke: #5b9be6; }
+  .n-agent .fold { fill: #213d5f; stroke: #5b9be6; }
+  .n-agent .tag, .k-agent { fill: #8dbdf4; }
+  .g-agent { stroke: #5b9be6; }
+  .n-human .sh { fill: #33260f; stroke: #e0a33a; }
+  .n-human .fold { fill: #563f18; stroke: #e0a33a; }
+  .n-human .tag, .k-human { fill: #f2bd63; }
+  .g-human { stroke: #e0a33a; }
+  .n-code .sh { fill: #0f2e26; stroke: #3fb68f; }
+  .n-code .fold { fill: #19493b; stroke: #3fb68f; }
+  .n-code .tag, .k-code { fill: #72d3b0; }
+  .g-code { stroke: #3fb68f; }
+  .n-ask .sh { fill: #251c38; stroke: #a98be0; }
+  .n-ask .fold { fill: #3f325a; stroke: #a98be0; }
+  .n-ask .tag, .k-ask { fill: #c4aef2; }
+  .g-ask { stroke: #a98be0; }
+  .n-stall .sh { fill: #371a1c; stroke: #e06c6c; }
+  .n-stall .fold { fill: #592a2c; stroke: #e06c6c; }
+  .n-stall .tag, .k-stall { fill: #f29191; }
+  .g-stall { stroke: #e06c6c; }
+  .n-quiet .sh { fill: #1a2029; stroke: #6b7380; }
+  .n-quiet .fold { fill: #2a313a; stroke: #6b7380; }
+  .n-quiet .tag, .k-quiet { fill: #a2abb7; }
+  .g-quiet { stroke: #6b7380; }
+  .e-flow { stroke: #bcc4ce; } .ah-flow { fill: #bcc4ce; }
+  .lb-flow { fill: #dfe6ee; }
+  .e-plain { stroke: #717a87; } .ah-plain { fill: #717a87; }
+  .lb-plain { fill: #9da7b3; }
+}
+</style>
+<defs><marker id="ah-flow" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-flow" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker><marker id="ah-plain" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7.5" markerHeight="7.5" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-plain" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker></defs>
+<rect class="bg" width="848" height="812"/>
+<text class="ttl" x="40" y="48" text-anchor="start">The order of events</text>
+<text class="sub" x="40" y="72" text-anchor="start">The watcher tries seven rules from the top; the first that matches returns its event.</text>
+<rect class="lane-a" x="40" y="116" width="608" height="176" rx="0"/><path class="rule" d="M 152 116 V 292"/><text class="lane-h" x="56" y="200.5" text-anchor="start">Corrections</text><text class="lane-n" x="56" y="220" text-anchor="start">and integrity</text>
+<rect class="lane-b" x="40" y="292" width="608" height="176" rx="0"/><path class="rule" d="M 152 292 V 468"/><text class="lane-h" x="56" y="376.5" text-anchor="start">The human's</text><text class="lane-n" x="56" y="396" text-anchor="start">signals</text>
+<rect class="lane-a" x="40" y="468" width="608" height="88" rx="0"/><path class="rule" d="M 152 468 V 556"/><text class="lane-h" x="56" y="508.5" text-anchor="start">The agent</text><text class="lane-n" x="56" y="528" text-anchor="start">at work</text>
+<rect class="lane-b" x="40" y="556" width="608" height="168" rx="0"/><path class="rule" d="M 152 556 V 724"/><text class="lane-h" x="56" y="644.5" text-anchor="start">New work</text>
+<path class="e e-flow" d="M 440 156 L 485 156" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 440 244 L 485 244" marker-end="url(#ah-flow)"/>
+<path class="e e-plain" d="M 300 184 L 300 213" marker-end="url(#ah-plain)"/>
+<path class="e e-flow" d="M 440 332 L 485 332" marker-end="url(#ah-flow)"/>
+<path class="e e-plain" d="M 300 272 L 300 301" marker-end="url(#ah-plain)"/>
+<path class="e e-flow" d="M 440 420 L 485 420" marker-end="url(#ah-flow)"/>
+<path class="e e-plain" d="M 300 360 L 300 389" marker-end="url(#ah-plain)"/>
+<path class="e e-flow" d="M 440 508 L 485 508" marker-end="url(#ah-flow)"/>
+<path class="e e-plain" d="M 300 448 L 300 477" marker-end="url(#ah-plain)"/>
+<path class="e e-flow" d="M 440 596 L 485 596" marker-end="url(#ah-flow)"/>
+<path class="e e-plain" d="M 300 536 L 300 565" marker-end="url(#ah-plain)"/>
+<path class="e e-flow" d="M 440 684 L 485 684" marker-end="url(#ah-flow)"/>
+<path class="e e-plain" d="M 300 624 L 300 653" marker-end="url(#ah-plain)"/>
+<g class="n-stall"><rect class="sh" x="160" y="128" width="280" height="56" rx="8"/><text class="tag" x="300" y="149.07" text-anchor="middle"><tspan class="code">_rejected</tspan></text><text class="nb" x="300" y="169.75" text-anchor="middle">an illegal stage change in the last commit</text></g>
+<g class="n-stall"><rect class="sh" x="488" y="128" width="152" height="56" rx="8"/><text class="nb" x="564" y="160.25" text-anchor="middle"><tspan class="code">reject</tspan></text></g>
+<g class="n-stall"><rect class="sh" x="160" y="216" width="280" height="56" rx="8"/><text class="tag" x="300" y="237.07" text-anchor="middle"><tspan class="code">_duplicated</tspan></text><text class="nb" x="300" y="257.75" text-anchor="middle">two work items with one identifier</text></g>
+<g class="n-stall"><rect class="sh" x="488" y="216" width="152" height="56" rx="8"/><text class="nb" x="564" y="248.25" text-anchor="middle"><tspan class="code">duplicate</tspan></text></g>
+<g class="n-human"><rect class="sh" x="160" y="304" width="280" height="56" rx="8"/><text class="tag" x="300" y="325.07" text-anchor="middle"><tspan class="code">_pull_requests</tspan></text><text class="nb" x="300" y="345.75" text-anchor="middle">the first waiting work item's pull request</text></g>
+<g class="n-human"><rect class="sh" x="488" y="304" width="152" height="56" rx="8"/><text class="nb" x="564" y="327.75" text-anchor="middle"><tspan class="code">error pr-lookup</tspan></text><text class="nb" x="564" y="344.75" text-anchor="middle"><tspan class="code">merged</tspan> · <tspan class="code">closed</tspan> · <tspan class="code">pr</tspan></text></g>
+<g class="n-ask"><rect class="sh" x="160" y="392" width="280" height="56" rx="8"/><text class="tag" x="300" y="413.07" text-anchor="middle"><tspan class="code">_asking</tspan></text><text class="nb" x="300" y="433.75" text-anchor="middle">a question to post, or a gate without <tspan class="code">pr</tspan></text></g>
+<g class="n-ask"><rect class="sh" x="488" y="392" width="152" height="56" rx="8"/><text class="nb" x="564" y="424.25" text-anchor="middle"><tspan class="code">ask</tspan></text></g>
+<g class="n-code"><rect class="sh" x="160" y="480" width="280" height="56" rx="8"/><text class="tag" x="300" y="501.07" text-anchor="middle"><tspan class="code">_leased</tspan></text><text class="nb" x="300" y="521.75" text-anchor="middle">a run record exists</text></g>
+<g class="n-code"><rect class="sh" x="488" y="480" width="152" height="56" rx="8"/><text class="nb" x="564" y="512.25" text-anchor="middle"><tspan class="code">busy</tspan> · <tspan class="code">expired</tspan></text></g>
+<g class="n-agent"><rect class="sh" x="160" y="568" width="280" height="56" rx="8"/><text class="tag" x="300" y="589.07" text-anchor="middle"><tspan class="code">_runnable</tspan></text><text class="nb" x="300" y="609.75" text-anchor="middle">the lowest identifier in a stage with an agent</text></g>
+<g class="n-agent"><rect class="sh" x="488" y="568" width="152" height="56" rx="8"/><text class="nb" x="564" y="591.75" text-anchor="middle"><tspan class="code">ask</tspan> (attempts cap)</text><text class="nb" x="564" y="608.75" text-anchor="middle"><tspan class="code">run</tspan></text></g>
+<g class="n-quiet"><rect class="sh" x="160" y="656" width="280" height="56" rx="8"/><text class="nb" x="300" y="688.25" text-anchor="middle">nothing matched</text></g>
+<g class="n-quiet"><rect class="sh" x="488" y="656" width="152" height="56" rx="8"/><text class="nb" x="564" y="688.25" text-anchor="middle"><tspan class="code">idle</tspan></text></g>
+<g class="n-human"><rect class="sh" x="664" y="304" width="144" height="104" rx="8"/><text class="nb" x="736" y="326.25" text-anchor="middle">a waiting work item</text><text class="nb" x="736" y="343.25" text-anchor="middle">makes rung 3 match</text><text class="nb" x="736" y="360.25" text-anchor="middle">on every tick, so</text><text class="nb" x="736" y="377.25" text-anchor="middle">nothing below it</text><text class="nb" x="736" y="394.25" text-anchor="middle">runs</text></g>
+<g class="n-quiet"><rect class="sh" x="664" y="536" width="144" height="120" rx="8"/><text class="nb" x="736" y="566.25" text-anchor="middle">never handled by</text><text class="nb" x="736" y="583.25" text-anchor="middle">the tick: <tspan class="code">busy</tspan>,</text><text class="nb" x="736" y="600.25" text-anchor="middle"><tspan class="code">idle</tspan>, and <tspan class="code">pr</tspan></text><text class="nb" x="736" y="617.25" text-anchor="middle">without new</text><text class="nb" x="736" y="634.25" text-anchor="middle">human comments</text></g>
+<text class="tx-bold" x="300" y="106" text-anchor="middle">the rule</text>
+<text class="tx-bold" x="564" y="106" text-anchor="middle">the event</text>
+<text class="lb lb-plain on-lane" x="308" y="198.08" text-anchor="start">no match</text>
+<text class="lb lb-plain on-lane" x="308" y="286.08" text-anchor="start">no match</text>
+<text class="lb lb-plain" x="308" y="374.08" text-anchor="start">no match</text>
+<text class="lb lb-plain" x="308" y="462.08" text-anchor="start">no match</text>
+<text class="lb lb-plain on-lane" x="308" y="550.08" text-anchor="start">no match</text>
+<text class="lb lb-plain" x="308" y="638.08" text-anchor="start">no match</text>
+<g class="n-agent"><rect class="sh" x="40" y="753.5" width="26" height="13" rx="3"/></g><text class="lg" x="74" y="764" text-anchor="start">new work</text>
+<g class="n-human"><rect class="sh" x="154.7" y="753.5" width="26" height="13" rx="3"/></g><text class="lg" x="188.7" y="764" text-anchor="start">the human</text>
+<g class="n-code"><rect class="sh" x="275.67" y="753.5" width="26" height="13" rx="3"/></g><text class="lg" x="309.67" y="764" text-anchor="start">agent at work</text>
+<g class="n-ask"><rect class="sh" x="412.59" y="753.5" width="26" height="13" rx="3"/></g><text class="lg" x="446.59" y="764" text-anchor="start">asks the human</text>
+<g class="n-stall"><rect class="sh" x="562.68" y="753.5" width="26" height="13" rx="3"/></g><text class="lg" x="596.68" y="764" text-anchor="start">a correction</text>
+<g class="n-quiet"><rect class="sh" x="689.88" y="753.5" width="26" height="13" rx="3"/></g><text class="lg" x="723.88" y="764" text-anchor="start">nothing</text>
+<path class="e e-flow" d="M 40 784 L 63 784" marker-end="url(#ah-flow)"/><text class="lg" x="74" y="788" text-anchor="start">match: the event</text>
+<path class="e e-plain" d="M 194.26 784 L 217.26 784" marker-end="url(#ah-plain)"/><text class="lg" x="228.26" y="788" text-anchor="start">no match: the next rung</text>
+</svg>
