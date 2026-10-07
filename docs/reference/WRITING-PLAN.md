@@ -9,8 +9,8 @@ This file tells a fresh session how to write the rest of the reference in `docs/
 | Preface | `README.md` | Front part written (conventions, "Words with one meaning"); the introduction around it is written last |
 | I · The idea | 1–3 | Written, two lecturer rounds, trimmed to budget, 5 figures, in print |
 | II · The machine | 4–11 | Written (21,100 words), a lecturer round per chapter and one over the part, 4 figures, in print |
-| III · Around the machine | 12–15 | **Next** |
-| IV · Looking back | 16–17 | Open |
+| III · Around the machine | 12–15 | Written (9,500 words), a lecturer round per chapter and one over the part, 1 figure, in print |
+| IV · Looking back | 16–17 | **Next** |
 | Appendices | A–C | Open |
 | Introduction | `README.md` | Last |
 
@@ -20,7 +20,7 @@ Branch `docs/reference` of github.com/pkrahmer/factory; the book describes v1 at
 
 Give the new session this prompt, with the part filled in:
 
-> Read `docs/reference/WRITING-PLAN.md` in the factory checkout (C:\Dev\Projects\factory, branch `docs/reference`) and write Part II as it describes. Follow its process, its budgets and its rules against filling. Stop and report when the part is committed.
+> Read `docs/reference/WRITING-PLAN.md` in the factory checkout (C:\Dev\Projects\factory, branch `docs/reference`) and write Part IV as it describes. Follow its process, its budgets and its rules against filling, and keep `docs/reference/RETARGET.md` current. Use Sonnet for figure subagents and Opus for lecturer reviews. Stop and report when the part is committed.
 
 The session then reads, in this order:
 1. this plan;
@@ -367,24 +367,20 @@ The book links to the two archived documents at the commit it describes (`https:
 
 ## Known facts to place
 
-Found while writing Parts I and II, verified against the code. Each belongs in the chapter named. Part II (chapters 4–11) has placed every fact about its own mechanisms; Parts III and IV point to those chapters instead of restating them.
+Found while writing Parts I to III, verified against the code. Each belongs in the chapter named. Parts II and III (chapters 4–15) have placed every fact about their own mechanisms; Part IV points to those chapters instead of restating them.
 
 **Already placed in Part II; later chapters cite, never restate:**
 - WIP and the run record (ch. 6); the counters and the hard-coded names (ch. 5); `comments_seen`, posts that repeat, comment events outside the failure cap, the false give-up promise, a lost close at the gate (ch. 7); `reject`'s reach, the three silent stop events, the stuck repeated acceptance (ch. 6); the lane read from the work tree, the leftovers without undo, the hand-over that is not retried, the agent files' ignored keys (ch. 8); unenforced rules R1–R15 (ch. 9); posts that notify nobody, unread reviews (ch. 10); the acceptance cascade and its cumulative cost line (ch. 11).
 
+**Placed in Part III; Part IV cites, never restates:** the project's toolchain in the factory's image, the engine's protected paths and their gaps, checks weakened from inside a lane, the demonstration project's `layers` target that cannot fail, the template that does not run as shipped, `uv` assumed (ch. 12); the factory's missing identity and the commits GitHub attributes to the organization `factory`, the unprotected main branch, rejected pushes, unchecked settings, the squash and rebase merges (ch. 13); one machine, the shared checkout name, the bill's missing agent runs, the records lost with the volume, the machine's stops outside the pull request, the tick's lock, the preflight probe on a work item's branch, the unpinned image (ch. 14); the token in every agent, the allow list under auto mode, writes outside the undo, comments by anyone, unrecorded denials (ch. 15). Installation's `cp -r` is in ch. 9.
+
 **Still to place:**
-- **A killed agent run leaves no cost record** (ch. 14, 16). `tick.record` writes only after `dispatch.handle` returns. Also: `costs.buckets` counts only records with `ok: true`, so every failed agent run is missing from the cost table, the `done` line and the acceptor's sum; a missing agent writes a zero record.
-- **The tick's lock** (ch. 14). A tick that dies leaves `factory-tick.lock`; the next ticks return quietly for `lease_minutes` + 10 minutes, unless the container restarts (the entrypoint removes locks). Each `claude` call and each `make` call gets a full lease as its timeout.
-- **A restart wipes the tick's memo** (ch. 14). The entrypoint deletes `factory-tick.json` at start; so a restart also retries what the factory gave up on.
-- **Installation** (ch. 12, 14). The entrypoint's `cp -r` replaces agents and skills but never removes one deleted from the image.
-- **Safety gaps** (ch. 15): `GH_TOKEN` inherited by agents; `curl *` allowed; the credential helper `gh auth setup-git`; `git -C . push` passes the deny rule; writes outside the work tree or to ignored paths never undone; every role gets the same shell vocabulary (`git commit`, `curl`); prompt injection through story text or dependencies. Point to ch. 8 for the lane read from the work tree and the leftovers.
-- **The factory's identity** (ch. 13, 15). Pull requests are opened and comments posted with the human's own token: GitHub does not notify a user of their own activity, and an author cannot approve or request changes. A machine identity of its own would fix both (ch. 10 states the consequence).
-- **Merges** (ch. 13). A squash merge is misread as an illegal stage change only when the checkout sits on `main` (observed 2026-10-05, `docs/branching.md`); after a hand-over the checkout is usually on the story's branch and the merge arrives as `merged`. A rebase merge is untested.
-- **`uv` is assumed** (ch. 12). The preflight requires `uv` and `.venv`, and the entrypoint runs `uv sync`. `guard.NEVER_FILES` names Python, uv, make and Claude Code files. `template/tasks/.gitkeep` is a leftover of the flat `tasks/` folder of contract version 3. The template's guide says "the pipeline knows only these three targets" while the acceptor runs `make mutants`. R10 points agents to `docs/branching.md`, which exists only in the factory's repository.
+- **The measurements behind two changes** (ch. 16; ch. 14 names the changes and points there). *Connectors:* the 59 agent runs of run 4, read by five analysts, showed the login's claude.ai connectors announced in every agent run, usually after the first call, where they changed the start of the request and the second call rewrote the cached prefix: about 7,500 tokens per agent run, an estimated fifth of all cache cost; a two-call test with and without `--strict-mcp-config` wrote 5,500 tokens to the cache against 200. *Fewer turns:* every call re-read a prefix of 20,000 to 40,000 tokens; the reviewer ran `make check` in all ten of its agent runs, four times as a turn of its own; six of nine testers read `docs/architecture.md`. Source: `docs/decisions.md`, the last two entries of 2026-10-05.
 - **The `version:` field in `stages.yml`** went 1 → 2 → 4 → 5 (ch. 16). Generation 3 changed the loop, not the contract. No code reads the field (ch. 5 says so).
-- **Stale v1 documents** (ch. 16, 17). `README.md` still describes the dispatcher as a model session; `demo/README.md` still gives $1.50–2.20 a story; the `max_attempts` comment in `stages.yml` (ch. 5); `template/TICKET.md`'s Demo text (ch. 4); `docs/review-comments.md` reads as unbuilt at `537fc20` (ch. 10; fixed on 2026-10-07, see `RETARGET.md`); `stage-review` says the factory runs `make check` after the reviewer (ch. 9).
+- **Stale v1 documents** (ch. 16, 17). Stated so far: `README.md` still describes the dispatcher as a model session and calls `uv` "the only tool assumption left" (ch. 12); `demo/README.md` still gives $1.50–2.20 a story; the `max_attempts` comment in `stages.yml` (ch. 5); `template/TICKET.md`'s Demo text (ch. 4); `docs/review-comments.md` reads as unbuilt at `537fc20` (ch. 10; fixed on 2026-10-07, see `RETARGET.md`); `stage-review` says the factory runs `make check` after the reviewer (ch. 9); `docs/branching.md`'s table says intake and the acceptor create the branches, lists an answer on the main branch, and calls a rejected push a stall (ch. 13); the preflight's docstring has the dispatcher offer fixes (ch. 14); `docs/diagrams/README.md` §06 says a running tick finishes before `docker stop` (ch. 14 states the opposite).
 - **The reverted plans** (ch. 17). Two plans of 2026-10-05 (*fewer commits*, *review comments*) were built and reverted the same day. At `537fc20` the revert is in neither `docs/decisions.md` nor the history, because `main` was reset; since 2026-10-07 the decision log has an entry for it (see `RETARGET.md`).
-- **Chapter 17's table** collects every `v1 limit` box of Parts I–III, about 40 from Part II alone, each with a pointer.
+- **Chapter 17's table** collects every `v1 limit` box of Parts I–III: about 40 from Part II and about 25 from Part III, each with a pointer.
+- **What Part III's reviews learned about verification** (ch. 16): the demonstration project's `layers` target was found green on a broken contract only by breaking it on purpose; no part of v1's containment (ch. 15) has a test.
 
 ## Tools and pitfalls
 
@@ -398,7 +394,7 @@ Found while writing Parts I and II, verified against the code. Each belongs in t
   - new chapter folders `NN-slug` and appendix folders `a-slug` are picked up automatically;
   - `PARTS` in `_print/book.py` maps the first chapter of each part (Part IV starts at 16);
   - links to chapters that do not exist print as plain text.
-- **Subagents (what worked for Part II):** figures on Sonnet, one per figure, in the background; lecturers and the part reviewers on Opus, in the background, one per chapter, started as soon as a chapter is drafted while the next is written. Every lecturer found real errors against the code; verify each claim before applying it.
+- **Subagents (what worked for Parts II and III):** figures on Sonnet, one per figure, in the background; lecturers and the part reviewers on Opus, in the background, one per chapter, started as soon as a chapter is drafted while the next is written. Every lecturer found real errors against the code, and in Part III each also found limits the draft had missed; verify each claim before applying it. For claims about Claude Code's behavior, the lecturer read Claude Code's documentation (code.claude.com/docs/en/permissions and /permission-modes); state such claims as the documentation's, with the date.
 - **Kit quirks:** a step box with a title and one body line needs 64 px, not 56; `check()` wants a final straight leg of at least 24 px, so 16 px gaps between stacked boxes need the arrow to start inside the box above. A tall figure up to about 1,300 px at 850 px wide still prints upright on one page.
 - **Print:** a long box may break with only its label and first line at the foot of a page (seen at the end of chapters 9 and 11). A position-based page break in `callout` made the layout fail to converge; leave it, or solve it with a measure-free rule.
 - **Print:** code blocks print since Part II (the template had wrapped them in a paragraph, which Typst drops with a warning). Treat any Typst warning in `make book` as a bug.

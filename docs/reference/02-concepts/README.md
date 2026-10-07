@@ -320,7 +320,7 @@ The factory runs on a **machine**: in v1, a container that holds the tools, the 
 
 A missing tool is reported, never worked around: an agent that cannot run the full check does not get to run its parts by hand and call it green.
 
-The machine also keeps the **cost records**: one line per agent run with its duration, tokens and cost, giving each story its bill and each stage its average. The health endpoint's bill (seven agent runs, 2.8 minutes, $1.36) was summed from them.
+The machine also keeps the **cost records**: one line per agent run with its duration, tokens and cost, giving each story its bill, broken down by stage. The health endpoint's bill (seven agent runs, 2.8 minutes, $1.36) was summed from them.
 
 ## How the concepts fit together
 
