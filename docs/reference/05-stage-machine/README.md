@@ -54,7 +54,7 @@ with `lease_minutes: 60` and `max_attempts: 2`. The lanes are listed in [chapter
 
 The three tables below list every move, grouped by cause. *Any agent stage* means a stage whose `agent` is set; *the event* and *the handler* point to [chapter 6](../06-watcher/README.md), [chapter 7](../07-dispatcher/README.md) and [chapter 8](../08-stage-run/README.md).
 
-**An agent's decision.** After an agent run, `stage._decide` takes the first matching rule, in this order:
+*An agent's decision.* After an agent run, `stage._decide` takes the first matching rule, in this order:
 
 | Rule | Condition | To | Counters and flags |
 | :- | :- | :- | :- |
@@ -68,7 +68,7 @@ The three tables below list every move, grouped by cause. *Any agent stage* mean
 
 Before `_decide`, any result the factory cannot keep is a stall, `attempts` + 1, with the stage unchanged: `stuck`, an error, no decision, a decision the table does not allow, a form that broke during the agent run. Rule 1 applies at every stage, but only intake's task names the findings; an agent at a later stage is not told why its forward move became a question. After the round cap (rule 4), answering the question runs the *sending* stage again, and every further send-back from an agent asks again, because the counter keeps climbing.
 
-**The factory's observation.**
+*The factory's observation.*
 
 | From | Trigger | To | Counters and flags | Event · handler |
 | :- | :- | :- | :- | :- |
@@ -83,7 +83,7 @@ Before `_decide`, any result the factory cannot keep is a stall, `attempts` + 1,
 
 A stall commits the partial work as it is (`ops.stall`), so the next attempt continues from it. A *branch stage* is any stage after `ready`'s first agent run: the work item has its own branch.
 
-**The human's action.**
+*The human's action.*
 
 | From | Trigger | To | Counters and flags | Event · handler |
 | :- | :- | :- | :- | :- |

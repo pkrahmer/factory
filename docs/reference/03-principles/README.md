@@ -66,7 +66,7 @@ Autonomy is not the goal; leverage is. The human's two decisions, *build this no
 
 **The human works in two places they already use: the repository, where they write and promote stories, and the pull request, where they answer, accept and send back. There is no third.**
 
-The factory runs while the human is elsewhere, so a channel that needs a terminal, a dashboard or a chat session at the right moment is one the human misses. The pull request is already on the human's phone, already notifies them and already carries the code, so it carries the rest too: the story, each question, the result and the bill ([chapter 2](../02-concepts/README.md)). A second conversational channel would split the record: an answer given in a chat never reaches the log, and the agent waiting for it blocks.
+The factory runs while the human is elsewhere, so a channel that needs a terminal, a dashboard or a chat session at the right moment is one the human misses. The pull request is already on the human's phone and already carries the code, so it carries the rest too: the story, each question, the result and the bill ([chapter 2](../02-concepts/README.md)). A second conversational channel would split the record: an answer given in a chat never reaches the log, and the agent waiting for it blocks.
 
 *Rules out:* questions in a chat or an email; a dashboard the human must watch; any action the human can only take at a keyboard while the factory works.
 

@@ -100,7 +100,7 @@ The run record is `.git/factory-run.json`, outside the work tree:
 | Command | Does |
 | :- | :- |
 | `factory-watch --once` | evaluates once and prints the event; the tick calls the same function |
-| `factory-watch --board` | prints one row per feature (drafts, ongoing and done counted in the working tree, and the acceptance's status: `-`, `due`, `running`, `accepted` or `refused`) and one row per work item, acceptances included (identifier, stage, `pr`, the run record's start, and the flags `blocked`, `round`, `attempts`) |
+| `factory-watch --board` | prints one row per feature (drafts, ongoing and done counted in the working tree, and the acceptance's status: `-`, `due`, `running`, `accepted` or `refused`, defined in [chapter 11](../11-feature-acceptance/README.md)) and one row per work item, acceptances included (identifier, stage, `pr`, the run record's start, and the flags `blocked`, `round`, `attempts`) |
 | `factory-watch --follow` | re-evaluates whenever a fingerprint changes (HEAD, the status of `<root>`, the `ticket/` and `acceptance/` refs, and every 15 polls of 2 seconds, so pull requests are read again), and prints the event when it differs from the last one printed, which it keeps in `.git/factory-last-line` |
 
 The board's counts come from whatever branch the factory last checked out.
