@@ -339,7 +339,7 @@ The book links to the two archived documents at the commit it describes (`https:
 
 ## Data that is not in the repository
 
-**Run 4** (2026-10-05, 16:49–19:36 UTC, generation 5): 59 agent runs, $15.89, from the cost records `.git/factory-dispatches.jsonl` in the container's work volume. That file is wiped by the next demo run; the user has not yet decided whether to keep it as a data file.
+**Run 4** (2026-10-05, 16:49–19:36 UTC, generation 5): 59 agent runs, $15.89, from the cost records `.git/factory-dispatches.jsonl` in the container's work volume. The records are kept in [`data/demo-dispatches.jsonl`](data/demo-dispatches.jsonl) (copied 2026-10-07; run 4 is its first 59 lines), described in `data/README.md`.
 
 | Work item | Agent runs | Agent minutes | Cost | Notes |
 | :- | -: | -: | -: | :- |
@@ -411,6 +411,6 @@ Found while writing Parts I and II, verified against the code. Each belongs in t
 ## Open decisions for the user
 
 1. Add a design decision to `docs/decisions.md` for the reverted plans of 2026-10-05?
-2. Keep run 4's cost records as a data file for chapter 16?
+2. ~~Keep run 4's cost records as a data file for chapter 16?~~ Done on 2026-10-07: `data/demo-dispatches.jsonl`.
 3. Redraw Part I's five figures at most 850 px wide, so that they print upright in the text instead of on pages of their own?
 4. When to merge `docs/reference` into `main`?
