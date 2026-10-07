@@ -11,16 +11,15 @@ This file tells a fresh session how to write the rest of the reference in `docs/
 | II · The machine | 4–11 | Written (21,100 words), a lecturer round per chapter and one over the part, 4 figures, in print |
 | III · Around the machine | 12–15 | Written (9,500 words), a lecturer round per chapter and one over the part, 1 figure, in print |
 | IV · Looking back | 16–17 | Written (5,600 words without table syntax), a lecturer round per chapter and one over the part, no figures, in print; chapter 17 numbers the limits L1–L74 |
-| Appendices | A–C | **Next** |
-| Introduction | `README.md` | Last |
+| Figure 13-1, the retarget, appendices A–C, the introduction | | **Next**, in one final session: see *Finishing the book* |
 
 Branch `docs/reference` of github.com/pkrahmer/factory; the book describes v1 at commit `537fc20`. Every session updates this table before it ends. Files that move after `537fc20`, and everything else the final version must retarget to the latest repository, are listed in [`RETARGET.md`](RETARGET.md); add to it in the same commit as the change.
 
 ## Starting a session
 
-Give the new session this prompt, with the part filled in:
+Parts I to IV were each written in a session of their own, from a prompt naming the part. What is left is one final session, started with this prompt:
 
-> Read `docs/reference/WRITING-PLAN.md` in the factory checkout (C:\Dev\Projects\factory, branch `docs/reference`) and write Part IV as it describes. Follow its process, its budgets and its rules against filling, and keep `docs/reference/RETARGET.md` current. Use Sonnet for figure subagents and Opus for lecturer reviews. Stop and report when the part is committed.
+> Read `docs/reference/WRITING-PLAN.md` in the factory checkout (C:\Dev\Projects\factory, branch `docs/reference`) and finish the book as its section *Finishing the book* describes: figure 13-1 (the branches), the retarget to the latest repository (`docs/reference/RETARGET.md`), appendices A to C, the introduction, and a last review over the whole book. Follow the plan's process, budgets and rules against filling. Use Sonnet for figure subagents and Opus for lecturer reviews. Commit after each step; at the end, push the branch, merge it into `main` through a pull request with a merge commit, send me both PDFs and report.
 
 The session then reads, in this order:
 1. this plan;
@@ -192,6 +191,7 @@ The budgets are in words, tables included. Together they come to about 40,000 wo
   - fetch, fast-forward-only pulls, merging `main` in before each stage;
   - `docs/github-settings.md`: rulesets, tokens, noreply identity.
 - *Sources:* `docs/branching.md`, `docs/github-settings.md`, `repo.py`, `dispatch.py`, `entrypoint.sh`.
+- *Figure (added in the final session):* 13-1, the branches; see *Finishing the book*.
 
 **14. The runtime** · `14-runtime` · 2,800, including costs and observability (the planned chapter 16 is folded in here)
 - *In v1:*
@@ -253,6 +253,44 @@ The budgets are in words, tables included. Together they come to about 40,000 wo
 ### The introduction (last)
 
 Complete `docs/reference/README.md`: keep the preface as its front part and add what the book covers, a map of the parts, and how each of the two readers should read it.
+
+## Finishing the book
+
+One session finishes the book, in this order, and commits after each step. Each step follows *Process for each chapter* where it applies: facts against the code, a lecturer review on Opus, `make check`, `make book`.
+
+1. **Figure 13-1, the branches** (chapter 13, section *Branches*). v1 already has the picture: [`docs/diagrams/10-branches.svg`](../diagrams/10-branches.svg), drawn by `branches()` in `docs/diagrams/draw.py`. It is 2,100 px wide and runs left to right, so the book redraws it with its own kit, as the triple `13-git-and-github/branches.{md,py,svg}`:
+   - *Layout:* time runs downward; three lanes side by side, `ticket/<stem>`, `main` and `acceptance/<feature>`; at most 850 px wide and up to about 1,300 px tall, so it prints upright.
+   - *Content:* what v1's picture shows:
+     - the human's drafts and promotion on `main`;
+     - the factory's commits on the work item's branch: opened with a draft pull request, one per stage change, a merge of `main`;
+     - the coder's `feat:` and `refactor:` commits;
+     - `demo → accept` with the pull request marked ready;
+     - the human's merge commit, never a squash;
+     - the archive on `main`, and the branch deleted;
+     - the acceptance's branch, `feature → accept`, the human's merge, and the booking with its `outcome`;
+     - the pull request's state, draft or ready, beside each branch;
+     - the colors of the human, the coder's work and the factory's code, as in Part I's figures.
+   - *Verify* every commit and label against the code at the pin (`stage.py`, `dispatch.py`, `ops.py`, `repo.py`) and against chapter 13's commit table, not against v1's picture or `docs/branching.md`. One example: v1's picture says `main` is merged in at "every stage", its README says "whenever it moved"; the code decides. The description lists every deviation from v1's picture, and why.
+   - *Place* it in *Branches* with the image line and caption shape the print needs; cite it from the text, and cut any sentence the figure now carries.
+   - A figure subagent on Sonnet draws it (brief under *Process for each chapter*); review both renders yourself.
+2. **The retarget.** Work through [`RETARGET.md`](RETARGET.md) section by section.
+   - *Section 1:* set the pin to the newest commit on `main` when the step starts, after Part IV's merge. The code differs from `537fc20` only in `.env.example`, `compose.yml`, `entrypoint.sh` and the `Makefile` (the commit address, `make book`), and the documents in the archive and backlog moves, so most of section 5 is a check, not a rewrite.
+   - *Sections 2 to 4:* every link, path and statement listed there; then `grep -rn "537fc20" docs/reference` for every mention left in prose.
+   - *Section 5:* one Opus lecturer per group of chapters, for accuracy only, against the code at the new pin.
+   - Chapter 17's limit numbers stay stable: a limit that no longer holds keeps its row, marked as history.
+   - Afterwards `RETARGET.md` keeps a dated line naming the commit the book was retargeted to, and section 5 as the checklist for the next retarget.
+3. **Appendices A to C** (outline above), written against the new pin.
+   - *A:* every term set in bold where it is defined, the preface's table *Words with one meaning* included; bold labels such as **Planner:** and the bold leads of list items are not terms.
+   - *B:* from `git ls-files` at the pin; `docs/reference/` is one line.
+   - *C:* from `docs/decisions.md` at the pin. The chapters cite design decisions by date and topic, so the index maps each entry to the chapters that cite it; the chapters keep their citations as they are.
+   - One Opus lecturer per appendix.
+4. **The introduction** (above), about 1,000 words; remove the comment at the top of `README.md`.
+5. **A last review over the whole book**, by two Opus reviewers, one for Parts I and II, one for Parts III and IV and the appendices: terms, cross-references, figure numbers, the limit numbers against the boxes, the introduction against what the book holds.
+6. **Close.**
+   - `make check` green; `make book` and `make book BOOK_FLAGS=--reader` without warnings; look at the overview and at every new page.
+   - *Status* marks the book complete; *Known facts* and *Starting a session* say that nothing is left.
+   - Push `docs/reference`, open a pull request to `main`, and merge it with a merge commit (`gh pr merge --merge`). GitHub has answered pushes with transient 500 errors before; retry after a few minutes.
+   - Send the user both PDFs.
 
 ## Rules against filling
 
@@ -376,7 +414,7 @@ Found while writing Parts I to III, verified against the code. Each belongs in t
 
 **Placed in Part IV; the appendices cite, never restate:** the test suite (183 tests), the demonstration and hardening mode, the four runs, the seventeen fixes, the paths walked per generation, run 4 item by item, the bookkeeping's cost and the measurements behind three changes (the pause, connectors, fewer turns), what is not verified (ch. 16); every limit as L1–L74, the stale documents, the backlog at `537fc20`, the design decisions left open (ch. 17). The `version:` field's history stays in the preface. Chapter 17's limit numbers are stable: a later chapter or plan cites them as L*n*.
 
-**Still to place:** nothing for the chapters. Appendix C needs the decision log's entries with ids; appendix B the file map (note `docs/archive/` and `docs/backlog/` after `537fc20`, see `RETARGET.md`).
+**Still to place:** nothing for the chapters. What is left is in *Finishing the book*.
 
 ## Tools and pitfalls
 
