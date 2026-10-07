@@ -9,7 +9,7 @@ services:
       TICK_SECONDS: ${TICK_SECONDS:-120}            # the longest pause between ticks
       TICK_FIRST_SECONDS: ${TICK_FIRST_SECONDS:-15} # the first pause after activity; doubles
       GIT_USER_NAME: ${GIT_USER_NAME:-factory}
-      GIT_USER_EMAIL: ${GIT_USER_EMAIL:-factory@users.noreply.github.com}
+      GIT_USER_EMAIL: ${GIT_USER_EMAIL:-factory@noreply.invalid}
     volumes:
       - claude-home:/home/factory/.claude
       - work:/work
