@@ -15,27 +15,27 @@ The tick keeps a small **memo** per project: the last event it handled, the repo
 
 ## In v1
 
-`src/factory/dispatch.py` maps each event kind to a handler (`dispatch.LINES`; v1 calls an event a *line*, so the names say `line` throughout). Every handler takes a `Context`: the checkout's root, the parsed stage table, a GitHub client, a function that starts an agent, today's date, and `gate`, a function that runs a `make` target for the stage's checks and reports (not the human's gate). It returns `Handled(ok, summary, run)`: whether it succeeded, one sentence for the tick's log, and the agent run's result if it started one. An event kind without a handler returns `NOTHING`, "nothing to do", without raising.
+`src/factory/dispatch.py` maps each event kind to a handler (`dispatch.LINES`; v1 calls an event a *line*, so the names say `line` throughout). Every handler takes a `Context`: the checkout's root, the parsed stage table, a GitHub client, a function that starts an agent, today's date, and `gate`, a function that runs a `make` target for the stage's checks and reports (not the human's gate). It returns `Handled(ok, summary, run)`: whether it succeeded, one sentence for the factory's log file, and the agent run's result if it started one. An event kind without a handler returns `NOTHING`, "nothing to do", without raising.
 
-Before the dispatcher sees an event, the tick has taken its lock, run the preflight, committed any leftovers of an interrupted agent run, fetched, fast-forwarded the main branch, evaluated, and turned an outlived run record into `expired` ([chapter 6](../06-watcher/README.md), [chapter 14](../14-runtime/README.md)).
+What the tick does before it hands an event over is [chapter 14](../14-runtime/README.md)'s subject.
 
 ### The handlers at a glance
 
-| Event | Handler | Commits on | Commit subject (after `ticket <id>:`) | Posts | Sets `comments_seen` |
-| :- | :- | :- | :- | :- | :- |
-| `merged` | `merged` | main | `accept → done (pull request merged)` | nothing | no |
-| `closed`, an acceptance | `_refused` | main | `closed by the human` | nothing | no |
-| `closed`, a story at `accept` | `_sent_back` | the story's branch | `accept → doing (pull request closed)`, or `… (pull request closed; asked why)` | the send-back question, without a reason | yes |
-| `closed`, a story elsewhere | `_discard` | main | `discarded (pull request closed)` | nothing | no |
-| `ask` | `ask` | the story's branch | `question asked on the pull request` | the question | yes |
-| `pr` | `answers` | the story's branch | `comments from the pull request` | nothing | yes |
-| `reject` | `reject` | the checked-out branch | `illegal change <a> → <b>, moved back` | a note, with a pull request | yes |
-| `expired` | `expired` | the story's branch | `run expired` | a stall note, with a pull request | yes |
-| `run` | `run`, then `stage.run` | the work item's branch, or main when it hands over to `merged` or `_discard` | `intake starts`, `merge main`, `<stage> → <next>` and others ([chapter 8](../08-stage-run/README.md)) | stall notes | on a stall |
-| `duplicate` | `_duplicate` | nothing | | nothing | no |
-| `error pr-lookup` | `_pr_lookup` | nothing | | nothing | no |
+| Event | Handler | Commits on | Commit subject (after `ticket <id>:`) | Posts |
+| :- | :- | :- | :- | :- |
+| `merged` | `merged` | main | `accept → done (pull request merged)` | nothing |
+| `closed`, an acceptance | `_refused` | main | `closed by the human` | nothing |
+| `closed`, a story at `accept` | `_sent_back` | the story's branch | `accept → doing (pull request closed)`, or `… (pull request closed; asked why)` | the send-back question, without a reason |
+| `closed`, a story elsewhere | `_discard` | main | `discarded (pull request closed)` | nothing |
+| `ask` | `ask` | the story's branch | `question asked on the pull request` | the question |
+| `pr` | `answers` | the story's branch | `comments from the pull request` | nothing |
+| `reject` | `reject` | the checked-out branch | `illegal change <a> → <b>, moved back` | a note, with a pull request |
+| `expired` | `expired` | the story's branch | `run expired` | a stall note, with a pull request |
+| `run` | `run`, then `stage.run` | the work item's branch, or main when it hands over to `merged` or `_discard` | `intake starts`, `merge main`, `<stage> → <next>` and others ([chapter 8](../08-stage-run/README.md)) | stall notes |
+| `duplicate` | `_duplicate` | nothing | | nothing |
+| `error pr-lookup` | `_pr_lookup` | nothing | | nothing |
 
-Every commit is followed by a push of the same branch (`ops.commit_and_push`). The subject prefix is `acceptance <feature folder>:` for an acceptance. `run` is the exception to one commit per handler: at the first stage it pushes the new branch, merging the main branch adds a commit, and the stage's result is a third.
+Every commit is followed by a push of the same branch (`ops.commit_and_push`). Every handler that posts also sets `comments_seen` to the count after its post, and so do `answers` and a stall in `run`. The subject prefix is `acceptance <feature folder>:` for an acceptance. `run` is the exception to one commit per handler: it makes up to two, `intake starts` (or `acceptance starts`) at the first stage or `merge main` at a later one, then the stage's result.
 
 ### `merged`: the human accepted
 
@@ -50,13 +50,13 @@ The handler trusts the event and does not read the pull request again. The file 
 
 An acceptance, recognized by its path, goes to `_refused`. A story is read from its branch: at `accept` it goes to `_sent_back`, anywhere else to `_discard`. A story whose file is missing on its branch reads as `ready`, and is discarded.
 
-**`_refused`**, for an acceptance:
+*`_refused`, for an acceptance:*
 1. Read the report from the acceptance branch; raise if it is missing.
-2. Read the human comments posted after `comments_seen`; their bodies, joined with spaces, are the reason, or `no reason given`.
+2. Read the human comments posted after `comments_seen`; their bodies, joined with spaces, are the reason, or `no reason given`. (A story's reason follows another rule, in chapter 5.)
 3. Check out the main branch. Write the branch's report there with `stage: done` and `outcome: refused`, the line `Refused by the human on <date>: <reason>` as the first paragraph under `## Verdict`, and the entry `done (pull request closed by the human); cost: …`. Only the report is written: the proposed drafts on the branch are dropped.
 4. Commit on the main branch and push; delete the branch.
 
-**`_sent_back`**, for a story at `accept`:
+*`_sent_back`, for a story at `accept`:*
 1. Reopen the pull request. If GitHub refuses, return a failure: "pull request *n* could not be reopened; nothing changed".
 2. Mark it as a draft again, and check out the story's branch.
 3. Copy the new human comments into the log (`_copy_comments`, under `pr` below).
@@ -68,13 +68,13 @@ An acceptance, recognized by its path, goes to `_refused`. A story is read from 
 
    Each option is an existing path of the machine.
 
-**`_discard`**, for a story at any other stage:
+*`_discard`, for a story at any other stage:*
 1. Check out the main branch, `git mv` the story from `ongoing/` to `drafts/`, commit and push.
 2. Delete the branch. The pull request stays closed.
 
 ### `ask`: post a question
 
-1. Find the story's branch. Without a branch or a pull request, return handled, "question without a pull request on …", and do nothing.
+1. Find the work item's branch. Without a branch or a pull request, return handled, "question without a pull request on …", and do nothing.
 2. If `blocked` is already `asked`, return `NOTHING`.
 3. Check out the branch. If `attempts` has reached `max_attempts`, the question is a new log entry: "Stage *s* stalled *n* times. The last time: *last entry* Comment anything to retry: the attempts go back to 0 and the stage runs again. Close the pull request to stop instead." Otherwise the question is the last log entry, verbatim, prefix and all: the agent's question, possibly followed by the form's findings or the round-cap question.
 4. Post the question, set `blocked: asked` and `comments_seen` to the comment count after the post, commit and push.
@@ -95,7 +95,7 @@ The handler is `answers`:
 
 ### `expired`: an agent run died
 
-1. Remove the run record. Find the story's branch; raise if there is none.
+1. Remove the run record. Find the work item's branch; raise if there is none.
 2. Check out the branch, add 1 to `attempts`, and append `run expired: the run that held it ended without finishing (lease over or machine restarted)`.
 3. If there is a pull request, post: "Stage *s* stalled: its run ended without finishing (attempt *n* of *max*). Retrying."
 4. Commit and push. The stage runs again on a later tick, or the attempts cap asks.
@@ -107,7 +107,6 @@ The handler is `answers`:
 3. If the work item has a pull request, read its state. A closed one is handled as `closed`, a merged one as `merged`.
 4. Otherwise run the stage protocol ([chapter 8](../08-stage-run/README.md)).
 
-`duplicate` and `error pr-lookup` return handled, with one sentence for the tick's log: "two stories with id …" and "gh could not answer for …; is gh logged in?".
 
 ### The tick's memo
 
@@ -154,7 +153,7 @@ The entrypoint deletes the memo at every start ([chapter 14](../14-runtime/READM
 
 `src/factory/github.py` wraps the `gh` command line. `GitHub` has `view`, `comment`, `reopen`, `to_draft`, `create_draft`, `find`, `edit_body` and `ready`; any non-zero exit raises `GitHubError`, except `reopen`, which returns `False`, and `find`, which returns `None`. `comment` appends the marker `<!-- factory -->` after a blank line. `is_own(body)` recognizes the factory's comments by the marker, or by the prefix `factory:` that comments had before the marker existed.
 
-`tests/test_dispatch.py` runs every handler against a throwaway repository with a bare `origin`, a fake GitHub that records posts, drafts and state changes, and a fake agent that returns a chosen outcome and edits chosen files: 38 tests. `tests/test_tick.py` holds 23 more for the memo, the lock and the failures. Design decision: 2026-10-05 (the dispatcher is code).
+`tests/test_dispatch.py` runs every handler against a throwaway repository with a bare `origin`, a fake GitHub that records posts, drafts and state changes, and a fake agent that returns a chosen outcome and edits chosen files; `tests/test_tick.py` tests the memo, the lock and the failures. Design decision: 2026-10-05 (the dispatcher is code).
 
 > [!WARNING]
 > **v1 limit:** `comments_seen` is a count, not a set. Every handler that posts sets it to the total after its own post, so a human comment made since the last read is counted as seen and never copied. While the stages work, a stall note or an expired agent run's note can swallow a comment that way. Deleting a comment lowers the count, so the next copy skips one.
@@ -166,10 +165,13 @@ The entrypoint deletes the memo at every start ([chapter 14](../14-runtime/READM
 > **v1 limit:** `pr` events bypass the memo. A persistent failure of `answers`, such as a branch that cannot fast-forward, is retried on every tick, and from the third failure on, every tick posts the give-up message again. Each post raises the comment count while the human's unread comment keeps the event alive, so the loop does not end by itself.
 
 > [!WARNING]
-> **v1 limit:** the give-up message's promise is false. The memo compares the checkout's `HEAD`, and a commit pushed to the work item's branch moves only `origin/…`, never the local branch the checkout is on. What makes the tick try again is a changed event, a new commit on the main branch while the checkout sits there, or a restart. And `give_up` needs a pull request: a failure on a work item that has none yet, such as a failing first stage, reaches only the tick's log.
+> **v1 limit:** the give-up message's promise is false. The memo compares the checkout's `HEAD`, and a commit pushed to the work item's branch moves only `origin/…`, never the local branch the checkout is on. What makes the tick try again is a changed event, a new commit on the main branch while the checkout sits there, or a restart. And `give_up` needs a pull request: a failure on a work item that has none yet, such as a failing first stage, reaches only the factory's log file.
 
 > [!WARNING]
 > **v1 limit:** a close at the gate can be lost silently. `_sent_back` reopens the pull request and marks it a draft before it checks out the branch. If the checkout then fails, the next evaluation finds an open pull request at `accept` with no new comments, `needs_handling` says no, and nothing tells the human that their close was undone.
+
+> [!WARNING]
+> **v1 limit:** an event kind without a handler returns "nothing to do" instead of raising, so a new event in the watcher's contract that the dispatcher does not know is handled silently, against P12.
 
 > [!WARNING]
 > **v1 limit:** `gh` is reached three ways: the watcher's `gh_pr_state`, the `GitHub` wrapper, and the tick's `pr_comment_bodies`, each with its own error handling. A change of hosting service touches all three.

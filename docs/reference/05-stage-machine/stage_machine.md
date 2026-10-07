@@ -52,7 +52,7 @@ Every stage of v1's table with v1's keys, the moves between them, and who causes
 - Canvas 850 × 1,160 px.
 - *The main column* (x 224 to 400, boxes 176 px wide, 32 px apart) holds `drafts/`, then `ready` down to `accept` and `done`.
 - *Right of the column:* the four back arrows into `doing` climb at x 472 to 544, nested so they do not cross: review's innermost and lowest port, the gate's outermost and highest. Each "round + 1" label sits on its arrow's first horizontal run. The `doing → tests` arrow rises right of the forward arrow between the two boxes.
-- *Left of the column:* a thin bracket from the top of `ready` to the bottom of `demo`, labeled "any stage before the gate". The discard arrow (red, dashed) runs from its top end up to `drafts/`; the merge-before-the-gate arrow (grey, dashed) runs from its bottom end down to `done`.
+- *Left of the column:* a thin bracket from the top of `ready` to the bottom of `demo`, labeled "any stage before the gate". The discard arrow (red, dashed) runs from its top end up to `drafts/`; the merge-before-the-gate arrow (gray, dashed) runs from its bottom end down to `done`.
 - *Bottom right:* the acceptance's own column, `feature` → `accept` → `done · accepted or refused`, in a dashed group captioned "once per complete feature".
 - *The two notes* sit at the top right, beside `ready` and `tests`, without arrows.
 - Legend: agent stage, the human's gate, end; forward, rework, discard.

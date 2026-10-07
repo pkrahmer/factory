@@ -73,7 +73,7 @@ Before `_decide`, any result the factory cannot keep is a stall, `attempts` + 1,
 | From | Trigger | To | Counters and flags | Event · handler |
 | :- | :- | :- | :- | :- |
 | `ready`, no branch | intake is due | `ready` on a new branch | the six fields written with defaults; draft pull request opened | `run` · `stage._open` |
-| no report, or a booked report covering fewer stories | a feature became complete | `feature` on a new branch | the report's head written, with `stories` | `run` · `stage._open` |
+| no report, or a report at `done` covering fewer stories | a feature became complete | `feature` on a new branch | the report's head written, with `stories` | `run` · `stage._open` |
 | any branch stage | the branch cannot fast-forward, or the main branch does not merge into it | unchanged | `attempts` + 1: a stall | `run` · `stage._prepare` |
 | any agent stage | the agent left its branch | unchanged | none: a failure of the factory, retried | `run` · `stage.run` raises |
 | any agent stage | the run record outlived its lease, or the machine restarted | unchanged | `attempts` + 1; the run record cleared | `expired` · `dispatch.expired` |
@@ -97,7 +97,7 @@ A stall commits the partial work as it is (`ops.stall`), so the next attempt con
 | any stage (a story) | merged | `done`, archived to `done/` | `blocked` cleared; the branch deleted | `merged` · `dispatch.merged` |
 | `accept` (an acceptance) | merged | `done` | `outcome: accepted` | `merged` · `dispatch.merged` |
 
-A reason is a human comment copied into the log after the demo stage's last entry, including one written together with the close. The factory sees a close or a merge while the human is expected to act, at a gate or with a question posted, and otherwise only before that work item's next agent run (`dispatch.run`). A story merged before its gate is therefore archived at whatever stage it had reached; the human accepted it as it was. The booking commit's subject still reads `accept → done`.
+For a story, a reason is a human comment copied into the log after the demo stage's last entry, including one written together with the close. The factory sees a close or a merge while the human is expected to act, at a gate or with a question posted, and otherwise only before that work item's next agent run (`dispatch.run`). A story merged before its gate is therefore archived at whatever stage it had reached; the human accepted it as it was. The archive commit's subject still reads `accept → done`.
 
 A work item whose `stage` is not a key of the table is neither run, nor polled, nor rejected: it sits.
 
@@ -127,7 +127,7 @@ The table is meant to be the whole program. These places name a stage, a role or
 | :- | :- | :- |
 | `ready` | `watch.py:49` (`MAIN_STAGES`), `:80`, `:292–293`; `ops.py:129`; `stage.py:146`, `:192` | the default stage of a story without frontmatter; intake starts on the main branch; intake after an answer; the form's findings in the task |
 | `feature` | `watch.py:48` (`FEATURE_STAGE`) | the stage a due acceptance starts in, on the main branch |
-| `done` | `watch.py:221`, `:243`, `:454`; `stage.py:77`, `:160`; `dispatch.py:40–43`, `:72` | the archive folder; the stage a merge or refusal writes; when an acceptance is booked |
+| `done` | `watch.py:221`, `:243`, `:454`; `stage.py:77`, `:160`; `dispatch.py:40–43`, `:72` | the archive folder; the stage a merge or refusal writes; when an acceptance's result is recorded |
 | `accept` | `dispatch.py:55` | a close here sends back; anywhere else it discards |
 | `doing` | `dispatch.py:117` | where a send-back from the gate goes |
 | `demo` | `dispatch.py:103`, `:118` | whose entry marks the hand-over (for the reason); whose `max_rounds` caps the human's send-backs |
@@ -143,7 +143,7 @@ The `gate` key is the one part of the human's side the table controls: any stage
 > **v1 limit:** the stage table is less configurable than it looks. A project can change checks, reports, caps and lanes freely. It cannot add a role: agents and their skills are installed in the image, the preflight requires every agent the table names, and each stage skill names its stage's decisions. Renaming `ready`, `accept`, `doing`, `demo` or `done`, or moving the gate, breaks the code paths in the table above. Dropping `demo` raises no error but changes behavior silently: with no demo entry in the log, any human comment counts as the reason for a send-back.
 
 > [!WARNING]
-> **v1 limit:** `stages.yml` is parsed as plain YAML with no schema, and the `version` field is never read. A missing `lease_minutes` makes every tick fail. A `next` that names no stage, or an agent without a lane, is found only when it is reached. The factory's own commits also depend on the table: its booking commit of an accepted acceptance needs `done` in `accept`'s `next`, and its send-back needs `doing` there, or the next evaluation's `reject` undoes them.
+> **v1 limit:** `stages.yml` is parsed as plain YAML with no schema, and the `version` field is never read. A missing `lease_minutes` makes every tick fail. A `next` that names no stage, or an agent without a lane, is found only when it is reached. The factory's own commits also depend on the table: its commit recording an accepted acceptance needs `done` in `accept`'s `next`, and its send-back needs `doing` there, or the next evaluation's `reject` undoes them.
 
 > [!WARNING]
 > **v1 limit:** an acceptance merged before its gate loops. If the human merges an acceptance's pull request while it waits with a question at `feature`, `dispatch.merged` writes `stage: done` on the main branch, which `feature`'s `next` does not allow. By the code, `reject` sets it back to `feature`, the pull request is still merged and still polled, and the two handlers alternate on every tick. A story is safe, because its archive moves the file, and `reject` ignores moved files.
@@ -166,7 +166,7 @@ The `gate` key is the one part of the human's side the table controls: any stage
 > - **Watch for:**
 >   - every behavior v1 hard-codes by name (*Names in the code*) needs a key in the table: where a close at the gate sends back, which cap the human's send-back uses, which stages start on the main branch, which roles fill the pull request's description, which stage is terminal;
 >   - validate the table at load time, against the installed agents and skills, and check `version` against the code's contract;
->   - the factory's own moves must be legal under the table, or exempt from the illegal-change check by construction, not by luck (the acceptance loop above);
+>   - the factory's own moves must be legal under the table, or exempt from the illegal-change rule by construction, not by luck (the acceptance loop above);
 >   - tell the agent why its forward move became a question;
 >   - decide whether a rework round and an approved change of direction are the same counter;
 >   - decide whether another story may start between two stages of a story. v1 allows it, so a merge of the main branch can conflict.

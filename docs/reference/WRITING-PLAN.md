@@ -8,8 +8,8 @@ This file tells a fresh session how to write the rest of the reference in `docs/
 | :- | :- | :- |
 | Preface | `README.md` | Front part written (conventions, "Words with one meaning"); the introduction around it is written last |
 | I · The idea | 1–3 | Written, two lecturer rounds, trimmed to budget, 5 figures, in print |
-| II · The machine | 4–11 | **Next** |
-| III · Around the machine | 12–15 | Open |
+| II · The machine | 4–11 | Written (21,100 words), a lecturer round per chapter and one over the part, 4 figures, in print |
+| III · Around the machine | 12–15 | **Next** |
 | IV · Looking back | 16–17 | Open |
 | Appendices | A–C | Open |
 | Introduction | `README.md` | Last |
@@ -69,7 +69,7 @@ The budgets are in words, tables included. Together they come to about 40,000 wo
 - *Limits:*
   - the table is less configurable than it looks;
   - the `max_attempts` comment is stale;
-  - `doing → tests` costs no round only because `tests` has no `max_rounds`.
+  - `doing → tests` costs no round only because `doing` has no `max_rounds`.
 - *Figure:* v1's state machine, laid out vertically to stay within 850 px.
 - *Sources:* `template/stages.yml`, `watch.py`, `dispatch.py`, `stage.py`, `ops.py`, `docs/WATCH_CONTRACT.md`, `docs/diagrams/01-stages.svg` (v1's older drawing).
 
@@ -112,7 +112,7 @@ The budgets are in words, tables included. Together they come to about 40,000 wo
   - `give_up` needs a pull request.
 - *Sources:* `dispatch.py`, `ops.py`, `tick.py`, `github.py`, `repo.py`, `tests/test_dispatch.py`, `tests/test_tick.py`, design decisions of 2026-10-05.
 
-**8. One stage run** · `08-stage-run` · 3,000
+**8. The stage protocol** · `08-stage-run` · 3,000
 - *Concept:* the stage protocol around one agent run; the task; the outcome schema; the lane undo; checks and reports; the hand-over.
 - *In v1:*
   - `stage.run` step by step: `_prepare` (branch, fast-forward pull, merge `origin/main`, `_open` for stages that start on main, intake after an answer), `_ensure_pull_request`, the run record, `_task` (its exact lines), `schema()`;
@@ -352,34 +352,24 @@ Complete `docs/reference/README.md`: keep the preface as its front part and add 
 
 ## Known facts to place
 
-Found while writing Part I, verified against the code. Each belongs in the chapter named.
+Found while writing Parts I and II, verified against the code. Each belongs in the chapter named. Part II (chapters 4–11) has placed every fact about its own mechanisms; Parts III and IV point to those chapters instead of restating them.
 
-- **WIP is one agent run per machine** (ch. 6, 14). `factory-tick` runs the agent synchronously while holding its lock, and the entrypoint ticks repositories in turn, so `busy` is almost never seen in the container. The run record matters for agent runs that died. `docs/WATCH_CONTRACT.md` says the run record enforces WIP 1, which is only half true.
-- **A lower identifier can start between two stages of another story** (ch. 5, 6). Two stories are then in production, and the later one's merge of `main` can conflict, which is a stall.
-- **The counters** (ch. 5):
-  - attempts count per story across stages and are reset only by the human's answer at the cap;
-  - rounds never reset;
-  - the human's close at `accept` costs a round, compared with `demo`'s `max_rounds` (`dispatch.py`, `_sent_back`).
-- **`comments_seen` is a count** (ch. 7, 10). Every factory post sets it to the count after its own post, so earlier unread human comments are skipped.
-- **A kill can double-post** (ch. 7). `ask`, `expired` and `ops.stall` post before they commit.
-- **A killed agent run leaves no cost record** (ch. 14, 16). `tick.record` writes only after `dispatch.handle` returns.
-- **Two events are handled silently** (ch. 6, 7). `duplicate` and `error pr-lookup` return `Handled(True)` and reach only the tick log, and they outrank all other events.
-- **`reject` sees little** (ch. 6). It checks only `HEAD~1..HEAD` of the checked-out branch and only targets outside `next`; merges and subjects containing "moved back" are exempt.
-- **Hard-coded names** (ch. 5):
-  - `watch.MAIN_STAGES` (`ready`, `feature`);
-  - `dispatch._sent_back` (`accept`, `doing`, `demo`'s `max_rounds`);
-  - `dispatch._reason_given` (`demo`);
-  - `stage._task` (`tests`, `coder:`, `ready`);
-  - `stage._story_body` (`tester`, `reviewer`, `documenter`, `demo`);
-  - `stage.current` (`done`);
-  - `ops.stall` (the default `ready`).
-- **Safety gaps** (ch. 15): `GH_TOKEN` inherited by agents; `curl *` allowed; the credential helper; `git -C . push`; writes outside the work tree never undone.
-- **Leftovers** (ch. 14, 15). `tick.recover_dirty_tree` commits an interrupted agent run's leftovers with `git add -A` and no lane undo.
-- **`uv` is assumed** (ch. 12). The preflight requires `uv` and `.venv`, and the entrypoint runs `uv sync`. `guard.NEVER_FILES` names Python, uv, make and Claude Code files, and `NEVER_NAMES` blocks any `FEATURE.md`.
-- **The `version:` field in `stages.yml`** went 1 → 2 → 4 → 5 (ch. 5, 16). Generation 3 changed the loop, not the contract.
-- **Stale v1 documents** (ch. 16, 17). `README.md` still describes the dispatcher as a model session, `demo/README.md` still gives $1.50–2.20 a story, and the `max_attempts` comment in `stages.yml` is stale.
-- **The reverted plans** (ch. 10, 17). Two plans of 2026-10-05 (*fewer commits*, *review comments*) were built and reverted the same day. The revert is in neither `docs/decisions.md` nor the history, because `main` was reset.
-- **A restart wipes the tick's memory** (ch. 14). The entrypoint deletes `factory-tick.json` at start, so the last handled event is forgotten.
+**Already placed in Part II; later chapters cite, never restate:**
+- WIP and the run record (ch. 6); the counters and the hard-coded names (ch. 5); `comments_seen`, posts that repeat, comment events outside the failure cap, the false give-up promise, a lost close at the gate (ch. 7); `reject`'s reach, the three silent stop events, the stuck repeated acceptance (ch. 6); the lane read from the work tree, the leftovers without undo, the hand-over that is not retried, the agent files' ignored keys (ch. 8); unenforced rules R1–R15 (ch. 9); posts that notify nobody, unread reviews (ch. 10); the acceptance cascade and its cumulative cost line (ch. 11).
+
+**Still to place:**
+- **A killed agent run leaves no cost record** (ch. 14, 16). `tick.record` writes only after `dispatch.handle` returns. Also: `costs.buckets` counts only records with `ok: true`, so every failed agent run is missing from the cost table, the `done` line and the acceptor's sum; a missing agent writes a zero record.
+- **The tick's lock** (ch. 14). A tick that dies leaves `factory-tick.lock`; the next ticks return quietly for `lease_minutes` + 10 minutes, unless the container restarts (the entrypoint removes locks). Each `claude` call and each `make` call gets a full lease as its timeout.
+- **A restart wipes the tick's memo** (ch. 14). The entrypoint deletes `factory-tick.json` at start; so a restart also retries what the factory gave up on.
+- **Installation** (ch. 12, 14). The entrypoint's `cp -r` replaces agents and skills but never removes one deleted from the image.
+- **Safety gaps** (ch. 15): `GH_TOKEN` inherited by agents; `curl *` allowed; the credential helper `gh auth setup-git`; `git -C . push` passes the deny rule; writes outside the work tree or to ignored paths never undone; every role gets the same shell vocabulary (`git commit`, `curl`); prompt injection through story text or dependencies. Point to ch. 8 for the lane read from the work tree and the leftovers.
+- **The factory's identity** (ch. 13, 15). Pull requests are opened and comments posted with the human's own token: GitHub does not notify a user of their own activity, and an author cannot approve or request changes. A machine identity of its own would fix both (ch. 10 states the consequence).
+- **Merges** (ch. 13). A squash merge is misread as an illegal stage change only when the checkout sits on `main` (observed 2026-10-05, `docs/branching.md`); after a hand-over the checkout is usually on the story's branch and the merge arrives as `merged`. A rebase merge is untested.
+- **`uv` is assumed** (ch. 12). The preflight requires `uv` and `.venv`, and the entrypoint runs `uv sync`. `guard.NEVER_FILES` names Python, uv, make and Claude Code files. `template/tasks/.gitkeep` is a leftover of the flat `tasks/` folder of contract version 3. The template's guide says "the pipeline knows only these three targets" while the acceptor runs `make mutants`. R10 points agents to `docs/branching.md`, which exists only in the factory's repository.
+- **The `version:` field in `stages.yml`** went 1 → 2 → 4 → 5 (ch. 16). Generation 3 changed the loop, not the contract. No code reads the field (ch. 5 says so).
+- **Stale v1 documents** (ch. 16, 17). `README.md` still describes the dispatcher as a model session; `demo/README.md` still gives $1.50–2.20 a story; the `max_attempts` comment in `stages.yml` (ch. 5); `template/TICKET.md`'s Demo text (ch. 4); `docs/review-comments.md` reads as unbuilt (ch. 10); `stage-review` says the factory runs `make check` after the reviewer (ch. 9).
+- **The reverted plans** (ch. 17). Two plans of 2026-10-05 (*fewer commits*, *review comments*) were built and reverted the same day. The revert is in neither `docs/decisions.md` nor the history, because `main` was reset.
+- **Chapter 17's table** collects every `v1 limit` box of Parts I–III, about 40 from Part II alone, each with a pointer.
 
 ## Tools and pitfalls
 
@@ -393,6 +383,10 @@ Found while writing Part I, verified against the code. Each belongs in the chapt
   - new chapter folders `NN-slug` and appendix folders `a-slug` are picked up automatically;
   - `PARTS` in `_print/book.py` maps the first chapter of each part (Part IV starts at 16);
   - links to chapters that do not exist print as plain text.
+- **Subagents (what worked for Part II):** figures on Sonnet, one per figure, in the background; lecturers and the part reviewers on Opus, in the background, one per chapter, started as soon as a chapter is drafted while the next is written. Every lecturer found real errors against the code; verify each claim before applying it.
+- **Kit quirks:** a step box with a title and one body line needs 64 px, not 56; `check()` wants a final straight leg of at least 24 px, so 16 px gaps between stacked boxes need the arrow to start inside the box above. A tall figure up to about 1,300 px at 850 px wide still prints upright on one page.
+- **Print:** a long box may break with only its label and first line at the foot of a page (seen at the end of chapters 9 and 11). A position-based page break in `callout` made the layout fail to converge; leave it, or solve it with a measure-free rule.
+- **Print:** code blocks print since Part II (the template had wrapped them in a paragraph, which Typst drops with a warning). Treat any Typst warning in `make book` as a bug.
 - **Editing on this Windows machine:** heredocs that pass backslash escapes (`\n`) to Python or sed get mangled. Write scripts to a file with the Write tool, or use the Edit tool for exact replacements.
 - **Repositories:**
   - the running container `factory-factory-1`: do not touch it; read-only `docker compose exec -T factory sh -c '…'` from `C:\Dev\Projects\factory` is fine;

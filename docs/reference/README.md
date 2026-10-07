@@ -53,7 +53,7 @@ A few words could mean several things in a book about a system built on Git. Eac
 | *work item* | anything that moves through the line: a story, or a feature's acceptance | — (v1 calls every work item a *ticket*) |
 | *log* | a work item's append-only, numbered record | v1's decision log and the factory's log file, which are always named in full |
 | *gate* | a stage where the human, not an agent, decides | the checks |
-| *check* | a project command that must succeed before a forward move | the human's decision; v1's format validation of a story |
+| *check* | a project command that must succeed before a forward move | the human's decision; v1's form validation of a story |
 | *reports* | project commands run after a stage whose result is only noted | — (v1's key is `records`) |
 | *scheduler* | what wakes the factory again and again | — |
 | *tick* | one wake-up: fetch, evaluate, handle at most one event | the scheduler |

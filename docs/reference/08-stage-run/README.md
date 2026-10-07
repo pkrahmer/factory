@@ -91,7 +91,7 @@ The process runs in the checkout, with the factory's own environment plus three 
 
 > Finish now: give your outcome (`stuck` if the work is not done) and your log entry.
 
-The agent run succeeded when the process exited 0 and the result is not an error. Otherwise its reason is one of "timed out after *n* min", "no result from claude (exit *c*): …", "budget of $*b* spent, and the resume too", or the result's subtype and errors. Costs, turns and tokens of both calls are summed into one result, which the tick writes as one cost record ([chapter 14](../14-runtime/README.md)).
+The agent run succeeded when the process exited 0 and the result is not an error. Otherwise its cause is one of "timed out after *n* min", "no result from claude (exit *c*): …", "budget of $*b* spent, and the resume too", or the result's subtype and errors. Costs, turns and tokens of both calls are summed into one result, which the tick writes as one cost record ([chapter 14](../14-runtime/README.md)).
 
 ### After the agent
 
@@ -128,7 +128,7 @@ No lane reaches the files the guard reserves for the human: `.claude/`, `pyproje
 
 ![Figure 8-1. The stage protocol](stage_run_sequence.svg)
 
-*Figure 8-1. The stage protocol around one agent run: what the factory does before the agent, the agent's work inside its lane, and what the factory verifies, restores and commits afterwards.*
+*Figure 8-1. The stage protocol around one agent run: what the factory does before the agent, the agent's work inside its lane, and what the factory verifies, restores and commits afterward.*
 
 ### The hand-over
 
@@ -162,7 +162,7 @@ After the agent run that reached the gate, the tick posts the cost table ([chapt
 > **v1 limit:** the lane is read from the work tree the agent can change. The guard and the undo read `lanes:` from `factory/stages.yml` in the checkout, on every call. An agent that rewrites that file from the shell, which no hook sees, widens its own lane for the rest of its agent run. The undo then walks the changed paths in sorted order and judges every path that sorts before `factory/stages.yml` (`README.md`, `docs/…`, `factory/features/…`) by the widened lane, before it restores the file itself. A rewrite that is not valid YAML makes the undo raise.
 
 > [!WARNING]
-> **v1 limit:** the undo and the restore run only when the protocol completes. They see only the work tree's tracked and unignored files: a write to an ignored path, or outside the checkout, is never undone ([chapter 15](../15-safety/README.md)). After a kill, or any raise after the agent (the branch check, the YAML error above), the next tick's `tick.recover_dirty_tree` commits whatever is in the work tree with `git add -A`: out-of-lane writes, and the agent's edits to the frontmatter and the log, survive into the history ([chapter 14](../14-runtime/README.md)). After a branch switch they land on whatever branch is checked out. And an out-of-lane change the coder committed itself stays in the history, reverted by the factory's next commit.
+> **v1 limit:** the undo and the restore run only when the protocol completes. They see only the work tree's tracked and unignored files: a write to an ignored path, or outside the checkout, is never undone ([chapter 15](../15-safety/README.md)). After a kill, or any raise after the agent (the branch test, the YAML error above), the next tick's `tick.recover_dirty_tree` commits whatever is in the work tree with `git add -A`: out-of-lane writes, and the agent's edits to the frontmatter and the log, survive into the history ([chapter 14](../14-runtime/README.md)). After a branch switch they land on whatever branch is checked out. And an out-of-lane change the coder committed itself stays in the history, reverted by the factory's next commit.
 
 > [!WARNING]
 > **v1 limit:** the hand-over is not retried. `_move` pushes the stage change before `_hand_over` writes the description. If GitHub fails then, the tick counts a failure, but the work item is already at the gate, so the `run` event never returns: the pull request stays a draft with its first description, no cost table is posted, the agent run gets no cost record, and nothing tells the human.
@@ -170,8 +170,7 @@ After the agent run that reached the gate, the tick posts the cost table ([chapt
 > [!WARNING]
 > **v1 limit:** each `claude` call, and each `make` call of a check or report, gets the full lease as its timeout. A stage can therefore take two leases for the agent, plus one per check, while its run record expires after one. Only the sequential loop keeps that harmless: the lock of a running tick goes stale only after the lease plus 10 minutes, and no second tick starts in the meantime.
 
-> [!WARNING]
-> **v1 limit:** agents run with the factory's whole environment, including its GitHub token ([chapter 15](../15-safety/README.md)).
+Agents run with the factory's whole environment, its GitHub token included; [chapter 15](../15-safety/README.md) states that limit.
 
 > [!IMPORTANT]
 > **Planner:** what this chapter fixes.
@@ -185,7 +184,7 @@ After the agent run that reached the gate, the tick posts the cost table ([chapt
 > - **Incidental to v1:** Claude Code's flags; the budget resume; the environment switches; the task's exact wording.
 > - **Watch for:**
 >   - take the lanes from the start commit or the factory's configuration, never from the work tree the agent can change;
->   - run the agent in a sandbox where a write outside the work tree is impossible, rather than undone afterwards;
+>   - run the agent in a sandbox where a write outside the work tree is impossible, rather than undone afterward;
 >   - apply the undo and the restore to leftovers too, whatever ended the agent run;
 >   - make the hand-over idempotent and retry it from the work item's state;
 >   - one limit on a stage's wall clock, counted across resumes and checks, that matches the run record's lease;

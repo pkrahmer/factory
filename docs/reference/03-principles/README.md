@@ -28,7 +28,7 @@ The principle cuts both ways: code should not judge either. Carrying the human's
 
 *Rules out:* a model doing bookkeeping (counting, numbering, routing, posting, committing, deciding whether a check passed); code interpreting free text.
 
-*In v1:* the dispatcher and the stage protocol are code, and each agent's task names every fact the factory knows (the round, whether this is an approved test change, the format validation's result, the next free story number, the cost so far), so no agent works anything out from version control or the hosting service. [`docs/deterministic-core.md`](../../deterministic-core.md) tabulates where each fault sat. Design decisions: 2026-10-05 (dispatcher as code; stage protocol as code; story form checked by code).
+*In v1:* the dispatcher and the stage protocol are code, and each agent's task names every fact the factory knows (the round, whether this is an approved test change, the form validation's result, the next free story number, the cost so far), so no agent works anything out from version control or the hosting service. [`docs/deterministic-core.md`](../../deterministic-core.md) tabulates where each fault sat. Design decisions: 2026-10-05 (dispatcher as code; stage protocol as code; story form checked by code).
 
 ### P2. Versioned files are the only truth
 
@@ -40,12 +40,12 @@ So the stage is a field in the story, and a transition is a commit, which record
 
 *Rules out:* a database, a dashboard or a long-lived session as the place where a story's status lives; any action taken on a comment before it is in the log.
 
-*In v1:* machine state lives in `.git/`, never committed: the lock a tick holds, the run record (`factory-run.json`), the tick's memory of the last event handled, and the cost records. After a restart the locks and the tick's memory are removed, and the run record left behind expires its agent run. The cost records are neither disposable nor rebuilt. Design decisions: 2026-10-04 (version 3; questions through the pull request), 2026-10-05 (the claim leaves Git).
+*In v1:* machine state lives in `.git/`, never committed: the lock a tick holds, the run record (`factory-run.json`), the tick's memo of the last event handled, and the cost records. After a restart the locks and the memo are removed, and the run record left behind expires its agent run. The cost records are neither disposable nor rebuilt. Design decisions: 2026-10-04 (version 3; questions through the pull request), 2026-10-05 (the claim leaves Git).
 
 > [!WARNING]
 > **v1 limit:** two shortfalls.
 > - Losing the cost records, for example with the container's work volume, loses the bill of every story not yet archived.
-> - A comment the human writes while the stages work can be skipped entirely: every post of the factory's own advances the count of comments read ([chapter 10](../10-human-at-the-gate/README.md)).
+> - A comment the human writes while the stages work can be skipped entirely: every post of the factory's own advances the count of comments read ([chapter 7](../07-dispatcher/README.md)).
 
 ## The human
 
@@ -163,9 +163,9 @@ An instruction is a request. A model follows it most of the time, and "most of t
 | Rule | Enforcement in v1 |
 | :- | :- |
 | A stage changes only by a decision the table allows | The factory applies only decisions the table allows; a disallowed change committed by hand is detected and moved back |
-| A role writes only its lane | A hook refuses the write while the agent works; after the stage the factory undoes any change outside the lane, shell writes included |
+| A role writes only its lane | A hook refuses the write while the agent works; after the stage the factory undoes any change outside the lane, shell writes included (with the gaps in chapter 8) |
 | The story's state fields and log are the factory's | Whatever the agent did to them is restored before the factory writes its own entry |
-| The story keeps its form | A format validation before the first stage and after every stage; a stage that broke the form stalls |
+| The story keeps its form | Form validation before every agent run and after it; a stage that broke the form stalls |
 | Agents do not push, switch branches or call the hosting service | Those commands are denied to the agent, and the factory confirms the agent is still on its branch |
 
 Code also keeps the factory changeable. A new rule in prose cannot be tested before an expensive live run, and it adds a new way to fail; a new rule in code is a unit test.
@@ -206,9 +206,7 @@ P9 is this principle for agents: when the specification is silent, ask. P12 is t
 *In v1:* a handler's unexpected error is a counted failure, tried three times on the same event and repository state and then reported on the pull request (commit `57fe24f`). Every stall is a comment there when it happens, not only at the attempts cap. Design decisions: 2026-10-04 (every stall a comment), 2026-10-05 (the dispatcher is code).
 
 > [!WARNING]
-> **v1 limit:** two events stop the line but reach only the factory's log file, not the pull request:
-> - two stories with the same identifier;
-> - a pull request the factory cannot read.
+> **v1 limit:** some stops reach only the factory's log file, never the pull request: three events that stop a repository ([chapter 6](../06-watcher/README.md)), a failure on a work item without a pull request ([chapter 7](../07-dispatcher/README.md)), a hand-over that failed ([chapter 8](../08-stage-run/README.md)).
 
 ### P13. Spend on events, not on time
 
@@ -240,7 +238,7 @@ Machines restart, processes are killed and networks drop; a factory that needs a
 > **v1 limit:** three recovery gaps remain:
 > - **A restart is charged to the story** as a failed attempt, so two interruptions, or one and a red check, ask the human.
 > - **Leftovers bypass the lane undo.** An interrupted agent run's leftovers are committed without it, so a killed agent's out-of-lane write survives.
-> - **A kill can double-post.** Handlers that post on the pull request do so before they commit, so a kill between the two posts again.
+> - **Posts can repeat.** Handlers post on the pull request before they write the state ([chapter 7](../07-dispatcher/README.md)).
 
 ## The factory itself
 
@@ -262,7 +260,7 @@ The boundary also runs the other way. The project's documentation is written for
 > - **File names are hard-coded.** The lane guard never lets an agent write `pyproject.toml`, `uv.lock`, `Makefile` or `CLAUDE.md`, the file names of Python, uv, make and Claude Code.
 > - **Stage and role names are hard-coded** in several places.
 >
-> [Chapter 12](../12-project-contract/README.md) and [chapter 17](../17-limits-and-backlog/README.md) list them.
+> [Chapter 5](../05-stage-machine/README.md) lists the names; [chapter 12](../12-project-contract/README.md) the rest.
 
 ### P16. Measure every agent run
 
@@ -320,19 +318,19 @@ A principle is useful to a planner only if a design can fail it. The last column
 | P1 | Is every step with exactly one right result done by code, and is every interpretation of free text left to a model? | Holds; the demonstration stays with a model under the rule's own recovery clause |
 | P2 | After deleting all machine state and restarting on a fresh checkout, does every story continue? Is every human statement copied into a work item before the factory acts on it? | Partial: the cost records are lost; a comment written while the stages work can be skipped |
 | P3 | Does every story enter production, and every result reach the main branch, only through a human act? | Holds for work; the factory's own bookkeeping commits go to the main branch |
-| P4 | Can the human do everything from the work-item store and the pull request alone? | Partial: two events reach only the factory's log file; setting up the machine aside |
+| P4 | Can the human do everything from the work-item store and the pull request alone? | Partial: some stops reach only the factory's log file; posts under the human's token notify nobody (chapter 10); setting up the machine aside |
 | P5 | Are the agent runs in flight bounded, and is work taken strictly in identifier order? | Holds: one agent run per machine; a lower identifier can start between two stages of another story |
 | P6 | Can a fresh agent rerun any stage from the repository alone? | Holds |
 | P7 | Is every artifact judged by a role that could not write it? | Partial: every story role may edit the story's criteria |
-| P8 | Is a story without testable criteria, failing sides or expected output stopped before any code is written? | Holds: format validation in code, plus intake's judgment |
+| P8 | Is a story without testable criteria, failing sides or expected output stopped before any code is written? | Holds: form validation in code, plus intake's judgment |
 | P9 | Can every role end with a question that reaches the human? | Holds |
 | P10 | Does every instruction have code that prevents, detects or reverses its violation, or a stated reason why not? | Partial: see the limits under P10 |
 | P11 | Does the factory act only on what it observed itself, never on an agent's claim? | Holds |
-| P12 | Does every unforeseen state stop and reach the human, and does every retry and every loop end there? | Partial: two events reach only the factory's log file |
+| P12 | Does every unforeseen state stop and reach the human, and does every retry and every loop end there? | Partial: some stops reach only the factory's log file |
 | P13 | While nothing changes, does the factory spend nothing on models? | Holds |
 | P14 | Killed at any instruction, does the factory resume without a human, without duplicated effects, and with its rules intact? | Partial: a restart costs an attempt; a kill can double-post; leftovers skip the lane undo |
 | P15 | Is the engine free of every language, tool, file name and path of the project? | Partial: `uv`, `.venv`, Python and Claude Code file names, stage names |
-| P16 | Is every agent run recorded with time, tokens and cost, and attributable to a work item and a stage? | Partial: an agent run killed by a restart leaves no cost record |
+| P16 | Is every agent run recorded with time, tokens and cost, and attributable to a work item and a stage? | Partial: an agent run killed by a restart, or one that ended with an error, is missing from the bill (chapter 14) |
 | P17 | Is every lasting design decision recorded with its reason and the alternatives it beat? | Partial: the reverted plans of 2026-10-05 |
 
 v1 gives its agents the principles as fifteen rules, R1 to R15, in the `factory-rules` skill. [Chapter 9](../09-agents-and-skills/README.md) maps each rule to its principles and to the code that enforces it.
@@ -374,7 +372,7 @@ v1 gives its agents the principles as fifteen rules, R1 to R15, in the `factory-
 >   - P3: scope;
 >   - P7: editable criteria;
 >   - P10: unenforced rules;
->   - P12: two events that reach only the log file;
+>   - P12: stops that reach only the log file;
 >   - P14: three recovery gaps;
 >   - P15: Python, `uv` and stage names in the engine;
 >   - P16: no record of a killed agent run;

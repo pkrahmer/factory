@@ -29,36 +29,48 @@ Each agent is a Markdown file in `claude/agents/` with YAML frontmatter. The run
 | Agent | Stage | `model` | `effort` | `budget_usd` | `tools` | `skills` |
 | :- | :- | :- | :- | -: | :- | :- |
 | intake | `ready` | sonnet | low | 1 | Read, Grep, Glob, Edit, Bash | rules, `stage-intake` |
-| tester | `tests` | opus | medium | 2 | + Write | rules, `role-tester`, `stage-tests` |
-| coder | `doing` | opus | medium | 4 | + Write | rules, `role-coder`, `stage-doing` |
+| tester | `tests` | opus | medium | 2 | as intake, plus Write | rules, `role-tester`, `stage-tests` |
+| coder | `doing` | opus | medium | 4 | as intake, plus Write | rules, `role-coder`, `stage-doing` |
 | reviewer | `review` | opus | high | 3 | Read, Grep, Glob, Edit, Bash | rules, `role-reviewer`, `stage-review` |
-| documenter | `docs` | sonnet | medium | 1.5 | + Write | rules, `role-documenter`, `stage-docs` |
+| documenter | `docs` | sonnet | medium | 1.5 | as intake, plus Write | rules, `role-documenter`, `stage-docs` |
 | demo | `demo` | opus | medium | 2 | Read, Grep, Glob, Edit, Bash | rules, `stage-demo` |
-| acceptor | `feature` | opus | high | 8 | + Write | rules, `role-acceptor`, `stage-feature` |
+| acceptor | `feature` | opus | high | 8 | as intake, plus Write | rules, `role-acceptor`, `stage-feature` |
 
-*rules* is the skill `factory-rules`; *+ Write* means Read, Grep, Glob, Edit, Write and Bash. Leaving out Write is no boundary: Edit still changes files, and Bash can write anything. Intake runs on Sonnet because Haiku, its first model, needed more than 20 turns on a story and guessed timestamps; no design decision records why the documenter does. Each file's body is one or two sentences, the agent's own boundary: "Never edit tests; a wrong test is a question" for the coder, "Fix nothing" for the demo, "Do not improve the ticket; accept it or ask" for intake. Design decisions: 2026-10-04 (intake on Sonnet, not Haiku; the permission mode), 2026-10-05 (budgets in dollars).
+*rules* is the skill `factory-rules`. Leaving out Write is no boundary: Edit still changes files, and Bash can write anything. Intake runs on Sonnet because Haiku, its first model, needed more than 20 turns on a story and guessed timestamps; no design decision records why the documenter does. Each file's body is one or two sentences, the agent's own boundary: "Never edit tests; a wrong test is a question" for the coder, "Fix nothing" for the demo, "Do not improve the ticket; accept it or ask" for intake. Design decisions: 2026-10-04 (intake on Sonnet, not Haiku; the permission mode), 2026-10-05 (budgets in dollars).
 
 ### The rules, R1 to R15
 
-`claude/skills/factory-rules/SKILL.md` gives every agent the same fifteen rules. The table maps each to the principles of [chapter 3](../03-principles/README.md), to its enforcement, and to what nothing enforces. It is the complete list of v1's unenforced rules; the box under P10 in chapter 3 names the most important.
+`claude/skills/factory-rules/SKILL.md` gives every agent the same fifteen rules. The table maps each to the principles of [chapter 3](../03-principles/README.md) and to its enforcement; the list below it is the complete list of what R1 to R15 ask and nothing enforces. Role rules that nothing enforces are in the limits at the end of this chapter and of [chapter 11](../11-feature-acceptance/README.md).
 
-| Rule | In short | Principles | Enforced by | Not enforced |
-| :- | :- | :- | :- | :- |
-| R1 | Git is the only truth; nothing carries over between agent runs | P2, P6 | a fresh process with a new session and auto memory off (`AGENT_ENV`) | ignored files and background processes, such as a demo's server, outlive the agent run |
-| R2 | Every stage ends with a decision and an entry: what was done, why, what was rejected, what is open; for `stuck`, where it stopped | P1, P10 | `--json-schema`; anything else is a stall | the entry's contents |
-| R3 | One work item; never the feature's `FEATURE.md` | P3, P5 | the undo restores every other story; the guard refuses any `FEATURE.md` | |
-| R4 | The work item is the memory; no work item or criterion named in code | P6 | | all of it; the reviewer checks names in code |
-| R5 | State and log are the factory's; new criteria before the two closing ones; no clock time; never move the file | P2, P10 | the restore after the agent run; form validation (the closing criteria); the undo (a move is a deletion and an out-of-lane write) | clock times |
-| R6 | Take the facts from the task | P10, P11 | the task (`stage._task`) | looking them up anyway |
-| R7 | The stage changes by the decision only; the factory runs the checks | P10, P11 | `stage._decide`, `_checks`; `reject` for hand edits ([chapter 6](../06-watcher/README.md)) | |
-| R8 | Ask with `question`, with the options and a preference; never guess on the guide's list of things not to do without asking | P9 | `question` is always allowed; the `ask` handler posts it ([chapter 7](../07-dispatcher/README.md)) | guessing |
-| R9 | Tests are the tester's; a wrong test is a question; an approved change goes back to `tests` | P7, P8 | the coder's lane has no `tests/`; the guard and the undo; the `Mode:` line in the tester's task | that a `tests` decision follows a human's approval |
-| R10 | One branch; never push, check out, switch, merge, pull or call `gh`; only the coder commits | P2, P3 | the deny list; the branch check after the agent run | `git commit` is allowed to every agent; the undo reverts content, the commit stays in the history |
-| R11 | `make check` means that command; a missing tool is `stuck` | P11 | the factory runs the checks; the preflight checks the machine ([chapter 14](../14-runtime/README.md)) | |
-| R12 | Rework rounds share one counter, capped | P12 | `stage._rework`, `dispatch._sent_back` | |
-| R13 | Nothing starts without the human; only the acceptor proposes drafts; no scope beyond the assignment | P3 | only the acceptor's lane reaches `drafts/`; the undo removes any new story in `ongoing/` | scope |
-| R14 | Commit subjects start with `ticket <id>:` | P2 | the factory's own subjects | the coder's subjects |
-| R15 | The pipeline's files (`stages.yml`, the templates, every `FEATURE.md`, `drafts/`, `done/`, `.claude/`) are the human's; write only your lane | P3, P10, P15 | the guard's never-lists, the lanes, the undo ([chapter 8](../08-stage-run/README.md)); the guard's refusal cites "(R15)" | |
+| Rule | In short | Principles | Enforced by |
+| :- | :- | :- | :- |
+| R1 | Git is the only truth; nothing carries over between agent runs | P2, P6 | a fresh process with a new Claude Code session and auto memory off (`AGENT_ENV`) |
+| R2 | Every stage ends with a decision and an entry: what was done, why, what was rejected, what is open; for `stuck`, where it stopped | P1, P10 | `--json-schema`; anything else is a stall |
+| R3 | One work item; never the feature's `FEATURE.md` | P3, P5 | the undo restores every other story; the guard refuses any `FEATURE.md` |
+| R4 | The work item is the memory; no work item or criterion named in code | P6 | nothing |
+| R5 | State and log are the factory's; new criteria before the two closing ones; no clock time; never move the file | P2, P10 | the restore after the agent run; form validation (the closing criteria); the undo (a move is a deletion and an out-of-lane write) |
+| R6 | Take the facts from the task | P10, P11 | the task (`stage._task`) |
+| R7 | The stage changes by the decision only; the factory runs the checks | P10, P11 | `stage._decide`, `_checks`; `reject` for hand edits ([chapter 6](../06-watcher/README.md)) |
+| R8 | Ask with `question`, with the options and a preference; never guess on the guide's list of things not to do without asking | P9 | `question` is always allowed; the `ask` handler posts it ([chapter 7](../07-dispatcher/README.md)) |
+| R9 | Tests are the tester's; a wrong test is a question; an approved change goes back to `tests` | P7, P8 | the coder's lane has no `tests/`; the guard and the undo; the `Mode:` line in the tester's task |
+| R10 | One branch; never push, check out, switch, merge, pull or call `gh`; only the coder commits | P2, P3 | the deny list; the branch test after the agent run |
+| R11 | `make check` means that command; a missing tool is `stuck` | P11 | the factory runs the checks; the preflight checks the machine ([chapter 14](../14-runtime/README.md)) |
+| R12 | Rework rounds share one counter, capped | P12 | `stage._rework`, `dispatch._sent_back` |
+| R13 | Nothing starts without the human; only the acceptor proposes drafts; no scope beyond the assignment | P3 | only the acceptor's lane reaches `drafts/`; the undo removes any new story in `ongoing/` |
+| R14 | Commit subjects start with `ticket <id>:` | P2 | the factory's own subjects |
+| R15 | The pipeline's files (`stages.yml`, the templates, every `FEATURE.md`, `drafts/`, `done/`, `.claude/`) are the human's; write only your lane | P3, P10, P15 | the guard's never-lists, the lanes, the undo ([chapter 8](../08-stage-run/README.md)); the guard's refusal cites "(R15)" |
+
+What no code enforces:
+- *R1:* ignored files and background processes, such as a demo's server, outlive the agent run;
+- *R2:* the entry's contents;
+- *R4:* all of it; the reviewer looks for names in code;
+- *R5:* clock times;
+- *R6:* looking them up anyway;
+- *R8:* guessing;
+- *R9:* that a `tests` decision follows a human's approval;
+- *R10:* `git commit` is allowed to every agent; the undo reverts content, the commit stays in the history;
+- *R13:* scope;
+- *R14:* the coder's subjects.
 
 ### The roles and their stages
 
@@ -66,7 +78,7 @@ Each agent's prompt carries one stage skill, named after its stage (`stage-revie
 
 | Agent | Must not | Entry must contain | Decisions |
 | :- | :- | :- | :- |
-| intake | re-check what form validation checks; improve the story | `accepted`, then one line per question judged: the Interface, the criteria, the Demo, the architecture, the scope; or the numbered questions, the form's findings among them | `tests` (made a question by code if the form has findings) |
+| intake | repeat what form validation tests; improve the story | `accepted`, then one line per aspect judged: the Interface, the criteria, the Demo, the architecture, the scope; or the numbered questions, the form's findings among them | `tests` (made a question by code if the form has findings) |
 | tester | interpret a criterion; test what the criteria leave open; run the tests more than once | criterion → test function, one line each; files created; modules the runner could not import | `doing` |
 | coder | edit a test; fix unrelated code; name work items in code or comments | what was built (paths); the main choice and the rejected alternative; what was noticed but not touched | `review`; `tests` for an approved test change |
 | reviewer | write any code, even scratch; run `make check`; pass with remarks | numbered findings (location, what is wrong, what would fix it), or "no findings" | `docs`, `doing` |
@@ -113,7 +125,7 @@ The image copies the repository to `/opt/factory` and installs `claude/agents/`,
 > **v1 limit:** the instruction layers are tied to one agent runtime and one toolchain. The project guide must be named `CLAUDE.md`, because Claude Code loads that file. The rules and skills name `make check`, `make lint`, `make test` and `make mutants`; the acceptor's skill runs `uv run mutmut show`; and the documenter's and reviewer's skills name `docs/openapi.json` as an example of generated documentation. R10 points agents to `docs/branching.md`, which exists only in the factory's own repository, not in a project's checkout.
 
 > [!WARNING]
-> **v1 limit:** instructions and code are kept in step by hand, and have drifted. Each stage skill names its decisions (`stage-review`: "No findings: end with `docs`. Findings: end with `doing`"), so they must match `next` in the stage table. `stage-review` tells the reviewer that the factory runs `make check` again after it, but `review` has no `checks`; the next `make check` runs after the documenter. And the template's guide says "the pipeline knows only these three targets" while the acceptor runs `make mutants`.
+> **v1 limit:** instructions and code are kept in step by hand, and have drifted (the stage skills also name their decisions, [chapter 5](../05-stage-machine/README.md)). `stage-review` tells the reviewer that the factory runs `make check` again after it, but `review` has no `checks`; the next `make check` runs after the documenter. And the template's guide says "the pipeline knows only these three targets" while the acceptor runs `make mutants`.
 
 > [!WARNING]
 > **v1 limit:** role boundaries rest on lanes alone. Every role gets the same shell vocabulary, so the reviewer may `git commit` and `curl`. The documenter's lane `docs/*` includes `docs/openapi.json`, the coder's generated file, so the rule that the documenter does not edit generated documentation is enforced by nothing.

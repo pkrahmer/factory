@@ -6,7 +6,7 @@ Every stage sees one story. Nobody sees the feature: whether the stories togethe
 
 A feature acceptance is a work item with one agent stage and one gate. It becomes due when a feature is complete, with at least one archived story and nothing in production or in draft, and due again whenever the set of archived stories changes, because a verdict covers a set of stories.
 
-The acceptance judges; it builds nothing. Its result is a report with findings and a recommendation, the **verdict**, and a set of proposed stories as drafts, which only the human promotes (P3). The human's merge or close decides the **result**, and the result, not the verdict, is the feature's status. A refusal keeps the report and the human's reason, which becomes the brief for the stories the human writes next.
+The acceptance judges; it builds nothing. Its result is a report with findings and a recommendation, the **verdict**, and a set of proposed stories as drafts, which only the human promotes (P3). The human's merge or close decides the result, and the result, not the verdict, is the feature's status. A refusal keeps the report and the human's reason, which becomes the brief for the stories the human writes next.
 
 Some judgments belong here rather than in every story: those that need the whole feature (an end-to-end demonstration, the scope against the stories), those that read across stories (the documentation as one text, the notes the stages left behind), and mutation testing, whose survivors can only be judged against the feature's promises.
 
@@ -26,11 +26,11 @@ The watcher derives the acceptance from the feature folder ([chapter 6](../06-wa
 
 The acceptor's decisions are `accept`, which moves the acceptance to its gate, `question` and `stuck`.
 
-### The eight questions
+### The eight items
 
-The `role-acceptor` skill orders the work as eight questions. Each gets a section of the report, with a finding or "none":
+The `role-acceptor` skill orders the work as eight things to check, the book's *items*. Each gets a section of the report, with a finding or "none":
 
-| Section | Question |
+| Section | Item |
 | :- | :- |
 | `## 1 Scope` | `FEATURE.md`'s Goal, Scope and Out of scope against the archived stories: a scope item without a story, a story outside the scope, a goal the stories do not reach together |
 | `## 2 Feature demo` | a walk-through of the feature's purpose end to end, written as one script against the real entry points, run, with command and output pasted; not the stories' demonstrations again |
@@ -52,23 +52,23 @@ The verdict is one of three:
 
 | Part | Written by |
 | :- | :- |
-| frontmatter: the six fields, `stories` (the archived ids it covers), and `outcome` once booked | the factory |
+| frontmatter: the six fields, `stories` (the archived ids it covers), and `outcome` once recorded | the factory |
 | `# Acceptance of <feature title>` | the factory |
 | `## Verdict`: the verdict in bold and two or three sentences of reasons | the acceptor; on a refusal, the factory adds the human's reason as the first paragraph |
 | `## 1 Scope` … `## 8 Cost` | the acceptor |
 | `## Proposed stories`: one line per draft and why | the acceptor |
 | `## Log (append only)` | the factory |
 
-The skill prescribes the log entry's first line, `<verdict>; <n> drafts proposed; make mutants <killed>/<total>`, followed by one line per question; no code checks it.
+The skill prescribes the log entry's first line, `<verdict>; <n> drafts proposed; make mutants <killed>/<total>`, followed by one line per item; no code verifies it.
 
 Each proposed draft follows `factory/TICKET.md` in full, with a concrete Interface where the change is code, criteria with their failing sides and the two closing criteria, and a Demo with `Expect:` lines. Its first line after the title is `<!-- proposed by feature acceptance of <date>; refine before promoting -->`. One draft covers one coherent change, not one mutant or one remark. Drafts are numbered from the next free number; if the human has unpushed drafts, the numbers can collide, and the human renumbers.
 
-The field records the human's action, not the verdict: a report that says `not accepted` and is merged records `accepted`. On the board (`watch.board`), a feature's acceptance shows `-` while the feature is incomplete; `due` when it is due or its acceptor is at work; `running` once it waits at its gate, or is merged but not yet booked; then the booked `outcome`, which stands until another story is archived. Design decision: 2026-10-05 (feature acceptance).
+On the board (`watch.board`), a feature's acceptance shows `-` while the feature is incomplete; `due` when it is due or its acceptor is at work; `running` once it waits at its gate, or is merged but not yet recorded; then the recorded `outcome`, which stands until another story is archived. Design decision: 2026-10-05 (feature acceptance).
 
 ### In the demonstration runs
 
-- *Operations* (`F0002`), run 4: "accepted with drafts". The project had no `make mutants` target yet, so the acceptor seeded mutants by hand and reported 19 of 22 killed.
-- *Todo service* (`F0001`) was accepted three times in run 4 and the two hours after it: first after its four stories, then twice more as the stories its own drafts had become were archived. Each acceptance proposed the next drafts, some of them tests only. Its `done` entry read $1.59 after the first acceptance, $3.20 after the second and $4.80 after the third.
+- *Operations* (`F0002`), run 4: "accepted with drafts". The project had no `make mutants` target yet, so the acceptor seeded mutants by hand.
+- *Todo service* (`F0001`) was accepted three times in run 4 and the two hours after it: first after its four stories, then twice more as the stories its own drafts had become were archived. Each acceptance proposed the next drafts, some of them tests only.
 - Run 3 refused two of its acceptances. *Search* (`F0003`) was refused because one draft belonged to another feature, and the human wanted a behavior change instead of a test pinning today's behavior. *Todo service* was refused on purpose, to test the refusal path: the acceptor's verdict, `not accepted` over a crash on an unpaired surrogate in a title, agreed with the human's close, but the human's reason differed. The human would write that story themselves, with the exact message they wanted, rather than take the draft.
 
 > [!WARNING]
@@ -91,8 +91,8 @@ The field records the human's action, not the verdict: a report that says `not a
 
 > [!IMPORTANT]
 > **Planner:** what this chapter fixes.
-> - **Essential, as tests:**
->   - an acceptance is due when a feature has at least one archived story and nothing in production or in draft, and no booked report covers exactly its archived stories;
+> - **Essential** (each a test):
+>   - an acceptance is due when a feature has at least one archived story and nothing in production or in draft, and no report at `done` covers exactly its archived stories;
 >   - a refused acceptance is not due again until the set of archived stories changes;
 >   - a merged acceptance's drafts neither make it due again nor change its status;
 >   - merging a report whose verdict is `not accepted` books `accepted`: the human's action is the result;

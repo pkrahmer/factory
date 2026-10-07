@@ -17,7 +17,7 @@ Readers decide what the watcher can see, and so what the factory notices. Readin
 
 ## In v1
 
-`src/factory/watch.py` implements the readers and `evaluate()`. Its specification is `docs/WATCH_CONTRACT.md`, version 5, which v1's documents call the watcher's contract; where the two differ, this chapter says so. `tests/test_watch.py` holds 48 tests: the order with hand-built snapshots, and the readers against throwaway Git repositories.
+`src/factory/watch.py` implements the readers and `evaluate()`. Its specification is `docs/WATCH_CONTRACT.md`, version 5, which v1's documents call the watcher's contract; where the two differ, this chapter says so. `tests/test_watch.py` tests the order with hand-built snapshots, and the readers against throwaway Git repositories.
 
 `evaluate()` is pure except in one place: the pull requests are not read in advance. The evaluation receives a lookup function and calls it, running `gh`, only for the first work item that waits. That laziness is what keeps an evaluation to at most one lookup.
 
@@ -62,9 +62,9 @@ An acceptance is not listed anywhere; `acceptance_ticket` derives it per feature
 | Situation | Result |
 | :- | :- |
 | the branch `acceptance/<feature>` exists and has the report | the report, read from the branch: in flight |
-| the main branch has a report whose `stage` is not `done` | the report as it is: merged but not yet booked as `done`, so the `merged` event can still come |
+| the main branch has a report whose `stage` is not `done` | the report as it is: merged but not yet recorded as `done`, so the `merged` event can still come |
 | the feature has no archived story, or any file at all in `ongoing/` or `drafts/` (a `.gitkeep` included) | nothing: incomplete |
-| the main branch has a report at `done` whose `stories` equal the archived ids | nothing: the verdict stands until another story is archived |
+| the main branch has a report at `done` whose `stories` equal the archived ids | nothing: the status stands until another story is archived |
 | otherwise | a work item at stage `feature`, whether no report exists or an old one covers fewer stories: due |
 
 The second row exists because a merged acceptance brings its proposed drafts to the main branch, which makes the feature look incomplete before the factory has recorded the merge.
@@ -81,7 +81,7 @@ The second row exists because a merged acceptance brings its proposed drafts to 
 
 ### Reading the pull requests
 
-`gh_pr_state` runs `gh pr view <pr> --json state,comments` and returns the state (`OPEN`, `MERGED` or `CLOSED`) and the number of comments, or nothing when `gh` fails. `_pull_requests` calls it only for work items that wait, in identifier order, and returns on the first. A work item's merge or close while the stages work is therefore not seen here; the dispatcher reads the pull request once before every agent run instead ([chapter 7](../07-dispatcher/README.md)). A tick can still make two more lookups: one for a `pr` event, to tell the factory's own comments from the human's, and the dispatcher's before an agent run.
+`gh_pr_state` runs `gh pr view <pr> --json state,comments` and returns the state (`OPEN`, `MERGED` or `CLOSED`) and the number of comments, or nothing when `gh` fails. `_pull_requests` calls it only for work items that wait, in identifier order, and returns on the first. A work item's merge or close while the stages work is therefore not seen here; the dispatcher reads the pull request once before every agent run instead ([chapter 7](../07-dispatcher/README.md)). Handlers make further lookups. Per tick, an idle evaluation makes at most one; a handled `pr` event makes up to four (the evaluation, the test for the factory's own comments, and two in `answers`); a `run` makes one before the agent, plus one after each post, to count the comments.
 
 With v1's own moves, only one work item can wait at a time. A work item starts waiting only through its own agent run (a move to a gate), through `dispatch.ask`, or through the human's close at the gate; the first two need the evaluation to reach the third or fourth tier, which never happens while another work item waits, and the third acts on the work item that already waits. Only a hand edit of the state fields produces a second waiting work item.
 
@@ -109,13 +109,13 @@ The board's counts come from whatever branch the factory last checked out.
 > **v1 limit:** `reject` sees little. It reads only the last commit of the branch the checkout is on, only the first file in it with a stage change, and only targets outside `next`. A stage change made on another branch, followed by any other commit, or hidden in a merge, is never seen. A legal-looking change, such as `review` to `docs` by hand, skipping the reviewer, is never flagged.
 
 > [!WARNING]
-> **v1 limit:** three events stop a whole repository and reach only the tick's log, never the pull request. `duplicate` and `error pr-lookup` outrank everything below them, and their handlers report success (`Handled(True)`). The tick therefore records them as handled and does nothing more until the event or the checkout's `HEAD` changes, or the machine restarts, which clears the tick's memory. An `ask` for a work item without a pull request behaves the same way (`dispatch.ask` returns "question without a pull request"), although the factory's own moves never create that state.
+> **v1 limit:** three events stop a whole repository and reach only the factory's log file, never the pull request. `duplicate` and `error pr-lookup` outrank everything below them, and their handlers report success (`Handled(True)`). The tick therefore records them as handled and does nothing more until the event or the checkout's `HEAD` changes, or the machine restarts, which clears the tick's memo ([chapter 7](../07-dispatcher/README.md)). An `ask` for a work item without a pull request behaves the same way (`dispatch.ask` returns "question without a pull request"), although the factory's own moves never create that state.
 
 > [!WARNING]
 > **v1 limit:** the watcher reads only the first waiting work item's pull request. v1's own moves never let two wait at once (see *Reading the pull requests*), but after a hand edit the second one's merge, close or answer stays unseen until the first stops waiting.
 
 > [!WARNING]
-> **v1 limit:** a repeated acceptance can trip `reject` and stay stuck. When `stage._open` starts a second acceptance of a feature, its first commit on the new branch changes the report's `stage` from `done`, the old report's, to `feature`, which `done`'s empty `next` forbids. Normally the agent's commit follows in the same tick and hides it. But if opening the pull request fails (a GitHub error is a counted failure), or the machine dies before the factory has written anything more, the next evaluation sees that commit. `reject` moves the report back to `done` on its branch, where no agent ever runs again, and the board shows `running` for ever. No pull request exists yet, so nothing reaches the human.
+> **v1 limit:** a repeated acceptance can trip `reject` and stay stuck. When `stage._open` starts a second acceptance of a feature, its first commit on the new branch changes the report's `stage` from `done`, the old report's, to `feature`, which `done`'s empty `next` forbids. Normally the agent's commit follows in the same tick and hides it. But if opening the pull request fails (a GitHub error is a counted failure), or the machine dies before the factory has written anything more, the next evaluation sees that commit. `reject` moves the report back to `done` on its branch, where no agent ever runs again, and the board shows `due` forever. No pull request exists yet, so nothing reaches the human.
 
 > [!WARNING]
 > **v1 limit:** `--follow` is a leftover from before generation 3, when a model session watched its output; nothing in v1 calls it.
@@ -136,4 +136,4 @@ The board's counts come from whatever branch the factory last checked out.
 >   - check every commit since the last evaluation for illegal stage changes, on every branch with work items, and make the factory's own commits legal by construction;
 >   - every stop event must reach the human where they look (P12);
 >   - the contract and the code disagree on where the attempts cap sits; a next contract states the order the code implements;
->   - each reader's cost: on every tick, v1 lists the work items twice, runs two `git` calls per branch ref to test ancestry, and one `git show` per work item.
+>   - each reader's cost on every tick (v1 lists the work items twice, runs two `git` calls per branch ref to test ancestry, and one `git show` per work item).

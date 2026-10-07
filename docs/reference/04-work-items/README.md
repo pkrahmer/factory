@@ -26,9 +26,8 @@ The path shows the lifecycle and the identifier gives identity and order ([chapt
 | `…/done/F0002-S0001-health-endpoint.md` | an archived story | the factory, in the commit that sets `stage: done` |
 | `…/ACCEPTANCE.md` | the feature's acceptance report, a work item of its own | the factory writes its head, the acceptor its body ([chapter 11](../11-feature-acceptance/README.md)) |
 
-A story is a file exactly three levels below the root with `ongoing` in the middle (`watch._is_live`); a file deeper or beside is not a story. Git has no empty folders, so a feature whose stories are all archived simply has no `drafts/` and no `ongoing/`. The acceptance's due rule counts *any* file there, so a placeholder such as `.gitkeep` keeps a feature incomplete for ever. The templates the human copies from live beside the stage table: `factory/TICKET.md` for a story, `factory/FEATURE.md` for a feature.
+A story is a file exactly three levels below the root with `ongoing` in the middle (`watch._is_live`); a file deeper or beside is not a story. Git has no empty folders, so a feature whose stories are all archived simply has no `drafts/` and no `ongoing/`. The acceptance's due rule counts *any* file there, so a placeholder such as `.gitkeep` keeps a feature incomplete forever. The templates the human copies from live beside the stage table: `factory/TICKET.md` for a story, `factory/FEATURE.md` for a feature.
 
-A discard moves the story from `ongoing/` back to `drafts/` on the main branch with `git mv`, and deletes its branch (`dispatch._discard`). The main branch never had the story's branch merged, so the file that moves is the human's text untouched by the stages.
 
 ### Identifiers
 
@@ -77,9 +76,9 @@ A story in production carries YAML frontmatter, written only by the factory, in 
 
 | Field | Values | Set by | Read by |
 | :- | :- | :- | :- |
-| `stage` | a key of `stages:` | `stage._open` (the first stage), `stage._move`, `dispatch.merged`, `_sent_back`, `reject` | the watcher; every handler |
+| `stage` | a key of `stages:` | `stage._open` (the first stage), `stage._move`, `dispatch.merged`, `_refused`, `_sent_back`, `reject` | the watcher; every handler |
 | `pr` | the pull request's number, or `null` | `stage._ensure_pull_request` | the watcher (which pull requests to poll) |
-| `blocked` | `null`, `question` (recorded) or `asked` (posted) | `stage._ask` sets `question`; `dispatch.ask` and `_sent_back` set `asked`; `answers` and `stage._move` clear it | the watcher |
+| `blocked` | `null`, `question` (recorded) or `asked` (posted) | `stage._ask` sets `question`; `dispatch.ask` and `_sent_back` set `asked`; `answers`, `stage._move` and `merged` clear it | the watcher |
 | `comments_seen` | the number of comments on the pull request the factory has taken in | every handler that reads or posts | the tick (`needs_handling`) |
 | `round` | a count, from 0 | `stage._rework`, `dispatch._sent_back` | the stage protocol (the cap); the task |
 | `attempts` | a count, from 0 | `ops.stall`, `dispatch.expired`; reset by `answers` at the cap | the watcher (the cap) |
@@ -111,7 +110,7 @@ Each entry starts with who speaks. The factory writes these prefixes:
 
 Inside an agent's entry the factory appends what it observed. One paragraph holds the last line of each check and report, one per line (`` `make lint`: lint: green ``). Separate paragraphs hold the form's findings when a forward decision met them, the paths the factory undid outside the lane, and at the round cap the cap question. The cost line has a fixed shape, from `costs.one_line`: `cost: 7 runs, 2.8 min, 40 turns, 157k tokens in (567k more from cache), 13k out, $1.36`.
 
-Only the human's entries carry a date. Rule R5 of the agents' rules ([chapter 9](../09-agents-and-skills/README.md)) keeps clock times out of the story, because Git has the time of every commit; no code enforces it.
+Only the human's entries carry a date; Git has the time of every commit.
 
 `src/factory/story.py` holds every function that edits a story, and knows the format and nothing else: no Git, no model. Besides `split`, `render` and `append`, two functions matter: `with_log(body, source)` puts the log of one version into another, which is how the factory restores its log after an agent run, and `insert_under(body, heading, line)` puts a paragraph first under a heading, used once, for the human's refusal under an acceptance's `## Verdict`.
 
@@ -130,7 +129,7 @@ Only the human's entries carry a date. Rule R5 of the agents' rules ([chapter 9]
 | `## Demo` has at least one fenced block, and the first non-blank line after each block starts with `Expect:` | `_demo` |
 | The log's entries are numbered 1 to *n* | `check` |
 
-The stage protocol validates the form before every agent run on a story, never on an acceptance (`stage._form`). At `ready` the findings go into intake's task. At any stage, a forward decision that meets findings becomes a question that carries them (`stage._decide`). After every agent run the form is validated again, and a finding that was not there before is a stall: "the story's form broke" ([chapter 8](../08-stage-run/README.md)).
+The stage protocol validates a story's form, never an acceptance's, before and after every agent run; what it does with the findings is in [chapter 5](../05-stage-machine/README.md) (rule 1 of the decision) and [chapter 8](../08-stage-run/README.md).
 
 `factory-check-story <path>…` prints the same findings and exits 1 when there are any. Nothing in the loop calls it: it is the human's tool, for a draft before promotion.
 
@@ -153,6 +152,9 @@ The stage protocol validates the form before every agent run on a story, never o
 > **v1 limit:** headings are found by `# ` and `## ` at the start of a line, with no regard for code fences. A comment line `## start the server` inside a `## Demo` block ends the section there, so validation reports the block as missing or without `Expect:`; a `# comment` in any code block satisfies the title rule. The acceptance reports of the demonstration project already contain such lines in pasted scripts; they do no harm only because none of them starts with a section name code looks for.
 
 > [!WARNING]
+> **v1 limit:** a draft's own frontmatter wins. `stage._open` writes the defaults under any key the human put in the draft, and a story promoted with `stage: tests` is never opened at all: the checkout of its missing branch raises, the tick retries three times and gives up, and with no pull request yet, only the factory's log file says so.
+
+> [!WARNING]
 > **v1 limit:** the feature form is not validated. A `FEATURE.md` without a goal or an out-of-scope section passes; only its existence and its title are used.
 
 > [!IMPORTANT]
@@ -167,7 +169,7 @@ The stage protocol validates the form before every agent run on a story, never o
 > - **Watch for:**
 >   - code must not re-derive state from prose. v1's four parsers of log text (above) are the counterexample: keep the speaker, the kind of entry and the cost as structured data beside the text;
 >   - test: renaming a story's slug in production keeps its branch, state and cost;
->   - test: a draft's own frontmatter (`stage: tests`, `attempts: 0` on a story that stalled before) cannot skip intake or the caps. In v1, `stage._open` lets it win, and a draft promoted with `stage: tests` is never opened: the checkout of its missing branch raises, and the tick retries until it gives up;
+>   - test: a draft's own frontmatter (`stage: tests`, `attempts: 0` on a story that stalled before) cannot skip intake or the caps;
 >   - test: an acceptance sorts after its feature's stories whatever the slug;
 >   - the section parser must respect code fences;
 >   - a discard must restore the human's text byte for byte.

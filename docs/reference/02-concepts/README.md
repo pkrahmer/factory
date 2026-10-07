@@ -176,7 +176,7 @@ The **task** is the factory's short message naming everything it already knows:
 - the round;
 - whatever facts this stage needs.
 
-When intake ran again after the human's answer, its task said so, and whether the story's form had passed format validation.
+When intake ran again after the human's answer, its task said so, and whether the story's form had passed form validation.
 
 ### Instructions in layers
 
@@ -213,8 +213,8 @@ Around the agent, the factory runs the **stage protocol**, the same steps in the
 
 Before the agent:
 1. Bring the work item's branch up to date with the main branch. At the first stage, create the branch, write the story's state fields, and open a draft pull request.
-2. Write the run record.
-3. Compose the task.
+2. Compose the task.
+3. Write the run record.
 
 Then start the agent, and wait for its outcome.
 
