@@ -9,7 +9,7 @@ The branches of one clean story and of its feature's acceptance, in time order: 
 The figure redraws v1's own picture, [`docs/diagrams/10-branches.svg`](../../diagrams/10-branches.svg), which runs left to right at 2,100 px. Deviations from it, each checked against the code:
 - *The merge of the main branch* is drawn once, after the main branch has moved, and labeled "only when `main` moved". v1's picture labels it "every stage"; `stage._prepare` calls `repo.merge_main` before every stage on an existing branch, but `git merge` makes a commit only when `origin/main` has moved.
 - *The merge comes before the coder's commits*, because it happens before the `doing` stage's agent starts.
-- *Commit labels are the subjects' second halves*, as the factory writes them (`ticket <id>: ready → tests`); v1's picture abbreviates some.
+- *Commit labels are the subjects' second halves*, as the factory writes them (`ticket <id>: ready → tests`); m5 and m7 drop the subject's tail "(pull request merged)". v1's picture abbreviates some.
 - *The booking of the acceptance* names the field it writes, `outcome: accepted`.
 
 ## Elements
@@ -75,5 +75,5 @@ Canvas 850 × 1,128 px, top to bottom; the kit's title ("Branches: one trunk, a 
 
 - One trunk, one short branch per work item, and merge commits only: everything a work item does stays on its branch until the human merges.
 - Almost every commit on a work item's branch is the factory's; the coder's work commits are the only ones an agent makes.
-- The factory commits on the main branch only after the human has acted there: the archive after a merge, the booking after the acceptance's merge.
+- In this figure the factory commits on the main branch only after the human's merge: the archive, then the booking. Chapter 13's table adds the refusal record, the discard and `reject`'s correction.
 - A clean story leaves seven commits of the factory's on its branch, the first and one per stage result, plus a merge of the main branch when it moved, and the coder's.

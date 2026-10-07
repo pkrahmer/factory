@@ -38,7 +38,7 @@ That state falls into four classes, and an implementation should know which is w
 | `TICK_SECONDS` | 120 | the longest pause |
 | `GIT_USER_NAME`, `GIT_USER_EMAIL` | `factory`, `factory@noreply.invalid` | the commit identity; an address that matches no GitHub account |
 
-Claude Code is logged in once, interactively: `docker compose run --rm -it --entrypoint claude factory`. The login stays in `claude-home`. It is a subscription login, so the dollars in the cost records are Claude Code's computed list prices, not a bill.
+Claude Code is logged in once, interactively: `docker compose run --rm -it --entrypoint claude factory`. The login stays in `claude-home`. It is a subscription login, so the dollars in the cost records are Claude Code's computed list prices, not what the subscription charges.
 
 ![Figure 14-1. The machine](machine.svg)
 

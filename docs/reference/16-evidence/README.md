@@ -57,7 +57,7 @@ All four ran against the demonstration project in `pkrahmer/factory-demo-todo`; 
 | -: | -: | :- | :- | :- | -: | -: | :- |
 | 1 | 4 | 4 Oct, 21:28–23:28 | 8 stories | #1–#10 | 69 | $17.97 | 1–12 |
 | 2 | 4 | 4–5 Oct, 23:31–00:59 | 8 stories | #11–#18 | 48 | $14.09 | 13, after the run |
-| 3 | 4 | 5 Oct, 08:59–11:42 | 3 acceptances; then 4 stories archived, a fifth left at the gate, 1 acceptance refused | #19–#29 | 6 + 75 | about $26 | 14–17 |
+| 3 | 4 | 5 Oct, 08:59–11:42 | 3 acceptances, 1 refused; then 4 stories archived, a fifth left at the gate, 1 acceptance refused | #19–#29 | 6 + 75 | about $26 | 14–17 |
 | 4 | 5 | 5 Oct, 16:47–19:38 | 8 stories, 3 acceptances | #30–#40 | 59 | $15.89 | none |
 
 The times run from a run's start to its last archive (run 3: to the stop at 11:42); run 4's cost records span 16:49 to 19:36. The records of runs 1 to 3 were lost with their work volumes; their numbers survive in the maintainer's run log and in the cost tables on their pull requests. Run 4's records are kept in this book's `data/` folder, as `demo-dispatches.jsonl`.

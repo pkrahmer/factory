@@ -8,15 +8,15 @@ This book is for two readers at once. The first is a software professional who w
 
 ### What this book covers
 
-The factory is a small production system around coding agents. The human decides what is built and accepts what was built; models judge and write; ordinary code keeps the books, enforces the rules and talks to the outside world. The book explains that division of labor, the parts that make it executable, and every detail of the first implementation, *v1*: its work items, its stage machine, the code that runs between the agents, the agents' instructions, the human's pull request, the project it builds, the machine it runs on, and how far its safety reaches. It ends with what v1's runs showed, every limit found on the way, and the decisions v1 left open.
+The factory is a small production system around coding agents. The human decides what is built and accepts what was built; models judge and write; ordinary code keeps the books, enforces the rules and talks to the outside world. The book explains that division of labor, the parts that make it executable, and every detail of the first implementation, *v1*: its work items, its stage machine, the code that runs between the agents, the agents' instructions, the human's pull request, the project it builds, the machine it runs on, and how far its safety reaches. It ends with what v1's runs showed, every limit found on the way, and the design decisions v1 left open.
 
-The book is not a manual for running v1; v1's `README.md` and `demo/README.md` are. Nor does it teach the tools v1 is built on, such as Git, GitHub, Python or Claude Code; it names what v1 needs from each.
+The book is not a manual for running v1; v1's `README.md` and `demo/README.md` are (partly stale; chapter 17 lists where). Nor does it teach the tools v1 is built on, such as Git, GitHub, Python or Claude Code; it names what v1 needs from each.
 
 ### A map of the book
 
 | Chapter | What it answers |
 | :- | :- |
-| *Part I, The idea* | general throughout; v1 appears only as evidence and example |
+| *Part I, The idea* | general throughout; v1 appears as evidence and example, and chapter 3 states where v1 falls short of each principle |
 | 1. [Why a factory](01-why-a-factory/README.md) | What does an agent session not give you, and how did v1 find its shape? |
 | 2. [Concepts](02-concepts/README.md) | What are the parts: work items, the line, the control loop, the agent run, the human's channel? |
 | 3. [Principles](03-principles/README.md) | Which seventeen principles hold the parts together, and how is a design tested against them? |
@@ -41,7 +41,7 @@ The book is not a manual for running v1; v1's `README.md` and `demo/README.md` a
 
 ### How to read this book
 
-*As a professional reader,* read Part I in order: it is the argument, and every later chapter builds on its terms. After that, read what you need. Each chapter of Parts II to IV opens with its concept, which stands alone; *In v1* is specification, best read next to the code; the limit boxes say where v1 falls short. Chapter 2's table *Where each concept lives in v1* leads from any concept to its chapter, and the glossary from any term. The print comes in two editions, with and without the planner boxes.
+*As a professional reader,* read Part I in order: it is the argument, and every later chapter builds on its terms. After that, read what you need. Each chapter of Parts II and III, and chapter 16, opens with its concept, which stands alone; *In v1* is specification, best read next to the code; the limit boxes say where v1 falls short, and chapter 17 collects them. Chapter 2's table *Where each concept lives in v1* leads from any concept to its chapter, and the glossary from any term. The print comes in two editions, with and without the planner boxes.
 
 *As a planning agent,* read everything, the planner boxes included; they separate what is essential from what is incidental to v1. Then use four parts of the book as instruments:
 - chapter 3's table *Testing a design against the principles* is the acceptance test for a design: every answer should be *yes*;
@@ -55,7 +55,7 @@ Keep the two layers apart: the concepts are what any implementation must keep, a
 
 *v1* is the first implementation of the factory: the code, agent definitions and templates in this repository. The book describes it as of commit `930c61a` of 7 October 2026. Its code has not changed since 5 October apart from the default commit address, so the runs of chapter 16 ran on that code or its predecessors. Links to v1's files are relative links into this repository; if the files have moved on since, the commit is what the book describes. Where v1's own documents disagree with its code, the code is what v1 does, and the book says so.
 
-v1 went through five *generations* in three days, which its decision log calls versions 1 to 5. (The stage table's `version:` field is something else: it versions the watcher's contract, and it skipped 3, because generation 3 changed the loop, not the contract.) v1 was exercised by four end-to-end *runs* against the same demonstration project, and run 4 was the first on generation 5. Generations and runs are numbered separately and should not be confused.
+v1 went through five *generations* in three days, which its decision log calls versions 1 to 5. (The stage table's `version:` field is something else: it versions the watcher's contract, and it skipped 3, because generation 3 changed the loop, not the watcher's contract.) v1 was exercised by four end-to-end *runs* against the same demonstration project, and run 4 was the first on generation 5. Generations and runs are numbered separately and should not be confused.
 
 ### Conventions used in this book
 
@@ -86,7 +86,7 @@ A few words could mean several things in a book about a system built on Git. Eac
 | *the line* (with the article) | the sequence of stages a story moves through | the main branch; a line of text keeps its ordinary meaning |
 | *main branch* | the long-lived branch every accepted change lands on | — |
 | *work item* | anything that moves through the line: a story, or a feature's acceptance | — (v1 calls every work item a *ticket*) |
-| *log* | a work item's append-only, numbered record | v1's decision log and the factory's log file, which are always named in full |
+| *log* | a work item's append-only, numbered record | v1's decision log and the factory's log file (in v1, the tick log), which are always named in full |
 | *gate* | a stage where the human, not an agent, decides | the checks |
 | *check* | a project command that must succeed before a forward move | the human's decision; v1's form validation of a story |
 | *reports* | project commands run after a stage whose result is only noted | — (v1's key is `records`) |

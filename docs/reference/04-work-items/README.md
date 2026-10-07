@@ -87,7 +87,7 @@ A story in production carries YAML frontmatter, written only by the factory, in 
 
 A story with no frontmatter is at `ready` (`watch.Ticket.stage`). When the first stage opens the branch, `stage._open` writes all six fields with their defaults, and any key the human already put in the draft wins over the default. Values are written in YAML's flow style: `blocked: null`, `stories: [F0002-S0001, F0002-S0002]`.
 
-Every frontmatter write renders through `story.render`. The handlers write through `ops.edit`, which sets fields and appends entries in one read-modify-write of the file in the working tree, and drops `claimed_at`, the field in which contract version 4 kept the run record before it moved to `.git/factory-run.json`. `dispatch._refused` drops it too.
+Every frontmatter write renders through `story.render`. The handlers write through `ops.edit`, which sets fields and appends entries in one read-modify-write of the file in the working tree, and drops `claimed_at`, the field in which the watcher's contract, version 4, kept the run record before it moved to `.git/factory-run.json`. `dispatch._refused` drops it too.
 
 ### The log
 

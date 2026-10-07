@@ -344,7 +344,7 @@ Read Figure 2-2 by its colors:
 | Lifecycle | The feature's subfolders `drafts/`, `ongoing/`, `done/` | [4](../04-work-items/README.md) |
 | Story state | Six frontmatter fields: `stage`, `pr`, `blocked` (`question` or `asked`), `comments_seen`, `round`, `attempts` | [4](../04-work-items/README.md), [5](../05-stage-machine/README.md) |
 | Branch per work item | `ticket/<file stem>`, and `acceptance/<feature folder>` for an acceptance | [13](../13-git-and-github/README.md) |
-| Format validation | `factory-check-story`, in `factory.story` | [4](../04-work-items/README.md) |
+| Form validation | `story.check` and `check_place`, run by the stage protocol; `factory-check-story` for the human's drafts | [4](../04-work-items/README.md) |
 | Stage table | `factory/stages.yml`, `version: 5` of the watcher's contract (`docs/WATCH_CONTRACT.md`); *reports* are called `records` there | [5](../05-stage-machine/README.md) |
 | Scheduler and tick | The container's entrypoint loop calling `factory-tick` | [14](../14-runtime/README.md) |
 | Watcher and events | `factory-watch`; v1 calls an event a *line*: `reject`, `duplicate`, `error pr-lookup`, `merged`, `closed`, `pr`, `ask`, `busy`, `expired`, `run`, `idle` | [6](../06-watcher/README.md) |
@@ -373,7 +373,7 @@ Read Figure 2-2 by its colors:
 > - **Transitions** come only from an agent's decision applied by the factory, or from the human's action.
 > - **The watcher** is readers plus a pure evaluation, with fixed precedence: corrections, then the human's signals, then new work. One event per tick. Handling is safe to repeat on the repository; after a kill, a post on the pull request can repeat (P14 in chapter 3).
 > - **Work-in-progress.**
->   - Agent runs in flight are limited (v1: one per project, in practice one per machine). v1's watcher contract says the run record enforces this; in the container it matters mainly for agent runs that died.
+>   - Agent runs in flight are limited (v1: one per project, in practice one per machine). v1's watcher's contract says the run record enforces this; in the container it matters mainly for agent runs that died.
 >   - Anything waiting for the human outranks new work in its project.
 >   - Identifiers are the only priority, so a lower identifier can start between two stages of another story.
 > - **Agents end with a structured outcome (decision + entry).** Only the factory applies it, through the stage protocol, in order.

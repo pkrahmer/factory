@@ -6,26 +6,21 @@ This file tells a fresh session how to write the rest of the reference in `docs/
 
 | Part | Chapters | State |
 | :- | :- | :- |
-| Preface | `README.md` | Front part written (conventions, "Words with one meaning"); the introduction around it is written last |
+| Preface and introduction | `README.md` | Written: who the book is for, what it covers, a map of the chapters, how each reader reads it, the conventions, "Words with one meaning" |
 | I · The idea | 1–3 | Written, two lecturer rounds, trimmed to budget, 5 figures, in print |
 | II · The machine | 4–11 | Written (21,100 words), a lecturer round per chapter and one over the part, 4 figures, in print |
-| III · Around the machine | 12–15 | Written (9,500 words), a lecturer round per chapter and one over the part, 1 figure, in print |
+| III · Around the machine | 12–15 | Written (9,500 words), a lecturer round per chapter and one over the part, 2 figures (13-1 added in the final session), in print |
 | IV · Looking back | 16–17 | Written (5,600 words without table syntax), a lecturer round per chapter and one over the part, no figures, in print; chapter 17 numbers the limits L1–L74 |
-| Figure 13-1, appendices A–C, the introduction, the retarget | | **Next**, in one final session: see *Finishing the book* |
+| Appendices | A–C | Written in the final session, a lecturer round each, in print |
+| Retarget | | Done in the final session: the book describes `930c61a` |
 
-Branch `docs/reference` of github.com/pkrahmer/factory; the book describes v1 at commit `537fc20`. Every session updates this table before it ends. Files that move after `537fc20`, and everything else the final version must retarget to the latest repository, are listed in [`RETARGET.md`](RETARGET.md); add to it in the same commit as the change.
+**The book is complete** (2026-10-07). Two Opus reviewers read it whole after the last changes.
+
+Branch `docs/reference` of github.com/pkrahmer/factory, merged into `main`; the book describes v1 at commit `930c61a`. To describe a later commit, follow [`RETARGET.md`](RETARGET.md).
 
 ## Starting a session
 
-Parts I to IV were each written in a session of their own, from a prompt naming the part. What is left is one final session, started with this prompt:
-
-> Read `docs/reference/WRITING-PLAN.md` in the factory checkout (C:\Dev\Projects\factory, branch `docs/reference`) and finish the book as its section *Finishing the book* describes: figure 13-1 (the branches), appendices A to C, the introduction, the retarget to the latest repository (`docs/reference/RETARGET.md`), and a last review over the whole book. Follow the plan's process, budgets and rules against filling. Use Sonnet for figure subagents and Opus for lecturer reviews. Commit after each step; at the end, push the branch, merge it into `main` through a pull request with a merge commit, send me both PDFs and report.
-
-The session then reads, in this order:
-1. this plan;
-2. the preface, `docs/reference/README.md`, above all the table *Words with one meaning*, which every chapter obeys;
-3. Part I, `01-why-a-factory`, `02-concepts`, `03-principles`: the concepts the part builds on and the voice to match;
-4. the v1 sources listed for the part's chapters below. Code is the truth; v1's own documents are partly stale (see *Known facts*).
+Nothing is left to write. Parts I to IV were each written in a session of their own, and one final session added figure 13-1, the appendices and the introduction, retargeted the book and reviewed it whole (*Finishing the book* below is its record). A later session that changes the book reads this plan, the preface and Part I first, as every session did; one that moves the book to a newer commit follows `RETARGET.md`.
 
 ## The book in one paragraph
 
@@ -256,7 +251,7 @@ Complete `docs/reference/README.md`: keep the preface as its front part and add 
 
 ## Finishing the book
 
-One session finishes the book, in this order, and commits after each step. Each step follows *Process for each chapter* where it applies: facts against the code, a lecturer review on Opus, `make check`, `make book`.
+Done on 2026-10-07; kept as the record of the last session. One session finishes the book, in this order, and commits after each step. Each step follows *Process for each chapter* where it applies: facts against the code, a lecturer review on Opus, `make check`, `make book`.
 
 1. **Figure 13-1, the branches** (chapter 13, section *Branches*). v1 already has the picture: [`docs/diagrams/10-branches.svg`](../diagrams/10-branches.svg), drawn by `branches()` in `docs/diagrams/draw.py`. It is 2,100 px wide and runs left to right, so the book redraws it with its own kit, as the triple `13-git-and-github/branches.{md,py,svg}`:
    - *Layout:* time runs downward; three lanes side by side, `ticket/<stem>`, `main` and `acceptance/<feature>`; at most 850 px wide and up to about 1,300 px tall, so it prints upright.
@@ -321,7 +316,7 @@ One session finishes the book, in this order, and commits after each step. Each 
   - Code, identifiers and file names in backticks.
 - **Boxes:** `> [!NOTE]` for the reader; `> [!IMPORTANT]` starting with `**Planner:**`; `> [!WARNING]` starting with `**v1 limit:**`.
 - **Links:**
-  - to v1's files as relative links into the repository (the print export turns them into footnotes pinned to `537fc20`);
+  - to v1's files as relative links into the repository (the print export turns them into footnotes pinned to the commit the book describes, `DESCRIBES` in `_print/book.py`);
   - to other chapters as `../NN-slug/README.md`;
   - to chapters not yet written: still link, since the print shows them as plain text until they exist.
 - **Figures** are triples beside the chapter:
@@ -374,7 +369,7 @@ v1's `docs/` held plan documents next to its decision log. On 2026-10-07 they we
 | `backlog/mutants-in-story-loop.md` | **parked** | ch. 11, 17 |
 | `backlog/README.md` | the index: the two plans above, and the open ideas: dev instance, releases, changelog, mutation survivors, mutation testing in the story loop, the language server, running the Demo blocks in code, paths never run live, the rest | ch. 17 |
 
-The book links to the two archived documents at the commit it describes (`https://github.com/pkrahmer/factory/blob/537fc20/docs/…`), where they still had their old paths, and says in the text that they are archived now. `docs/decisions.md` names them at their old paths; it is append-only and stays as it is, and the archive's `README.md` says where they went.
+Since the retarget to `930c61a` the book links to the archived and backlog documents at their new paths. `docs/decisions.md` names them at their old paths; it is append-only and stays as it is, and the archive's `README.md` says where they went.
 
 ## Data that is not in the repository
 
@@ -415,7 +410,7 @@ Found while writing Parts I to III, verified against the code. Each belongs in t
 
 **Placed in Part IV; the appendices cite, never restate:** the test suite (183 tests), the demonstration and hardening mode, the four runs, the seventeen fixes, the paths walked per generation, run 4 item by item, the bookkeeping's cost and the measurements behind three changes (the pause, connectors, fewer turns), what is not verified (ch. 16); every limit as L1–L74, the stale documents, the backlog at `537fc20`, the design decisions left open (ch. 17). The `version:` field's history stays in the preface. Chapter 17's limit numbers are stable: a later chapter or plan cites them as L*n*.
 
-**Still to place:** nothing for the chapters. What is left is in *Finishing the book*.
+**Still to place:** nothing.
 
 ## Tools and pitfalls
 
@@ -442,7 +437,7 @@ Found while writing Parts I to III, verified against the code. Each belongs in t
 
 ## Open decisions for the user
 
-1. ~~Add a design decision to `docs/decisions.md` for the reverted plans of 2026-10-05?~~ Done on 2026-10-07 (the last entry, dated 2026-10-05). The book, describing `537fc20`, still states the gap; `RETARGET.md` lists the places.
+1. ~~Add a design decision to `docs/decisions.md` for the reverted plans of 2026-10-05?~~ Done on 2026-10-07 (the last entry, dated 2026-10-05). Since the retarget the book says P17 holds, and chapter 17's L6 is marked fixed.
 2. ~~Keep run 4's cost records as a data file for chapter 16?~~ Done on 2026-10-07: `data/demo-dispatches.jsonl`.
 3. ~~Redraw Part I's five figures at most 850 px wide?~~ Done on 2026-10-07: all five are 848–850 px wide and print upright.
 4. ~~When to merge `docs/reference` into `main`?~~ Decided on 2026-10-07: merged then, through a pull request with a merge commit; from now on push the branch and merge after each part, when the user says so.

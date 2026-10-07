@@ -40,7 +40,7 @@ So the stage is a field in the story, and a transition is a commit, which record
 
 *Rules out:* a database, a dashboard or a long-lived session as the place where a story's status lives; any action taken on a comment before it is in the log.
 
-*In v1:* machine state lives in `.git/`, never committed: the lock a tick holds, the run record (`factory-run.json`), the tick's memo of the last event handled, and the cost records. After a restart the locks and the memo are removed, and the run record left behind expires its agent run. The cost records are neither disposable nor rebuilt. Design decisions: 2026-10-04 (version 3; questions through the pull request), 2026-10-05 (the claim leaves Git).
+*In v1:* machine state lives in `.git/`, never committed: the lock a tick holds, the run record (`factory-run.json`), the tick's memo of the last event handled, and the cost records. After a restart the locks and the memo are removed, and the run record left behind expires its agent run. The cost records are neither disposable nor rebuilt. Design decisions: 2026-10-04 (generation 3; questions through the pull request), 2026-10-05 (the claim leaves Git).
 
 > [!WARNING]
 > **v1 limit:** two shortfalls.
@@ -70,7 +70,7 @@ The factory runs while the human is elsewhere, so a channel that needs a termina
 
 *Rules out:* questions in a chat or an email; a dashboard the human must watch; any action the human can only take at a keyboard while the factory works.
 
-*In v1:* code writes everything on the pull request, marked as its own; the description's closing paragraph says what each of the human's actions does at this stage ([chapter 2](../02-concepts/README.md)). Design decisions: 2026-10-04 (a branch per ticket; questions through the pull request), 2026-10-05 (the closing line; the hidden marker).
+*In v1:* code writes everything on the pull request, marked as its own; the description's closing paragraph says what each of the human's actions does at this stage ([chapter 8](../08-stage-run/README.md)). Design decisions: 2026-10-04 (a branch per ticket; questions through the pull request), 2026-10-05 (the closing line; the hidden marker).
 
 ### P5. Bounded work in flight, in the human's order
 
@@ -172,7 +172,7 @@ Code also keeps the factory changeable. A new rule in prose cannot be tested bef
 
 *Rules out:* a rule whose only defense is a sentence in an agent's instructions, when code could check it.
 
-*In v1:* two plans of 2026-10-05, *fewer commits* ([`docs/archive/fewer-commits.md`](../../archive/fewer-commits.md)) and *review comments* ([`docs/backlog/review-comments.md`](../../backlog/review-comments.md)), were built and reverted the same day although both worked: each added a conditional rule only a model could follow and nobody could test before a live run. The first became pointless the same day: once the claim left Git, there were no claim commits left to fold away, and the plan was withdrawn; it is archived in `docs/archive/`. The build and the revert are not in the repository's history, because the main branch was reset; the decision log has recorded both since 2026-10-07. Design decisions: 2026-10-04 (lanes enforced by a hook), 2026-10-05 (stage protocol as code; the two reverted plans).
+*In v1:* two plans of 2026-10-05, *fewer commits* ([`docs/archive/fewer-commits.md`](../../archive/fewer-commits.md)) and *review comments* ([`docs/backlog/review-comments.md`](../../backlog/review-comments.md)), were built and reverted the same day although both worked: each added a conditional rule only a model could follow and nobody could test before a live run. The first became pointless the same day: once the claim (generation 4's run record) left Git, there were no claim commits left to fold away, and the plan was withdrawn; it is archived in `docs/archive/`. The build and the revert are not in the repository's history, because the main branch was reset; the decision log has recorded both since 2026-10-07. Design decisions: 2026-10-04 (lanes enforced by a hook), 2026-10-05 (stage protocol as code; the two reverted plans).
 
 > [!WARNING]
 > **v1 limit:** some rules have no enforcement in code:
@@ -218,7 +218,7 @@ Spending only on events has a price, and v1 paid it once. The watcher reads a pu
 
 *Rules out:* a model on a timer; an agent session that watches; polling every pull request on every tick.
 
-*In v1:* the tick sleeps 2 seconds after a handled event, then 15 seconds, doubling to 120. Design decisions: 2026-10-04 (version 3), 2026-10-05 (the pull request's state before an agent; the doubling pause).
+*In v1:* the tick sleeps 2 seconds after a handled event, then 15 seconds, doubling to 120. Design decisions: 2026-10-04 (generation 3), 2026-10-05 (the pull request's state before an agent; the doubling pause).
 
 ### P14. Recover by construction
 
@@ -273,7 +273,7 @@ The largest saving in v1's history came from one row of a cost table: the coordi
 *In v1:* the records are free: the agent runtime reports them with every agent run, one line each, summed per story and per stage. The bill is posted on the pull request at the gate and written into the log at the archive; the feature acceptance reads the sum. Three later changes were made on measured grounds; [chapter 14](../14-runtime/README.md) has them. Design decisions: 2026-10-04 (the tick records costs).
 
 > [!WARNING]
-> **v1 limit:** the cost record is written when an agent run returns, so one killed by a restart leaves no record, and its cost is missing from the bill.
+> **v1 limit:** the cost record is written when an agent run returns, so one killed by a restart leaves no record, and its cost is missing from the bill; so are agent runs that ended with an error or whose handler raised afterward ([chapter 14](../14-runtime/README.md)).
 
 ### P17. Change by evidence, and write down why
 
@@ -372,4 +372,4 @@ v1 gives its agents the principles as fifteen rules, R1 to R15, in the `factory-
 >   - P12: stops that reach only the factory's log file;
 >   - P14: three recovery gaps;
 >   - P15: Python, `uv` and stage names in the engine;
->   - P16: no record of a killed agent run.
+>   - P16: killed and failed agent runs missing from the bill.

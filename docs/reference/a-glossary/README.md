@@ -1,6 +1,6 @@
 # A. Glossary
 
-This appendix lists every term the book sets in bold where it defines it, and the words of the preface's table *Words with one meaning*, each in one line with the chapter that defines it. Where v1 calls a thing by another word, the line gives it. The words sort by their noun: *the human* under H.
+This appendix lists every term the book sets in bold where it defines it, and the words of the preface's table *Words with one meaning*, each in one line with the chapter that defines it. Where v1 calls a thing by another word, the entry gives it. The words sort by their noun: *the human* under H.
 
 | Term | Meaning | Chapter |
 | :- | :- | :- |
@@ -32,6 +32,7 @@ This appendix lists every term the book sets in bold where it defines it, and th
 | *entry* | The second part of an outcome: the text of the agent's log entry. | [2](../02-concepts/README.md) |
 | *event* | The one next thing to do, as the watcher determines it (v1: a *line*). | [2](../02-concepts/README.md) |
 | *the factory* | The whole system: its code, its agents and its rules (v1's documents also say *the pipeline*). | [Preface](../README.md) |
+| *the factory's log file* | Where the tick writes what it did, one time-stamped line each, also in the container's output (v1: the tick log, `.git/factory-tick.log`). | [14](../14-runtime/README.md) |
 | *failing sides* | Errors, limits and rejected inputs, which the criteria cover too. | [2](../02-concepts/README.md) |
 | *failure* | The factory's, not the story's: a handler could not handle an event; retried a fixed number of times. | [2](../02-concepts/README.md) |
 | *feature* | A coherent piece of value with a goal, a scope and an explicit *out of scope*. | [2](../02-concepts/README.md) |

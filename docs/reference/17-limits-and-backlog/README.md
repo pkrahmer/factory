@@ -17,7 +17,7 @@ Limits of the evidence (L1, L72 to L74) are rated by what they leave unproven. A
 | L1 | The evidence is narrow: one project, stories written in advance, a simulated human, one machine | [1](../01-why-a-factory/README.md) | P17 | Medium |
 | L2 | Scope beyond a story's assignment is held by instructions alone | [3](../03-principles/README.md) | P3 | Medium |
 | L3 | Every story role may edit the criteria its work is judged by | [3](../03-principles/README.md) | P7 | Medium |
-| L4 | Some rules have no code: story numbers in code, commit subjects, the contents of a log entry | [3](../03-principles/README.md) | P10 | Low |
+| L4 | Some rules have no enforcement in code: no story or criterion numbers in code, the coder's commit subjects, a log entry's required contents | [3](../03-principles/README.md) | P10 | Low |
 | L5 | A restart is charged to the story as a failed attempt | [3](../03-principles/README.md) | P14 | Low |
 | L6 | The reverted plans were missing from the decision log until 2026-10-07 | [3](../03-principles/README.md) | P17 | Fixed |
 | L7 | Log text is parsed back as data in four places; a renamed role or cost line breaks them silently | [4](../04-work-items/README.md) | P1 | Medium |
@@ -29,7 +29,7 @@ Limits of the evidence (L1, L72 to L74) are rated by what they leave unproven. A
 | L13 | The stage table is less configurable than it looks: stage and role names in code; dropping `demo` changes behavior silently | [5](../05-stage-machine/README.md) | P15 | Medium |
 | L14 | `stages.yml` has no schema and `version` is never read; a missing `lease_minutes` fails every tick, other errors surface when reached; the factory's own commits need `done` and `doing` in `accept`'s `next` | [5](../05-stage-machine/README.md) | P12 | Medium |
 | L15 | An acceptance merged before its gate loops between `merged` and `reject` | [5](../05-stage-machine/README.md) | P12 | Medium |
-| L16 | The `max_attempts` comment describes contract version 4 | [5](../05-stage-machine/README.md) | — | Low |
+| L16 | The `max_attempts` comment describes the watcher's contract, version 4 | [5](../05-stage-machine/README.md) | — | Low |
 | L17 | `doing → tests` costs no round only because `doing` has no cap | [5](../05-stage-machine/README.md) | — | Low |
 | L18 | `reject` sees only the last commit of the checked-out branch, and only targets outside `next` | [6](../06-watcher/README.md) | P10 | Medium |
 | L19 | `duplicate`, `error pr-lookup` and an `ask` without a pull request stop the repository and reach only the factory's log file | [6](../06-watcher/README.md) | P12 | Medium |
@@ -89,7 +89,7 @@ Limits of the evidence (L1, L72 to L74) are rated by what they leave unproven. A
 | L73 | Most hardening paths ran live only on generation 4; `reject` never ran live | [16](../16-evidence/README.md) | P17 | Medium |
 | L74 | The evidence is not in the repository | [16](../16-evidence/README.md) | P2 | Low |
 
-The ten high limits fall into three groups, and a plan that closes the groups closes most of them:
+The ten high limits fall into three groups, and a plan that closes the groups closes all ten, provided it also checks each comment's author (L70):
 
 - *One token for everyone* (L57, L67, L70; its medium cousins are L38, L39 and L56). The factory, every agent and the human act on GitHub as one identity, so nothing on GitHub can tell them apart or protect the main branch against any of them. L70's other half is about authors: a stranger's comment counts as the human's.
 - *What an agent's shell can reach* (L31, L32, L52, L68, L69). Lanes are enforced on tracked paths after the stage, and checks trust files inside the lanes; what the shell reaches beyond them, changes before the undo reads them, or plants inside a lane to weaken a check is not enforced.
@@ -101,10 +101,10 @@ v1's code changed for three days; its documents did not keep up. Where they disa
 
 | Document | What it says | Chapter |
 | :- | :- | -: |
-| `README.md` | the dispatcher is a model session; `uv` is "the only tool assumption left" | [12](../12-project-contract/README.md) |
+| `README.md` | a tick "starts a headless dispatcher", which is code since generation 5; `uv` is "the only tool assumption left" | [7](../07-dispatcher/README.md), [12](../12-project-contract/README.md) |
 | `demo/README.md` | a story costs $1.50 to $2.20 (generation 4's figures) | [16](../16-evidence/README.md) |
 | `docs/WATCH_CONTRACT.md` | the attempts cap sits with the other `ask`; the code tests it later, in `_runnable` | [6](../06-watcher/README.md) |
-| `template/stages.yml` | `max_attempts` counts stage runs without a commit (L16) | [5](../05-stage-machine/README.md) |
+| `template/stages.yml` | `max_attempts` counts "stage runs that ended without a commit" (L16) | [5](../05-stage-machine/README.md) |
 | `template/TICKET.md` | the demo stage pastes its output below each command | [4](../04-work-items/README.md) |
 | `template/README.md`, `template/Makefile` | "lint, types, tests", and a type check that `check` lacks (L54) | [12](../12-project-contract/README.md) |
 | `template/CLAUDE.md` | the pipeline knows only three targets (L36) | [9](../09-agents-and-skills/README.md) |

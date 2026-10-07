@@ -37,7 +37,7 @@ The names `main` and `origin` are fixed in the code (`ops.MAIN`, `watch.MAIN_REF
 | :- | :- | :- |
 | `main` | *the human* | features, drafts, the stage table, the forms, the guide, the build files; the `git mv` that promotes a story |
 | `main` | *the human, on GitHub* | the merge commit of a pull request |
-| `main` | *the factory* | one per event: the archive after a merge, the refusal record, the discard ([chapter 7](../07-dispatcher/README.md)); and `reject`'s correction when the checkout is on the main branch |
+| `main` | *the factory* | one per event: the archive after a merge (for an acceptance, the booking of its `outcome`), the refusal record, the discard ([chapter 7](../07-dispatcher/README.md)); and `reject`'s correction when the checkout is on the main branch |
 | a work item's branch | *the factory* | the first commit; `merge main` before a later stage, when the main branch has moved; one commit per stage result; the bookkeeping of questions, answers, send-backs, corrections, stalls and expired agent runs |
 | a work item's branch | *the coder* | its work commits, `ticket <id>: feat(<layer>): …` |
 | a work item's branch | *the tick* | `work left uncommitted by an interrupted run`: whatever a killed process, or a handler that raised between an edit and its commit, left in the work tree ([chapter 14](../14-runtime/README.md)) |

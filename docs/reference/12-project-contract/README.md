@@ -11,7 +11,7 @@ Three parts of the contract need more than [chapter 2](../02-concepts/README.md)
 - *Quiet output.* Agents read it in every turn that runs a command; green output should be a few lines, a red one should name the problem once.
 - *Honest exit status.* Every tool's failure must reach the command's exit status. A pipe, a `|| true` or a filter that swallows it turns the check into a report that always says green.
 
-**Protected paths** are the files that decide how the project is built and judged: the stage table, the forms, the guide, the build and check configuration, the dependency manifest. If an agent could change what the check judges, the check would judge nothing. No lane reaches them, whatever the project's lanes say. That covers the configuration wherever a tool looks for it, nested files and inline suppressions included, or the project names them on its list of things not to do without asking.
+**Protected paths** are the files that decide how the project is built and judged: the stage table, the forms, the guide, the build and check configuration, the dependency manifest. If an agent could change what the check judges, the check would judge nothing. No lane reaches them, whatever the project's lanes say. They include the configuration wherever a tool looks for it, nested files and inline suppressions included; whatever no lane can be kept from, the project guide lists among the things not to do without asking.
 
 *The project guide's rules are enforced by the project's own checks* wherever a tool can do it: P10 applied inside the project. The guide says which check holds which rule, and leaves to the stories and the reviewer only what no tool can judge.
 
