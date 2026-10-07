@@ -23,6 +23,10 @@ The hosting service must offer what [chapter 3](../03-principles/README.md) list
 | `ticket/<file stem>` | one story, from its first stage to the human's decision | by `stage._open`, from the main branch, when the story's first stage is due ([chapter 8](../08-stage-run/README.md)) | deleted after a merge or a discard; kept after a send-back |
 | `acceptance/<feature folder>` | one feature's acceptance report and its proposed drafts | the same, when the acceptance is due | deleted after a merge or a refusal |
 
+![Figure 13-1. Branches](branches.svg)
+
+*Figure 13-1. Branches: one clean story and its feature's acceptance in time order, each commit colored by who makes it, and each work item's pull request, draft and then ready, beside its branch.*
+
 The table in `docs/branching.md` says intake and the acceptor create the branches; its own step list, and the code, say the factory does. `repo.delete` removes a branch locally (unless it is checked out), prunes, and deletes it on the remote with `git push origin --delete`; a branch already gone is fine.
 
 The names `main` and `origin` are fixed in the code (`ops.MAIN`, `watch.MAIN_REF`, `tick.sync_main`), and `gh pr create` is called without `--base`, so every pull request targets the repository's default branch, which must be `main`.

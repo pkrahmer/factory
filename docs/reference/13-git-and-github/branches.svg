@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="1128" viewBox="0 0 850 1128" role="img" aria-labelledby="title desc">
+<title id="title">Branches: one trunk, a short branch per work item</title>
+<desc id="desc">Three vertical lanes, time running down: the story's branch ticket/&lt;file stem&gt; on the left, the trunk main in the middle, and the feature acceptance's branch acceptance/&lt;feature&gt; on the right. Each commit is a dot colored by who makes it: the human amber, the coder blue, the factory's code green. On main the human commits the drafts and FEATURE.md, then promotes the story with git mv into ongoing/. The story's branch leaves main at that promotion. Its first commit is the factory's: intake starts, with a draft pull request. The factory then commits ready to tests and tests to doing. Meanwhile the human commits another draft on main, so the factory merges main into the story's branch, only when main moved. The coder commits its work, feat, and a refactor if any. The factory commits doing to review, review to docs, docs to demo, and demo to accept, which marks the pull request ready. A bar beside the lane shows the pull request: draft from the first commit to the last, then ready until the human merges. The human merges the branch into main with a merge commit, never a squash, and the factory commits accept to done on main: the story is archived into done/ and its branch deleted. Once the feature's last story is archived, the acceptance's branch leaves main. The factory commits acceptance starts with a draft pull request, then feature to accept, which marks it ready. The human merges the report and its proposed drafts into main with a merge commit, and the factory commits accept to done with outcome accepted on main and deletes the branch.</desc>
+<style>
+text { font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+.code { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 0.92em; }
+.ttl { font-size: 20px; font-weight: 600; }
+.sub { font-size: 13.5px; font-weight: 400; }
+.tag { font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; }
+.nt { font-size: 14.5px; font-weight: 700; }
+.nb { font-size: 12.5px; font-weight: 400; }
+.lb { font-size: 12px; font-weight: 400; }
+.lane-h { font-size: 13px; font-weight: 700; }
+.lane-n { font-size: 12px; font-weight: 400; }
+.col-h { font-size: 12.5px; font-weight: 700; }
+.grp-c { font-size: 12px; font-weight: 600; }
+.tx { font-size: 13px; font-weight: 400; }
+.tx-bold { font-size: 13px; font-weight: 700; }
+.tx-mono { font-size: 12px; font-weight: 400; font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; }
+.tx-note { font-size: 12px; font-weight: 400; }
+.tx-small { font-size: 11px; font-weight: 400; }
+.lg { font-size: 12px; font-weight: 400; }
+.sh, .fold { stroke-width: 1.5; stroke-linejoin: round; }
+.n-end .sh { stroke-dasharray: 5 3; }
+.e { fill: none; stroke-linejoin: round; }
+.lb { paint-order: stroke fill; stroke-width: 4px; stroke-linejoin: round; }
+.rule, .lane-a, .lane-b { stroke-width: 1; shape-rendering: crispEdges; }
+.rule, .col-u { fill: none; } .col-r { stroke-dasharray: 2 3; }
+.col-u { stroke-width: 1; shape-rendering: crispEdges; }
+.grp { stroke-width: 1; } .grp-d { stroke-dasharray: 5 4; }
+.bg { fill: #ffffff; }
+.ttl, .nt, .lane-h, .col-h, .tx-bold { fill: #1b1f24; }
+.sub, .lane-n, .grp-c, .tx-note, .tx-small { fill: #5d6470; }
+.nb, .tx, .tx-mono, .lg { fill: #363b43; }
+.lb { stroke: #ffffff; } .lb.on-lane { stroke: #f5f7f9; }
+.lane-a { fill: #f5f7f9; stroke: #dde1e6; }
+.lane-b { fill: #ffffff; stroke: #dde1e6; }
+.rule { stroke: #dde1e6; }
+.grp { fill: #ffffff; stroke: #b4bac3; } .col-u { stroke: #b4bac3; }
+@media (prefers-color-scheme: dark) {
+  .bg { fill: #0f141a; }
+  .ttl, .nt, .lane-h, .col-h, .tx-bold { fill: #e6edf3; }
+  .sub, .lane-n, .grp-c, .tx-note, .tx-small { fill: #9da7b3; }
+  .nb, .tx, .tx-mono, .lg { fill: #c9d1d9; }
+  .lb { stroke: #0f141a; } .lb.on-lane { stroke: #151b22; }
+  .lane-a { fill: #151b22; stroke: #2a313b; }
+  .lane-b { fill: #0f141a; stroke: #2a313b; }
+  .rule { stroke: #2a313b; }
+  .grp { fill: #0f141a; stroke: #3d4651; } .col-u { stroke: #3d4651; }
+}
+.lane, .guide { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.trunk { stroke-width: 4; } .twig { stroke-width: 2.5; }
+.guide { stroke-width: 1; stroke-dasharray: 2 4; }
+.dot { stroke-width: 2; }
+.pr { stroke-width: 1.25; stroke-dasharray: 4 3; }
+.pr-t { font-size: 11px; font-weight: 600; }
+.lane { stroke: #4b515c; }
+.guide { stroke: #b4bac3; }
+.dot { stroke: #ffffff; }
+.pr-draft { fill: #f4f5f7; stroke: #a3a8b2; }
+.pr-ready { fill: #fff4df; stroke: #c27400; }
+.pr-t-draft { fill: #646b76; }
+.pr-t-ready { fill: #965a00; }
+.dot-human { fill: #c27400; }
+.dot-agent { fill: #2f6db5; }
+.dot-code { fill: #2a8a6e; }
+@media (prefers-color-scheme: dark) {
+  .lane { stroke: #bcc4ce; }
+  .guide { stroke: #3d4651; }
+  .dot { stroke: #0f141a; }
+  .pr-draft { fill: #1a2029; stroke: #6b7380; }
+  .pr-ready { fill: #33260f; stroke: #e0a33a; }
+  .pr-t-draft { fill: #a2abb7; }
+  .pr-t-ready { fill: #f2bd63; }
+  .dot-human { fill: #e0a33a; }
+  .dot-agent { fill: #5b9be6; }
+  .dot-code { fill: #3fb68f; }
+}
+</style>
+<defs></defs>
+<rect class="bg" width="850" height="1128"/>
+<path class="guide" d="M 232 132 L 232 251"/>
+<path class="guide" d="M 616 132 L 616 875"/>
+<path class="lane trunk" d="M 424 132 L 424 1064"/>
+<path class="lane twig" d="M 232 264 L 232 744"/>
+<path class="lane twig" d="M 616 888 L 616 936"/>
+<path class="lane twig" d="M 424 216 L 232 264"/>
+<path class="lane twig" d="M 424 408 L 232 456"/>
+<path class="lane twig" d="M 232 744 L 424 792"/>
+<path class="lane twig" d="M 424 840 L 616 888"/>
+<path class="lane twig" d="M 616 936 L 424 984"/>
+<rect class="pr pr-draft" x="204" y="264" width="16" height="478.5" rx="4"/>
+<text class="pr-t pr-t-draft" transform="translate(215.74 503.25) rotate(-90)" text-anchor="middle">draft</text>
+<rect class="pr pr-ready" x="204" y="745.5" width="16" height="46.5" rx="4"/>
+<text class="pr-t pr-t-ready" transform="translate(215.74 768.75) rotate(-90)" text-anchor="middle">ready</text>
+<rect class="pr pr-draft" x="628" y="888" width="16" height="46.5" rx="4"/>
+<text class="pr-t pr-t-draft" transform="translate(639.74 911.25) rotate(-90)" text-anchor="middle">draft</text>
+<rect class="pr pr-ready" x="628" y="937.5" width="16" height="46.5" rx="4"/>
+<text class="pr-t pr-t-ready" transform="translate(639.74 960.75) rotate(-90)" text-anchor="middle">ready</text>
+<circle class="dot dot-human" cx="424" cy="168" r="7"/>
+<circle class="dot dot-human" cx="424" cy="216" r="7"/>
+<circle class="dot dot-code" cx="232" cy="264" r="7"/>
+<circle class="dot dot-code" cx="232" cy="312" r="7"/>
+<circle class="dot dot-code" cx="232" cy="360" r="7"/>
+<circle class="dot dot-human" cx="424" cy="408" r="7"/>
+<circle class="dot dot-code" cx="232" cy="456" r="7"/>
+<circle class="dot dot-agent" cx="232" cy="504" r="7"/>
+<circle class="dot dot-agent" cx="232" cy="552" r="7"/>
+<circle class="dot dot-code" cx="232" cy="600" r="7"/>
+<circle class="dot dot-code" cx="232" cy="648" r="7"/>
+<circle class="dot dot-code" cx="232" cy="696" r="7"/>
+<circle class="dot dot-code" cx="232" cy="744" r="7"/>
+<circle class="dot dot-human" cx="424" cy="792" r="7"/>
+<circle class="dot dot-code" cx="424" cy="840" r="7"/>
+<circle class="dot dot-code" cx="616" cy="888" r="7"/>
+<circle class="dot dot-code" cx="616" cy="936" r="7"/>
+<circle class="dot dot-human" cx="424" cy="984" r="7"/>
+<circle class="dot dot-code" cx="424" cy="1032" r="7"/>
+<circle class="dot dot-human" cx="48" cy="1100" r="6"/>
+<text class="lg" x="64" y="1104">the human</text>
+<circle class="dot dot-agent" cx="158.968" cy="1100" r="6"/>
+<text class="lg" x="174.968" y="1104">the coder's work</text>
+<circle class="dot dot-code" cx="301.436" cy="1100" r="6"/>
+<text class="lg" x="317.436" y="1104">the factory's code</text>
+<rect class="pr pr-draft" x="458.854" y="1093.5" width="26" height="13" rx="3"/>
+<text class="lg" x="492.854" y="1104">pull request, draft</text>
+<rect class="pr pr-ready" x="617.275" y="1093.5" width="26" height="13" rx="3"/>
+<text class="lg" x="651.275" y="1104">pull request, ready</text>
+<text class="ttl" x="40" y="48" text-anchor="start">Branches: one trunk, a short branch per work item</text>
+<text class="sub" x="40" y="72" text-anchor="start">Time runs down. A story and a feature's acceptance each have a branch of their own and come back by a merge commit.</text>
+<text class="tx-bold" x="232" y="120" text-anchor="middle"><tspan class="code">ticket/&lt;file stem&gt;</tspan></text>
+<text class="tx-bold" x="424" y="120" text-anchor="middle"><tspan class="code">main</tspan></text>
+<text class="tx-bold" x="616" y="120" text-anchor="middle"><tspan class="code">acceptance/&lt;feature&gt;</tspan></text>
+<text class="tx" x="438" y="172.42" text-anchor="start">drafts and <tspan class="code">FEATURE.md</tspan></text>
+<text class="tx" x="438" y="210.92" text-anchor="start">promote: <tspan class="code">git mv</tspan></text><text class="tx" x="438" y="229.92" text-anchor="start">into <tspan class="code">ongoing/</tspan></text>
+<text class="tx" x="196" y="258.92" text-anchor="end"><tspan class="code">intake starts</tspan> ·</text><text class="tx" x="196" y="277.92" text-anchor="end">draft pull request</text>
+<text class="tx" x="196" y="316.42" text-anchor="end"><tspan class="code">ready → tests</tspan></text>
+<text class="tx" x="196" y="364.42" text-anchor="end"><tspan class="code">tests → doing</tspan></text>
+<text class="tx" x="438" y="412.42" text-anchor="start">another draft</text>
+<text class="tx" x="196" y="450.92" text-anchor="end"><tspan class="code">merge main</tspan> ·</text><text class="tx" x="196" y="469.92" text-anchor="end">only when <tspan class="code">main</tspan> moved</text>
+<text class="tx" x="196" y="508.42" text-anchor="end"><tspan class="code">feat(&lt;layer&gt;): …</tspan></text>
+<text class="tx" x="196" y="556.42" text-anchor="end"><tspan class="code">refactor: …</tspan></text>
+<text class="tx" x="196" y="604.42" text-anchor="end"><tspan class="code">doing → review</tspan></text>
+<text class="tx" x="196" y="652.42" text-anchor="end"><tspan class="code">review → docs</tspan></text>
+<text class="tx" x="196" y="700.42" text-anchor="end"><tspan class="code">docs → demo</tspan></text>
+<text class="tx" x="196" y="738.92" text-anchor="end"><tspan class="code">demo → accept</tspan> ·</text><text class="tx" x="196" y="757.92" text-anchor="end">ready</text>
+<text class="tx" x="438" y="786.92" text-anchor="start">merge commit,</text><text class="tx" x="438" y="805.92" text-anchor="start">never a squash</text>
+<text class="tx" x="410" y="834.92" text-anchor="end"><tspan class="code">accept → done</tspan>: archived</text><text class="tx" x="410" y="853.92" text-anchor="end">into <tspan class="code">done/</tspan> · branch deleted</text>
+<text class="tx" x="652" y="882.92" text-anchor="start"><tspan class="code">acceptance starts</tspan> ·</text><text class="tx" x="652" y="901.92" text-anchor="start">draft pull request</text>
+<text class="tx" x="652" y="930.92" text-anchor="start"><tspan class="code">feature → accept</tspan> ·</text><text class="tx" x="652" y="949.92" text-anchor="start">ready</text>
+<text class="tx" x="410" y="978.92" text-anchor="end">merge commit:</text><text class="tx" x="410" y="997.92" text-anchor="end">report and drafts</text>
+<text class="tx" x="438" y="1026.92" text-anchor="start"><tspan class="code">accept → done</tspan>,</text><text class="tx" x="438" y="1045.92" text-anchor="start"><tspan class="code">outcome: accepted</tspan> · branch deleted</text>
+</svg>
