@@ -1,4 +1,4 @@
-.PHONY: check lint types dockerfile test
+.PHONY: check lint types dockerfile test book
 .SILENT:
 
 check: lint types dockerfile test
@@ -22,3 +22,8 @@ dockerfile:
 test:
 	uv run pytest --no-header --tb=short
 	echo "test: green"
+
+# The reference manual (docs/reference) as a printable book: pandoc and typst on the PATH.
+# BOOK_FLAGS=--reader leaves out the planner boxes; --pages also writes page images.
+book:
+	uv run python docs/reference/_print/book.py $(BOOK_FLAGS)

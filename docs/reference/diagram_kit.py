@@ -54,8 +54,9 @@ Layout rules
 - Put node positions and sizes on the 8 px grid; ``check()`` warns about nodes that are not.
 - Canvas: 40 px margins. The title's baseline is at y = 48, the subtitle's at y = 72, so
   content starts at y = 104. Keep the bottom 56 px free for a one-row legend, plus 24 px for
-  each further row. Prefer widths of 720 to 1120 px (1200 at most): GitHub shows a figure about
-  900 px wide, and a wider canvas shrinks its text.
+  each further row. Prefer widths of 720 to 850 px (1200 at most): GitHub shows a figure about
+  900 px wide, and the printed book (`_print/`) keeps a figure of up to about 850 px upright in
+  the text; a wider one is turned a quarter onto a page of its own.
 - Node heights: tag, title and two body lines 96 px; tag, title and one line 72 px; title and
   one line 56 px; a pill with a title 48 px. A cylinder needs 24 px more for its cap; a diamond
   holds one or two short words. Widths: 136 px holds about 16 body characters, 176 px about 22.
