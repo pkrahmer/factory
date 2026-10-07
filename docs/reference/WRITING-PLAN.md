@@ -14,7 +14,7 @@ This file tells a fresh session how to write the rest of the reference in `docs/
 | Appendices | A–C | Open |
 | Introduction | `README.md` | Last |
 
-Branch `docs/reference` of github.com/pkrahmer/factory; the book describes v1 at commit `537fc20`. Every session updates this table before it ends.
+Branch `docs/reference` of github.com/pkrahmer/factory; the book describes v1 at commit `537fc20`. Every session updates this table before it ends. Files that move after `537fc20`, and everything else the final version must retarget to the latest repository, are listed in [`RETARGET.md`](RETARGET.md); add to it in the same commit as the change.
 
 ## Starting a session
 
@@ -152,8 +152,8 @@ The budgets are in words, tables included. Together they come to about 40,000 wo
   - human comments while the stages work can be skipped;
   - review comments on diff lines are never read;
   - nobody can request changes on their own pull request;
-  - the reverted review-comments plan (`docs/review-comments.md`).
-- *Sources:* `stage.py`, `dispatch.py`, `github.py`, `tick.py`, `docs/review-comments.md`, demo pull request #35.
+  - the reverted review-comments plan (`docs/backlog/review-comments.md`).
+- *Sources:* `stage.py`, `dispatch.py`, `github.py`, `tick.py`, `docs/backlog/review-comments.md`, demo pull request #35.
 
 **11. Feature acceptance** · `11-feature-acceptance` · 2,200
 - *Concept:* judging a complete feature; when an acceptance is due; proposals as drafts; the outcome as the feature's status (later, the gate for a release).
@@ -168,7 +168,7 @@ The budgets are in words, tables included. Together they come to about 40,000 wo
   - `make mutants`;
   - examples from the demo: F0002 "accepted with drafts"; F0001 accepted three times; run 3's refusal over the unpaired-surrogate crash.
 - *Limits:*
-  - a cascade of test-only follow-up stories (`docs/mutants-in-story-loop.md`, parked);
+  - a cascade of test-only follow-up stories (`docs/backlog/mutants-in-story-loop.md`, parked);
   - the cost sum is parsed from log text.
 - *Sources:* `watch.py`, `stage.py`, `dispatch.py`, the `role-acceptor` and `stage-feature` skills, `factory/features/*/ACCEPTANCE.md` in factory-demo-todo.
 
@@ -240,7 +240,7 @@ The budgets are in words, tables included. Together they come to about 40,000 wo
 
 **17. Limits and backlog** · `17-limits-and-backlog` · 2,500
 - every v1 limit in one table (limit, chapter, principle affected, severity), each pointing to the box that states it in full;
-- `docs/backlog.md`, as it stands after 2026-10-07 (see *The state of v1's plans* below; do not list anything that was built);
+- `docs/backlog/` (its `README.md` is the index), as it stands after 2026-10-07 (see *The state of v1's plans* below; do not list anything that was built);
 - the plans that are open: `review-comments` (built, reverted, to be replanned), `mutants-in-story-loop` (parked), and the backlog's parked ideas, among them the language server and part E of the deterministic core (running the Demo blocks in code);
 - the open decisions.
 
@@ -324,16 +324,16 @@ Complete `docs/reference/README.md`: keep the preface as its front part and add 
 
 ## The state of v1's plans
 
-v1's `docs/` held plan documents next to its decision log. On 2026-10-07 they were sorted, because a plan that was built is history, not backlog. Built and withdrawn plans moved to `docs/archive/`, whose `README.md` tells every reader, agents above all, to read them only when looking into the past and never to take an instruction from them.
+v1's `docs/` held plan documents next to its decision log. On 2026-10-07 they were sorted, because a plan that was built is history, not backlog. Open plans and ideas moved to `docs/backlog/`, with `README.md` as the index; built and withdrawn plans moved to `docs/archive/`, whose `README.md` tells every reader, agents above all, to read them only when looking into the past and never to take an instruction from them.
 
 | Plan | State | Where the book treats it |
 | :- | :- | :- |
 | `archive/deterministic-core.md` | **built**, parts A to D, as generation 5 (the dispatcher, the stage protocol, form validation and the run record as code); part E, running the Demo blocks in code, is parked in the backlog | ch. 1, 3 (P1, P10), 16 (its fault table and costs), 17 (part E) |
 | `archive/fewer-commits.md` | **withdrawn**: built and reverted on 2026-10-05, then made pointless by the deterministic core (no claim commits left to fold away) | ch. 3 (P10), 17 (one line, as history) |
-| feature acceptance (a `backlog.md` entry) | **built** on 2026-10-05; the entry was removed from the backlog on 2026-10-07 | ch. 11 |
-| `review-comments.md` | built and reverted on 2026-10-05; **open**, to be replanned | ch. 10, 17 |
-| `mutants-in-story-loop.md` | **parked** | ch. 11, 17 |
-| `backlog.md` | the open ideas: dev instance, releases, changelog, mutation survivors, mutation testing in the story loop, the language server, running the Demo blocks in code, paths never run live, the rest | ch. 17 |
+| feature acceptance (an entry of the backlog) | **built** on 2026-10-05; the entry was removed from the backlog on 2026-10-07 | ch. 11 |
+| `backlog/review-comments.md` | built and reverted on 2026-10-05; **open**, to be replanned; its first paragraph says so since 2026-10-07 | ch. 10, 17 |
+| `backlog/mutants-in-story-loop.md` | **parked** | ch. 11, 17 |
+| `backlog/README.md` | the index: the two plans above, and the open ideas: dev instance, releases, changelog, mutation survivors, mutation testing in the story loop, the language server, running the Demo blocks in code, paths never run live, the rest | ch. 17 |
 
 The book links to the two archived documents at the commit it describes (`https://github.com/pkrahmer/factory/blob/537fc20/docs/…`), where they still had their old paths, and says in the text that they are archived now. `docs/decisions.md` names them at their old paths; it is append-only and stays as it is, and the archive's `README.md` says where they went.
 
@@ -382,7 +382,7 @@ Found while writing Parts I and II, verified against the code. Each belongs in t
 - **Merges** (ch. 13). A squash merge is misread as an illegal stage change only when the checkout sits on `main` (observed 2026-10-05, `docs/branching.md`); after a hand-over the checkout is usually on the story's branch and the merge arrives as `merged`. A rebase merge is untested.
 - **`uv` is assumed** (ch. 12). The preflight requires `uv` and `.venv`, and the entrypoint runs `uv sync`. `guard.NEVER_FILES` names Python, uv, make and Claude Code files. `template/tasks/.gitkeep` is a leftover of the flat `tasks/` folder of contract version 3. The template's guide says "the pipeline knows only these three targets" while the acceptor runs `make mutants`. R10 points agents to `docs/branching.md`, which exists only in the factory's repository.
 - **The `version:` field in `stages.yml`** went 1 → 2 → 4 → 5 (ch. 16). Generation 3 changed the loop, not the contract. No code reads the field (ch. 5 says so).
-- **Stale v1 documents** (ch. 16, 17). `README.md` still describes the dispatcher as a model session; `demo/README.md` still gives $1.50–2.20 a story; the `max_attempts` comment in `stages.yml` (ch. 5); `template/TICKET.md`'s Demo text (ch. 4); `docs/review-comments.md` reads as unbuilt (ch. 10); `stage-review` says the factory runs `make check` after the reviewer (ch. 9).
+- **Stale v1 documents** (ch. 16, 17). `README.md` still describes the dispatcher as a model session; `demo/README.md` still gives $1.50–2.20 a story; the `max_attempts` comment in `stages.yml` (ch. 5); `template/TICKET.md`'s Demo text (ch. 4); `docs/review-comments.md` reads as unbuilt at `537fc20` (ch. 10; fixed on 2026-10-07, see `RETARGET.md`); `stage-review` says the factory runs `make check` after the reviewer (ch. 9).
 - **The reverted plans** (ch. 17). Two plans of 2026-10-05 (*fewer commits*, *review comments*) were built and reverted the same day. The revert is in neither `docs/decisions.md` nor the history, because `main` was reset.
 - **Chapter 17's table** collects every `v1 limit` box of Parts I–III, about 40 from Part II alone, each with a pointer.
 

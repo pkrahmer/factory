@@ -17,7 +17,7 @@ This repository is the engine. A repository that wants to be built by it carries
 - `docs/diagrams/` — how a story moves through the stages and lanes, how a finished feature is accepted, how the container, the tick, the watcher and the preflight drive it, and the branches, as SVG with a short explanation each.
 - `docs/branching.md` — one trunk, one short branch per ticket, merge commits only; `docs/github-settings.md` — the GitHub settings that keep it so, for the factory and for every repository it builds.
 - `docs/WATCH_CONTRACT.md` — what the watcher must do; `claude/skills/factory-rules/SKILL.md` — the rules.
-- `docs/backlog.md` and the plans beside it — what is open; `docs/archive/` — plans that were built or withdrawn, history only.
+- `docs/backlog/` — what is open: an index of ideas, and the bigger plans in files of their own; `docs/archive/` — plans that were built or withdrawn, history only.
 - `Dockerfile`, `compose.yml`, `entrypoint.sh` — the machine. The container clones the repositories in `REPOS` into a volume, keeps them current, and ticks them in turn.
 - `demo/`, `scripts/demo-check.sh` — the demo: a project skeleton and three features of stories, the instructions for the Claude Code session that plays the human, and a check of the machine before it starts. Its hardening mode is how the factory itself is tested.
 - `template/` — what a new repository starts from: `stages.yml`, the story and feature forms, `CLAUDE.md`, an app-first `README.md` and a `Makefile`.
