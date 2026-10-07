@@ -40,7 +40,7 @@ PARTS = {  # first chapter number -> (part number, title)
     1: ("I", "The idea"),
     4: ("II", "The machine"),
     12: ("III", "Around the machine"),
-    18: ("IV", "Looking back"),
+    16: ("IV", "Looking back"),
 }
 WINDOWS_TOOLS = {
     "pandoc": Path(os.environ.get("LOCALAPPDATA", "")) / "Pandoc" / "pandoc.exe",

@@ -12,8 +12,8 @@ This book is for two readers at once. The first is a software professional who w
 
 - **Part I, The idea** (chapters 1–3): the problem, the concepts and the principles. Part I is general throughout. It holds for any language, toolchain, hosting service or agent runtime, and it names the first implementation only as evidence and example.
 - **Part II, The machine** (chapters 4–11): one mechanism per chapter. Each first explains the concept, then shows it *In v1* with every detail, and ends with v1's limits.
-- **Part III, Around the machine** (chapters 12–17): the contract with a project, Git and GitHub, the runtime, safety, cost and verification.
-- **Part IV, Looking back** (chapters 18–19): the evidence from the runs, and the limits and open ends.
+- **Part III, Around the machine** (chapters 12–15): the contract with a project, Git and GitHub, the runtime with its costs and records, and safety.
+- **Part IV, Looking back** (chapters 16–17): how v1 was verified and what its runs showed, and the limits and open ends.
 - **Appendices**: a glossary (A), a map of v1's files to the chapters that explain them (B), and an index of v1's decisions (C).
 
 ### What "v1" means
