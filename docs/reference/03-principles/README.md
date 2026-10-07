@@ -201,7 +201,7 @@ A system that improvises past the unexpected hides its defects until someone rea
 
 P9 is this principle for agents: when the specification is silent, ask. P12 is the same principle for code: when the handlers are silent, stop and report.
 
-*Rules out:* a catch-all that carries on; unbounded retries; a failure only the log file knows about.
+*Rules out:* a catch-all that carries on; unbounded retries; a failure only the factory's log file knows about.
 
 *In v1:* a handler's unexpected error is a counted failure, tried three times on the same event and repository state and then reported on the pull request (commit `57fe24f`). Every stall is a comment there when it happens, not only at the attempts cap. Design decisions: 2026-10-04 (every stall a comment), 2026-10-05 (the dispatcher is code).
 
@@ -369,7 +369,7 @@ v1 gives its agents the principles as fifteen rules, R1 to R15, in the `factory-
 >   - P3: scope;
 >   - P7: editable criteria;
 >   - P10: unenforced rules;
->   - P12: stops that reach only the log file;
+>   - P12: stops that reach only the factory's log file;
 >   - P14: three recovery gaps;
 >   - P15: Python, `uv` and stage names in the engine;
 >   - P16: no record of a killed agent run.

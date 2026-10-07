@@ -38,7 +38,7 @@ That state falls into four classes, and an implementation should know which is w
 | `TICK_SECONDS` | 120 | the longest pause |
 | `GIT_USER_NAME`, `GIT_USER_EMAIL` | `factory`, `factory@noreply.invalid` | the commit identity; an address that matches no GitHub account |
 
-Claude Code is logged in once, interactively: `docker compose run --rm -it --entrypoint claude factory`. The login stays in `claude-home`. It is a subscription login (design decision 2026-10-05), so the dollars in the cost records are Claude Code's computed list prices, not a bill.
+Claude Code is logged in once, interactively: `docker compose run --rm -it --entrypoint claude factory`. The login stays in `claude-home`. It is a subscription login, so the dollars in the cost records are Claude Code's computed list prices, not a bill.
 
 ![Figure 14-1. The machine](machine.svg)
 
@@ -88,7 +88,7 @@ The scheduler reads exit 3 as "tick again at once" and treats 1 like 0. `factory
 
 An item whose tool is missing counts as missing too, and every item runs, so one preflight names everything at once. Nothing is installed and nobody is asked: the fixes go into the tick log. (The module's docstring still says the dispatcher "may offer to run" them, as in generation 2.) The `agents` item checks neither the skills nor the files' validity, which `agent.load` does at the agent run, and it reads `~/.claude` even where `FACTORY_CLAUDE_HOME` points elsewhere.
 
-After a pass the tick writes the stamp `factory-preflight-ok`: the factory's package version and the first 12 hex digits of the SHA-256 of `factory/stages.yml`. The stamp is fresh for 24 hours while both match (design decision 2026-10-04). The version is the one set by hand in `pyproject.toml`, `5.0.0` at `930c61a`, so a rebuilt image does not renew the stamp unless the version changed; a changed stage table does.
+After a pass the tick writes the stamp `factory-preflight-ok`: the factory's package version and the first 12 hex digits of the SHA-256 of `factory/stages.yml`. Both are in it so that a new version or a changed stage table runs the preflight again (design decision 2026-10-04); the stamp is fresh for 24 hours while both match. The version is the one set by hand in `pyproject.toml`, `5.0.0` at `930c61a`, so a rebuilt image does not renew the stamp unless the version changed; a changed stage table does.
 
 ### Machine state
 
@@ -158,7 +158,7 @@ Three changes after run 4 came from reading the cost records and the agents' tra
 > **v1 limit:** the preflight's probe judges the code, not only the machine. `preflight.gate_check` runs `make lint` on whatever branch is checked out, and a question (`stage._ask`) or a stall (`ops.stall`) commits the agent's work as it is: a coder that asks halfway, with code that fails the lint, leaves the checkout on a branch where the probe fails. If the stamp expires while the story waits, every tick fails at the preflight, runs `make lint` again, and never reaches the human's answer. A fix pushed to GitHub does not help, because the tick fetches only after the preflight; the branch must be fixed in the container's checkout. The preflight also runs before the dirty-tree recovery, so a killed agent's uncommitted edits are probed too. v1 chose `make lint` over `make check` because a branch "may be red on purpose" (design decision 2026-10-04), which holds for red tests, not for code that fails the lint. A main branch that fails the lint stops the repository the same way, before its first story.
 
 > [!WARNING]
-> **v1 limit:** the machine is not reproducible. The Dockerfile pins only `uv` ("Pin what the loop depends on"); Claude Code is installed as `latest` (`ARG CLAUDE_VERSION=latest`), and the base image, the Debian packages and `gh` float too, while the factory depends on Claude Code's flags, its JSON result and its permission behavior, and parses `gh`'s JSON. `--max-turns` had already disappeared once (design decision 2026-10-05). The container built on 2026-10-05 at 20:59 UTC has Claude Code 2.1.289.
+> **v1 limit:** the machine is not reproducible. The Dockerfile pins only `uv` ("Pin what the loop depends on"); Claude Code is installed as `latest` (`ARG CLAUDE_VERSION=latest`), the base image, the Debian packages and `gh` float too, and `uv tool install /opt/factory` is not told to use the repository's `uv.lock`, so the factory's own dependencies are resolved afresh at every build, while the factory depends on Claude Code's flags, its JSON result and its permission behavior, and parses `gh`'s JSON. `--max-turns` had already disappeared once (design decision 2026-10-05). The container built on 2026-10-05 at 20:59 UTC has Claude Code 2.1.289.
 
 > [!IMPORTANT]
 > **Planner:** what this chapter fixes.

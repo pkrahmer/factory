@@ -100,6 +100,6 @@ A few words could mean several things in a book about a system built on Git. Eac
 | *pull request* | the reviewable proposal to merge a work item's branch, with its description and comments (GitLab: *merge request*) | — |
 | *contract* | the project contract: what a project provides so the factory can build it | the watcher's contract, which is always named in full |
 | *generation* | one of v1's five versions, 1 to 5 | a run |
-| *run* (alone) | one of the four end-to-end demonstration runs, 1 to 4 | an agent run |
+| *run* (alone) | one of v1's four end-to-end runs on the demonstration project, 1 to 4 | an agent run |
 
 Quotations from v1 keep v1's own words; where they differ from this table, the book glosses them in brackets.

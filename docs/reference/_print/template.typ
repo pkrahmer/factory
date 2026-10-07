@@ -443,8 +443,10 @@
   if before.len() == 0 { return }
   let chapter = before.last()
   let number = chapter-number.at(chapter.location())
+  // An appendix is numbered by a letter, a chapter by digits.
+  let kind = if number.match(regex("^\d+$")) != none { "Chapter" } else { "Appendix" }
   let chapter-label = if number in ("", "front", "part") { chapter.body } else [
-    Chapter #number#h(0.5em)·#h(0.5em)#chapter.body
+    #kind #number#h(0.5em)·#h(0.5em)#chapter.body
   ]
   let sections = query(heading.where(level: 2).after(chapter.location())).filter(h => (
     h.location().page() <= here-page
