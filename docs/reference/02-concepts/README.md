@@ -122,7 +122,7 @@ Nobody told the factory that the health endpoint had started. Noticing is the co
 
 ### Scheduler and tick
 
-Nothing in the factory waits in memory between steps. A **scheduler**, the only permanent part, wakes the factory for each project in turn. One wake-up is a **tick**: fetch the latest state, evaluate it, and handle at most one thing. An idle tick costs a network fetch, plus one hosting-service lookup per story that waits for the human; no model runs. A tick that handled something is followed at once by another, because the next step is usually due; after that, the pause between ticks grows to a ceiling. The tick handles the same event in the same repository state only once.
+Nothing in the factory waits in memory between steps. A **scheduler**, the only permanent part, wakes the factory for each project in turn. One wake-up is a **tick**: fetch the latest state, evaluate it, and handle at most one thing. An idle tick costs a network fetch, plus a hosting-service lookup when a story waits for the human; no model runs. A tick that handled something is followed at once by another, because the next step is usually due; after that, the pause between ticks grows to a ceiling. The tick handles the same event in the same repository state only once.
 
 ### Watcher and events
 
