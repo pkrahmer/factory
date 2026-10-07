@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="848" height="696" viewBox="0 0 848 696" role="img" aria-labelledby="title desc">
+<title id="title">Three kinds of work</title>
+<desc id="desc">A step in the work meets two questions. The first asks whether it decides what is wanted, or whether a result is accepted: if yes, it is intent and acceptance, and it belongs to the human. If not, the second asks whether there is exactly one right result that code can reach: if yes, it is bookkeeping, and it belongs to code; if no, it is judgment and writing, and it belongs to a model. Below the questions, three columns list the steps of chapter 1's health-endpoint story that fell to each owner. The human started the story, answered (a) and merged, because only the human holds the purpose and the accountability. A model judged whether the story was buildable, which tests and which code to write, whether it was good, what a reader must know and whether the output matched, because these have many acceptable results. Code kept the branches, the state, the commits, the posts, the checks, the counts and the bill, because each has one right result that must be exact and cheap.</desc>
+<style>
+.tx-note { font-style: italic; }
+text { font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+.code { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 0.92em; }
+.ttl { font-size: 20px; font-weight: 600; }
+.sub { font-size: 13.5px; font-weight: 400; }
+.tag { font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; }
+.nt { font-size: 14.5px; font-weight: 700; }
+.nb { font-size: 12.5px; font-weight: 400; }
+.lb { font-size: 12px; font-weight: 400; }
+.lane-h { font-size: 13px; font-weight: 700; }
+.lane-n { font-size: 12px; font-weight: 400; }
+.col-h { font-size: 12.5px; font-weight: 700; }
+.grp-c { font-size: 12px; font-weight: 600; }
+.tx { font-size: 13px; font-weight: 400; }
+.tx-bold { font-size: 13px; font-weight: 700; }
+.tx-mono { font-size: 12px; font-weight: 400; font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; }
+.tx-note { font-size: 12px; font-weight: 400; }
+.tx-small { font-size: 11px; font-weight: 400; }
+.lg { font-size: 12px; font-weight: 400; }
+.sh, .fold { stroke-width: 1.5; stroke-linejoin: round; }
+.n-end .sh { stroke-dasharray: 5 3; }
+.e { fill: none; stroke-linejoin: round; }
+.lb { paint-order: stroke fill; stroke-width: 4px; stroke-linejoin: round; }
+.rule, .lane-a, .lane-b { stroke-width: 1; shape-rendering: crispEdges; }
+.rule, .col-u { fill: none; } .col-r { stroke-dasharray: 2 3; }
+.col-u { stroke-width: 1; shape-rendering: crispEdges; }
+.grp { stroke-width: 1; } .grp-d { stroke-dasharray: 5 4; }
+.e-flow { stroke-width: 1.5; }
+.bg { fill: #ffffff; }
+.ttl, .nt, .lane-h, .col-h, .tx-bold { fill: #1b1f24; }
+.sub, .lane-n, .grp-c, .tx-note, .tx-small { fill: #5d6470; }
+.nb, .tx, .tx-mono, .lg { fill: #363b43; }
+.lb { stroke: #ffffff; } .lb.on-lane { stroke: #f5f7f9; }
+.lane-a { fill: #f5f7f9; stroke: #dde1e6; }
+.lane-b { fill: #ffffff; stroke: #dde1e6; }
+.rule { stroke: #dde1e6; }
+.grp { fill: #ffffff; stroke: #b4bac3; } .col-u { stroke: #b4bac3; }
+.n-agent .sh { fill: #eaf2fc; stroke: #2f6db5; }
+.n-agent .fold { fill: #c5d7ee; stroke: #2f6db5; }
+.n-agent .tag, .k-agent { fill: #2862a5; }
+.g-agent { stroke: #2f6db5; }
+.n-human .sh { fill: #fff4df; stroke: #c27400; }
+.n-human .fold { fill: #f3dab2; stroke: #c27400; }
+.n-human .tag, .k-human { fill: #965a00; }
+.g-human { stroke: #c27400; }
+.n-code .sh { fill: #e8f5ef; stroke: #2a8a6e; }
+.n-code .fold { fill: #c2e0d5; stroke: #2a8a6e; }
+.n-code .tag, .k-code { fill: #1e6f58; }
+.g-code { stroke: #2a8a6e; }
+.n-concept .sh { fill: #eef1f6; stroke: #5d6f8c; }
+.n-concept .fold { fill: #d1d7e1; stroke: #5d6f8c; }
+.n-concept .tag, .k-concept { fill: #4b5b76; }
+.g-concept { stroke: #5d6f8c; }
+.e-flow { stroke: #4b515c; } .ah-flow { fill: #4b515c; }
+.lb-flow { fill: #2b3038; }
+@media (prefers-color-scheme: dark) {
+  .bg { fill: #0f141a; }
+  .ttl, .nt, .lane-h, .col-h, .tx-bold { fill: #e6edf3; }
+  .sub, .lane-n, .grp-c, .tx-note, .tx-small { fill: #9da7b3; }
+  .nb, .tx, .tx-mono, .lg { fill: #c9d1d9; }
+  .lb { stroke: #0f141a; } .lb.on-lane { stroke: #151b22; }
+  .lane-a { fill: #151b22; stroke: #2a313b; }
+  .lane-b { fill: #0f141a; stroke: #2a313b; }
+  .rule { stroke: #2a313b; }
+  .grp { fill: #0f141a; stroke: #3d4651; } .col-u { stroke: #3d4651; }
+  .n-agent .sh { fill: #13263d; stroke: #5b9be6; }
+  .n-agent .fold { fill: #213d5f; stroke: #5b9be6; }
+  .n-agent .tag, .k-agent { fill: #8dbdf4; }
+  .g-agent { stroke: #5b9be6; }
+  .n-human .sh { fill: #33260f; stroke: #e0a33a; }
+  .n-human .fold { fill: #563f18; stroke: #e0a33a; }
+  .n-human .tag, .k-human { fill: #f2bd63; }
+  .g-human { stroke: #e0a33a; }
+  .n-code .sh { fill: #0f2e26; stroke: #3fb68f; }
+  .n-code .fold { fill: #19493b; stroke: #3fb68f; }
+  .n-code .tag, .k-code { fill: #72d3b0; }
+  .g-code { stroke: #3fb68f; }
+  .n-concept .sh { fill: #1b2331; stroke: #8a9bb8; }
+  .n-concept .fold { fill: #313b4c; stroke: #8a9bb8; }
+  .n-concept .tag, .k-concept { fill: #afbdd5; }
+  .g-concept { stroke: #8a9bb8; }
+  .e-flow { stroke: #bcc4ce; } .ah-flow { fill: #bcc4ce; }
+  .lb-flow { fill: #dfe6ee; }
+}
+</style>
+<defs><marker id="ah-flow" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-flow" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker></defs>
+<rect class="bg" width="848" height="696"/>
+<text class="ttl" x="40" y="48" text-anchor="start">Three kinds of work</text>
+<text class="sub" x="40" y="72" text-anchor="start">Two questions sort every step to one of three owners; each column lists the steps that fell to it in chapter 1’s story.</text>
+<rect class="grp g-human" x="40" y="368" width="240" height="288" rx="12"/>
+<rect class="grp g-agent" x="304" y="368" width="240" height="288" rx="12"/>
+<rect class="grp g-code" x="568" y="368" width="240" height="288" rx="12"/>
+<path class="e e-flow" d="M 160 152 L 160 189" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 248 248 L 461 248" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 160 304 L 160 381" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 552 304 L 552 328 Q 552 336 544 336 L 432 336 Q 424 336 424 344 L 424 381" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 640 248 L 680 248 Q 688 248 688 256 L 688 381" marker-end="url(#ah-flow)"/>
+<g class="n-concept"><polygon class="sh" points="160,192 248,248 160,304 72,248"/><text class="nb" x="160" y="235.25" text-anchor="middle">Decides</text><text class="nb" x="160" y="252.25" text-anchor="middle">what is wanted</text><text class="nb" x="160" y="269.25" text-anchor="middle">or accepted?</text></g>
+<g class="n-concept"><rect class="sh" x="72" y="104" width="176" height="48" rx="24"/><text class="nt" x="160" y="132.93" text-anchor="middle">A step in the work</text></g>
+<g class="n-concept"><polygon class="sh" points="552,192 640,248 552,304 464,248"/><text class="nb" x="552" y="235.25" text-anchor="middle">One right</text><text class="nb" x="552" y="252.25" text-anchor="middle">result, reachable</text><text class="nb" x="552" y="269.25" text-anchor="middle">by code?</text></g>
+<g class="n-human"><rect class="sh" x="56" y="384" width="208" height="56" rx="8"/><text class="tag" x="160" y="405.57" text-anchor="middle">THE HUMAN</text><text class="nt" x="160" y="424.43" text-anchor="middle">Intent and acceptance</text></g>
+<g class="n-agent"><rect class="sh" x="320" y="384" width="208" height="56" rx="8"/><text class="tag" x="424" y="405.57" text-anchor="middle">A MODEL</text><text class="nt" x="424" y="424.43" text-anchor="middle">Judgment and writing</text></g>
+<g class="n-code"><rect class="sh" x="584" y="384" width="208" height="56" rx="8"/><text class="tag" x="688" y="405.57" text-anchor="middle">CODE</text><text class="nt" x="688" y="424.43" text-anchor="middle">Bookkeeping</text></g>
+<text class="tx-bold k-human" x="64" y="472" text-anchor="start">•</text><text class="tx-bold k-human" x="64" y="491" text-anchor="start">•</text><text class="tx-bold k-human" x="64" y="510" text-anchor="start">•</text>
+<text class="tx" x="80" y="472" text-anchor="start">start the story</text><text class="tx" x="80" y="491" text-anchor="start">answer “(a)”</text><text class="tx" x="80" y="510" text-anchor="start">merge</text>
+<text class="tx-note" x="64" y="616" text-anchor="start">Only the human holds the purpose</text><text class="tx-note" x="64" y="633" text-anchor="start">and the accountability</text>
+<text class="tx-bold k-agent" x="328" y="472" text-anchor="start">•</text><text class="tx-bold k-agent" x="328" y="491" text-anchor="start">•</text><text class="tx-bold k-agent" x="328" y="510" text-anchor="start">•</text><text class="tx-bold k-agent" x="328" y="529" text-anchor="start">•</text><text class="tx-bold k-agent" x="328" y="548" text-anchor="start">•</text><text class="tx-bold k-agent" x="328" y="567" text-anchor="start">•</text>
+<text class="tx" x="344" y="472" text-anchor="start">is it buildable?</text><text class="tx" x="344" y="491" text-anchor="start">which tests</text><text class="tx" x="344" y="510" text-anchor="start">which code</text><text class="tx" x="344" y="529" text-anchor="start">is it good?</text><text class="tx" x="344" y="548" text-anchor="start">what must a reader know?</text><text class="tx" x="344" y="567" text-anchor="start">does the output match?</text>
+<text class="tx-note" x="328" y="616" text-anchor="start">Many acceptable results;</text><text class="tx-note" x="328" y="633" text-anchor="start">choosing well takes understanding</text>
+<text class="tx-bold k-code" x="592" y="472" text-anchor="start">•</text><text class="tx-bold k-code" x="592" y="491" text-anchor="start">•</text><text class="tx-bold k-code" x="592" y="510" text-anchor="start">•</text><text class="tx-bold k-code" x="592" y="529" text-anchor="start">•</text><text class="tx-bold k-code" x="592" y="548" text-anchor="start">•</text><text class="tx-bold k-code" x="592" y="567" text-anchor="start">•</text><text class="tx-bold k-code" x="592" y="586" text-anchor="start">•</text>
+<text class="tx" x="608" y="472" text-anchor="start">branches</text><text class="tx" x="608" y="491" text-anchor="start">state</text><text class="tx" x="608" y="510" text-anchor="start">commits</text><text class="tx" x="608" y="529" text-anchor="start">posts</text><text class="tx" x="608" y="548" text-anchor="start">checks</text><text class="tx" x="608" y="567" text-anchor="start">counts</text><text class="tx" x="608" y="586" text-anchor="start">the bill</text>
+<text class="tx-note" x="592" y="616" text-anchor="start">One right result;</text><text class="tx-note" x="592" y="633" text-anchor="start">it must be exact and cheap</text>
+<text class="lb lb-flow" x="356" y="239.58" text-anchor="middle">no</text>
+<text class="lb lb-flow" x="168" y="348.08" text-anchor="start">yes</text>
+<text class="lb lb-flow" x="560" y="324.08" text-anchor="start">no</text>
+<text class="lb lb-flow" x="696" y="320.08" text-anchor="start">yes</text>
+</svg>

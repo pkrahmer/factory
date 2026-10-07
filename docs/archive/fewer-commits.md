@@ -1,5 +1,7 @@
 # Fewer commits per story
 
+> **Archived, history only** (see [`README.md`](README.md)): withdrawn on 2026-10-05. Do not apply it.
+
 **Withdrawn on 2026-10-05.** The claim left Git (`docs/deterministic-core.md`, part D): the dispatcher keeps it in `.git/factory-run.json`, so there are no claim commits left to fold away, and the dispatcher opens the pull request, so intake needs no exception. A story's branch now has the dispatcher's first commit, one commit per stage and the coder's work commits. The plan below is kept as it was written.
 
 The plan for taking the claim commits out of a story's history. Nothing here is done yet: it runs on this repository before the next end-to-end run, which verifies it. One pull request, one rebuild of the image.

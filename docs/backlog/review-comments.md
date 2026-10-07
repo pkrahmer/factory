@@ -1,6 +1,8 @@
 # Review comments on the diff
 
-The plan for making the human's inline review comments count. Nothing here is done yet: it runs after `docs/fewer-commits.md`, and the end-to-end run that follows verifies it (a new path in run 3 part two, or run 4).
+**Built and reverted on 2026-10-05; to be replanned.** It worked, but it added conditional rules only a model could follow, which no test could check before a live run; and GitHub lets nobody approve or request changes on their own pull request, so path 1 needs the factory to have an identity of its own. A replan should prefer code over new agent rules. The plan below is kept as it was written, before the build.
+
+The plan for making the human's inline review comments count. It was to run after `docs/archive/fewer-commits.md` (withdrawn), and the end-to-end run that follows verifies it (a new path in run 3 part two, or run 4).
 
 ## What is wrong today
 

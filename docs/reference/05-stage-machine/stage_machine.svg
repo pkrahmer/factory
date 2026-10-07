@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="1160" viewBox="0 0 850 1160" role="img" aria-labelledby="title desc">
+<title id="title">v1's stage machine</title>
+<desc id="desc">v1's stage table as a state machine. A story runs down a vertical line: the human's draft, promoted to ready, then tests, doing, review, docs and demo, then the human's gate, accept, and when the human merges, done. Review, docs, demo and the human's close at the gate send the story back to doing, each at the cost of a round; doing can return it to tests after an approved test change, at no cost. From any stage between ready and demo, closing the pull request discards the story back to the drafts, and merging it moves the story straight to done. A question or a stall does not change the stage. At the bottom right, once per complete feature, the acceptor writes a report whose pull request the human merges, accepted, or closes, refused.</desc>
+<style>
+text { font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+.code { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 0.92em; }
+.ttl { font-size: 20px; font-weight: 600; }
+.sub { font-size: 13.5px; font-weight: 400; }
+.tag { font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; }
+.nt { font-size: 14.5px; font-weight: 700; }
+.nb { font-size: 12.5px; font-weight: 400; }
+.lb { font-size: 12px; font-weight: 400; }
+.lane-h { font-size: 13px; font-weight: 700; }
+.lane-n { font-size: 12px; font-weight: 400; }
+.col-h { font-size: 12.5px; font-weight: 700; }
+.grp-c { font-size: 12px; font-weight: 600; }
+.tx { font-size: 13px; font-weight: 400; }
+.tx-bold { font-size: 13px; font-weight: 700; }
+.tx-mono { font-size: 12px; font-weight: 400; font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace; }
+.tx-note { font-size: 12px; font-weight: 400; }
+.tx-small { font-size: 11px; font-weight: 400; }
+.lg { font-size: 12px; font-weight: 400; }
+.sh, .fold { stroke-width: 1.5; stroke-linejoin: round; }
+.n-end .sh { stroke-dasharray: 5 3; }
+.e { fill: none; stroke-linejoin: round; }
+.lb { paint-order: stroke fill; stroke-width: 4px; stroke-linejoin: round; }
+.rule, .lane-a, .lane-b { stroke-width: 1; shape-rendering: crispEdges; }
+.rule, .col-u { fill: none; } .col-r { stroke-dasharray: 2 3; }
+.col-u { stroke-width: 1; shape-rendering: crispEdges; }
+.grp { stroke-width: 1; } .grp-d { stroke-dasharray: 5 4; }
+.e-flow { stroke-width: 1.5; }
+.e-back { stroke-width: 1.5; }
+.e-stall { stroke-width: 1.5; stroke-dasharray: 6 4; }
+.e-plain { stroke-width: 1.1; }
+.e-dashed { stroke-width: 1.4; stroke-dasharray: 3 3; }
+.bg { fill: #ffffff; }
+.ttl, .nt, .lane-h, .col-h, .tx-bold { fill: #1b1f24; }
+.sub, .lane-n, .grp-c, .tx-note, .tx-small { fill: #5d6470; }
+.nb, .tx, .tx-mono, .lg { fill: #363b43; }
+.lb { stroke: #ffffff; } .lb.on-lane { stroke: #f5f7f9; }
+.lane-a { fill: #f5f7f9; stroke: #dde1e6; }
+.lane-b { fill: #ffffff; stroke: #dde1e6; }
+.rule { stroke: #dde1e6; }
+.grp { fill: #ffffff; stroke: #b4bac3; } .col-u { stroke: #b4bac3; }
+.n-agent .sh { fill: #eaf2fc; stroke: #2f6db5; }
+.n-agent .fold { fill: #c5d7ee; stroke: #2f6db5; }
+.n-agent .tag, .k-agent { fill: #2862a5; }
+.g-agent { stroke: #2f6db5; }
+.n-human .sh { fill: #fff4df; stroke: #c27400; }
+.n-human .fold { fill: #f3dab2; stroke: #c27400; }
+.n-human .tag, .k-human { fill: #965a00; }
+.g-human { stroke: #c27400; }
+.n-ask .sh { fill: #f3eefb; stroke: #7a4fb5; }
+.n-ask .fold { fill: #dbceed; stroke: #7a4fb5; }
+.n-ask .tag, .k-ask { fill: #673e9f; }
+.g-ask { stroke: #7a4fb5; }
+.n-stall .sh { fill: #fcecec; stroke: #b53a3a; }
+.n-stall .fold { fill: #eec8c8; stroke: #b53a3a; }
+.n-stall .tag, .k-stall { fill: #9f2d2d; }
+.g-stall { stroke: #b53a3a; }
+.n-end .sh { fill: #ffffff; stroke: #8a8f99; }
+.n-end .fold { fill: #e8e9eb; stroke: #8a8f99; }
+.n-end .tag, .k-end { fill: #5d6470; }
+.g-end { stroke: #8a8f99; }
+.e-flow { stroke: #4b515c; } .ah-flow { fill: #4b515c; }
+.lb-flow { fill: #2b3038; }
+.e-back { stroke: #d0661a; } .ah-back { fill: #d0661a; }
+.lb-back { fill: #a64e0e; }
+.e-stall { stroke: #b53a3a; } .ah-stall { fill: #b53a3a; }
+.lb-stall { fill: #9f2d2d; }
+.e-plain { stroke: #8f96a1; } .ah-plain { fill: #8f96a1; }
+.lb-plain { fill: #5d6470; }
+.e-dashed { stroke: #6b7280; } .ah-dashed { fill: #6b7280; }
+.lb-dashed { fill: #5d6470; }
+@media (prefers-color-scheme: dark) {
+  .bg { fill: #0f141a; }
+  .ttl, .nt, .lane-h, .col-h, .tx-bold { fill: #e6edf3; }
+  .sub, .lane-n, .grp-c, .tx-note, .tx-small { fill: #9da7b3; }
+  .nb, .tx, .tx-mono, .lg { fill: #c9d1d9; }
+  .lb { stroke: #0f141a; } .lb.on-lane { stroke: #151b22; }
+  .lane-a { fill: #151b22; stroke: #2a313b; }
+  .lane-b { fill: #0f141a; stroke: #2a313b; }
+  .rule { stroke: #2a313b; }
+  .grp { fill: #0f141a; stroke: #3d4651; } .col-u { stroke: #3d4651; }
+  .n-agent .sh { fill: #13263d; stroke: #5b9be6; }
+  .n-agent .fold { fill: #213d5f; stroke: #5b9be6; }
+  .n-agent .tag, .k-agent { fill: #8dbdf4; }
+  .g-agent { stroke: #5b9be6; }
+  .n-human .sh { fill: #33260f; stroke: #e0a33a; }
+  .n-human .fold { fill: #563f18; stroke: #e0a33a; }
+  .n-human .tag, .k-human { fill: #f2bd63; }
+  .g-human { stroke: #e0a33a; }
+  .n-ask .sh { fill: #251c38; stroke: #a98be0; }
+  .n-ask .fold { fill: #3f325a; stroke: #a98be0; }
+  .n-ask .tag, .k-ask { fill: #c4aef2; }
+  .g-ask { stroke: #a98be0; }
+  .n-stall .sh { fill: #371a1c; stroke: #e06c6c; }
+  .n-stall .fold { fill: #592a2c; stroke: #e06c6c; }
+  .n-stall .tag, .k-stall { fill: #f29191; }
+  .g-stall { stroke: #e06c6c; }
+  .n-end .sh { fill: #0f141a; stroke: #8b939e; }
+  .n-end .fold { fill: #282d34; stroke: #8b939e; }
+  .n-end .tag, .k-end { fill: #a2abb7; }
+  .g-end { stroke: #8b939e; }
+  .e-flow { stroke: #bcc4ce; } .ah-flow { fill: #bcc4ce; }
+  .lb-flow { fill: #dfe6ee; }
+  .e-back { stroke: #ef8a3c; } .ah-back { fill: #ef8a3c; }
+  .lb-back { fill: #f6a96d; }
+  .e-stall { stroke: #e06c6c; } .ah-stall { fill: #e06c6c; }
+  .lb-stall { fill: #f29191; }
+  .e-plain { stroke: #717a87; } .ah-plain { fill: #717a87; }
+  .lb-plain { fill: #9da7b3; }
+  .e-dashed { stroke: #939ba6; } .ah-dashed { fill: #939ba6; }
+  .lb-dashed { fill: #9da7b3; }
+}
+</style>
+<defs><marker id="ah-flow" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-flow" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker><marker id="ah-back" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-back" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker><marker id="ah-stall" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-stall" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker><marker id="ah-plain" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7.5" markerHeight="7.5" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-plain" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker><marker id="ah-dashed" viewBox="0 0 10 10" refX="6.67" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ah-dashed" d="M0.5 1 L10 5 L0.5 9 L2.6 5 Z"/></marker></defs>
+<rect class="bg" width="850" height="1160"/>
+<text class="ttl" x="40" y="48" text-anchor="start">v1's stage machine</text>
+<text class="sub" x="40" y="72" text-anchor="start">A story runs down the line; the human's merge and close, the rework and the discard are the other moves.</text>
+<rect class="grp grp-d" x="560" y="720" width="250" height="392" rx="12"/><text class="grp-c" x="574" y="741" text-anchor="start">once per complete feature</text>
+<path class="e e-flow" d="M 312 176 L 312 205" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 312 320 L 312 349" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 312 424 L 312 461" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 312 536 L 312 565" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 312 640 L 312 669" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 312 768 L 312 797" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 312 872 L 312 901" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 312 1000 L 312 1029" marker-end="url(#ah-flow)"/>
+<path class="e e-back" d="M 400 604 L 464 604 Q 472 604 472 596 L 472 532 Q 472 524 464 524 L 403 524" marker-end="url(#ah-back)"/>
+<path class="e e-back" d="M 400 720 L 488 720 Q 496 720 496 712 L 496 516 Q 496 508 488 508 L 403 508" marker-end="url(#ah-back)"/>
+<path class="e e-back" d="M 400 836 L 512 836 Q 520 836 520 828 L 520 500 Q 520 492 512 492 L 403 492" marker-end="url(#ah-back)"/>
+<path class="e e-back" d="M 400 952 L 536 952 Q 544 952 544 944 L 544 484 Q 544 476 536 476 L 403 476" marker-end="url(#ah-back)"/>
+<path class="e e-back" d="M 376 464 L 376 427" marker-end="url(#ah-back)"/>
+<path class="e e-plain" d="M 200 208 L 192 208 Q 184 208 184 216 L 184 864 Q 184 872 192 872 L 200 872"/>
+<path class="e e-stall" d="M 184 208 L 184 148 Q 184 140 192 140 L 221 140" marker-end="url(#ah-stall)"/>
+<path class="e e-dashed" d="M 184 872 L 184 1056 Q 184 1064 192 1064 L 221 1064" marker-end="url(#ah-dashed)"/>
+<path class="e e-flow" d="M 684 848 L 684 885" marker-end="url(#ah-flow)"/>
+<path class="e e-flow" d="M 684 984 L 684 1029" marker-end="url(#ah-flow)"/>
+<g class="n-human"><path class="sh" d="M 228 104 H 384 L 400 120 V 172 Q 400 176 396 176 H 228 Q 224 176 224 172 V 108 Q 224 104 228 104 Z"/><path class="fold" d="M 384 104 V 118 Q 384 120 386 120 H 400 Z"/><text class="tag" x="312" y="123.07" text-anchor="middle">HUMAN</text><text class="nt" x="312" y="141.93" text-anchor="middle"><tspan class="code">drafts/</tspan></text><text class="nb" x="312" y="163.75" text-anchor="middle">the human's text</text></g>
+<g class="n-agent"><rect class="sh" x="224" y="208" width="176" height="112" rx="8"/><text class="tag" x="312" y="230.07" text-anchor="middle">INTAKE</text><text class="nt" x="312" y="248.93" text-anchor="middle"><tspan class="code">ready</tspan></text><text class="nb" x="312" y="270.75" text-anchor="middle">the branch and</text><text class="nb" x="312" y="287.75" text-anchor="middle">draft pull request</text><text class="nb" x="312" y="304.75" text-anchor="middle">opened first</text></g>
+<g class="n-agent"><rect class="sh" x="224" y="352" width="176" height="72" rx="8"/><text class="tag" x="312" y="371.07" text-anchor="middle">TESTER</text><text class="nt" x="312" y="389.93" text-anchor="middle"><tspan class="code">tests</tspan></text><text class="nb" x="312" y="411.75" text-anchor="middle">checks: lint · reports: test</text></g>
+<g class="n-agent"><rect class="sh" x="224" y="464" width="176" height="72" rx="8"/><text class="tag" x="312" y="483.07" text-anchor="middle">CODER</text><text class="nt" x="312" y="501.93" text-anchor="middle"><tspan class="code">doing</tspan></text><text class="nb" x="312" y="523.75" text-anchor="middle">checks: check</text></g>
+<g class="n-agent"><rect class="sh" x="224" y="568" width="176" height="72" rx="8"/><text class="tag" x="312" y="587.07" text-anchor="middle">REVIEWER</text><text class="nt" x="312" y="605.93" text-anchor="middle"><tspan class="code">review</tspan></text><text class="nb" x="312" y="627.75" text-anchor="middle">max rounds 2</text></g>
+<g class="n-agent"><rect class="sh" x="224" y="672" width="176" height="96" rx="8"/><text class="tag" x="312" y="694.57" text-anchor="middle">DOCUMENTER</text><text class="nt" x="312" y="713.43" text-anchor="middle"><tspan class="code">docs</tspan></text><text class="nb" x="312" y="735.25" text-anchor="middle">checks: check</text><text class="nb" x="312" y="752.25" text-anchor="middle">max rounds 2</text></g>
+<g class="n-agent"><rect class="sh" x="224" y="800" width="176" height="72" rx="8"/><text class="tag" x="312" y="819.07" text-anchor="middle">DEMO</text><text class="nt" x="312" y="837.93" text-anchor="middle"><tspan class="code">demo</tspan></text><text class="nb" x="312" y="859.75" text-anchor="middle">max rounds 2</text></g>
+<g class="n-human"><rect class="sh" x="224" y="904" width="176" height="96" rx="8"/><text class="tag" x="312" y="926.57" text-anchor="middle">GATE</text><text class="nt" x="312" y="945.43" text-anchor="middle"><tspan class="code">accept</tspan></text><text class="nb" x="312" y="967.25" text-anchor="middle">the pull request is</text><text class="nb" x="312" y="984.25" text-anchor="middle">ready for the human</text></g>
+<g class="n-end"><rect class="sh" x="224" y="1032" width="176" height="64" rx="32"/><text class="nt" x="312" y="1058.43" text-anchor="middle"><tspan class="code">done</tspan></text><text class="nb" x="312" y="1080.25" text-anchor="middle">moved to <tspan class="code">done/</tspan></text></g>
+<g class="n-ask"><rect class="sh" x="456" y="208" width="352" height="96" rx="8"/><text class="tag" x="632" y="230.57" text-anchor="middle">QUESTION</text><text class="nt" x="632" y="249.43" text-anchor="middle">A question</text><text class="nb" x="632" y="271.25" text-anchor="middle">any agent stage: <tspan class="code">blocked</tspan>, the stage stays;</text><text class="nb" x="632" y="288.25" text-anchor="middle">the answer runs it again</text></g>
+<g class="n-stall"><rect class="sh" x="456" y="320" width="352" height="96" rx="8"/><text class="tag" x="632" y="342.57" text-anchor="middle">STALL</text><text class="nt" x="632" y="361.43" text-anchor="middle">A stall</text><text class="nb" x="632" y="383.25" text-anchor="middle">any agent stage: attempts + 1, the stage stays;</text><text class="nb" x="632" y="400.25" text-anchor="middle">at the cap the human is asked</text></g>
+<g class="n-agent"><rect class="sh" x="600" y="752" width="168" height="96" rx="8"/><text class="tag" x="684" y="774.57" text-anchor="middle">ACCEPTOR</text><text class="nt" x="684" y="793.43" text-anchor="middle"><tspan class="code">feature</tspan></text><text class="nb" x="684" y="815.25" text-anchor="middle">due when the</text><text class="nb" x="684" y="832.25" text-anchor="middle">feature is complete</text></g>
+<g class="n-human"><rect class="sh" x="600" y="888" width="168" height="96" rx="8"/><text class="tag" x="684" y="910.57" text-anchor="middle">GATE</text><text class="nt" x="684" y="929.43" text-anchor="middle"><tspan class="code">accept</tspan></text><text class="nb" x="684" y="951.25" text-anchor="middle">the report's</text><text class="nb" x="684" y="968.25" text-anchor="middle">pull request</text></g>
+<g class="n-end"><rect class="sh" x="568" y="1032" width="232" height="64" rx="32"/><text class="nt" x="684" y="1058.43" text-anchor="middle"><tspan class="code">done</tspan> · accepted or refused</text><text class="nb" x="684" y="1080.25" text-anchor="middle">the report on the main branch</text></g>
+<text class="lb lb-flow" x="320" y="196.08" text-anchor="start">promoted (the human)</text>
+<text class="lb lb-flow" x="320" y="892.08" text-anchor="start">hand-over</text>
+<text class="lb lb-flow" x="320" y="1020.08" text-anchor="start">merged (the human)</text>
+<text class="lb lb-back" x="436" y="595.58" text-anchor="middle">round + 1</text>
+<text class="lb lb-back" x="448" y="711.58" text-anchor="middle">round + 1</text>
+<text class="lb lb-back" x="460" y="827.58" text-anchor="middle">round + 1</text>
+<text class="lb lb-back" x="472" y="928.58" text-anchor="middle">closed (the human)</text><text class="lb lb-back" x="472" y="943.58" text-anchor="middle">round + 1</text>
+<text class="lb lb-back" x="384" y="448.08" text-anchor="start">approved test change · no round</text>
+<text class="lb lb-plain" x="176" y="536.58" text-anchor="end">any stage</text><text class="lb lb-plain" x="176" y="551.58" text-anchor="end">before the gate</text>
+<text class="lb lb-stall" x="176" y="170.58" text-anchor="end">closed before</text><text class="lb lb-stall" x="176" y="185.58" text-anchor="end">the gate: discarded</text>
+<text class="lb lb-dashed" x="176" y="964.58" text-anchor="end">merged before</text><text class="lb lb-dashed" x="176" y="979.58" text-anchor="end">the gate</text>
+<text class="lb lb-flow" x="692" y="872.08" text-anchor="start">report written</text>
+<text class="lb lb-flow" x="692" y="1004.58" text-anchor="start">merged: accepted</text><text class="lb lb-flow" x="692" y="1019.58" text-anchor="start">closed: refused</text>
+<g class="n-agent"><rect class="sh" x="40" y="1125.5" width="26" height="13" rx="3"/></g><text class="lg" x="74" y="1136" text-anchor="start">agent stage</text>
+<g class="n-human"><rect class="sh" x="167.22" y="1125.5" width="26" height="13" rx="3"/></g><text class="lg" x="201.22" y="1136" text-anchor="start">the human's gate</text>
+<g class="n-end"><rect class="sh" x="324.57" y="1125.5" width="26" height="13" rx="3"/></g><text class="lg" x="358.57" y="1136" text-anchor="start">end</text>
+<path class="e e-flow" d="M 407.38 1132 L 430.38 1132" marker-end="url(#ah-flow)"/><text class="lg" x="441.38" y="1136" text-anchor="start">forward</text>
+<path class="e e-back" d="M 510.99 1132 L 533.99 1132" marker-end="url(#ah-back)"/><text class="lg" x="544.99" y="1136" text-anchor="start">rework</text>
+<path class="e e-stall" d="M 610.43 1132 L 633.43 1132" marker-end="url(#ah-stall)"/><text class="lg" x="644.43" y="1136" text-anchor="start">discard</text>
+</svg>

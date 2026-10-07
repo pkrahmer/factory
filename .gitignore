@@ -11,3 +11,4 @@ htmlcov/
 .audit-requirements.txt
 .audit-stamp
 .env
+docs/reference/_print/build/

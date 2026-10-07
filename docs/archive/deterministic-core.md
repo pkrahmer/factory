@@ -1,5 +1,7 @@
 # Deterministic core
 
+> **Archived, history only** (see [`README.md`](README.md)): built on 2026-10-05 as generation 5, except part E, which is parked in `docs/backlog/`. The current behavior is in the code and in `docs/decisions.md`.
+
 The plan for moving the pipeline's control flow out of skill text and into tested code. The human approved parts A to D and the three decisions below on 2026-10-05 (E stays for later). A, C, B and D are built (`docs/decisions.md`, 2026-10-05); the demo run in hardening mode that verifies them is still to come.
 
 ## The finding
