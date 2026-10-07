@@ -501,7 +501,7 @@
     radius: 2pt,
     above: 1.2em,
     below: 1.2em,
-    par(justify: false, it),
+    { set par(justify: false); it },
   )
   show quote.where(block: true): it => pad(left: 1.4em, right: 1em, it.body)
   // A list item that runs over several lines stands apart from the next.
