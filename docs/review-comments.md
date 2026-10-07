@@ -1,6 +1,6 @@
 # Review comments on the diff
 
-The plan for making the human's inline review comments count. Nothing here is done yet: it runs after `docs/fewer-commits.md`, and the end-to-end run that follows verifies it (a new path in run 3 part two, or run 4).
+The plan for making the human's inline review comments count. Nothing here is done yet: it was to run after `docs/archive/fewer-commits.md` (withdrawn), and the end-to-end run that follows verifies it (a new path in run 3 part two, or run 4).
 
 ## What is wrong today
 

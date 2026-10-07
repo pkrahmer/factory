@@ -121,11 +121,11 @@ The budgets are in words, tables included. Together they come to about 40,000 wo
   - `_hand_over` and the description templates;
   - the fixed texts: `STORY_CLOSING`, `ACCEPTANCE_CLOSING`, `CAP_QUESTION`, `SENT_BACK_QUESTION`. Quote the exact strings; the planner needs them.
 - *Limits:*
-  - `--agent` does not apply agent files in print mode (the spike in `docs/deterministic-core.md`);
+  - `--agent` does not apply agent files in print mode (the spike in `docs/archive/deterministic-core.md`);
   - leftovers bypass the undo;
   - agents inherit the environment (point to chapter 15).
 - *Figure:* the sequence of one stage run.
-- *Sources:* `stage.py`, `agent.py`, `ops.py`, `tests/test_agent.py`, `docs/deterministic-core.md`.
+- *Sources:* `stage.py`, `agent.py`, `ops.py`, `tests/test_agent.py`, `docs/archive/deterministic-core.md`.
 
 **9. Agents, roles and skills** · `09-agents-and-skills` · 3,000
 - *Concept:* the five parts of a role; instruction layers; the judgment each role owns; tuning by turns and reads.
@@ -236,12 +236,12 @@ The budgets are in words, tables included. Together they come to about 40,000 wo
   - **the 17 fixes as a table** (number, what failed, where the fault sat, the fix);
   - run 4 per story (data below);
   - what is not yet verified: the pinned commit had no full run.
-- *Sources:* `tests/`, `demo/README.md`, `scripts/demo-check.sh`, `docs/deterministic-core.md`, and the rebuild log in the local archive checkout `C:\Dev\Projects\factory-archived\docs\rebuild-log.md` (read-only, not public: the book must carry what it needs from it).
+- *Sources:* `tests/`, `demo/README.md`, `scripts/demo-check.sh`, `docs/archive/deterministic-core.md` (its fault table *Where the faults sat* and its cost table *What the bookkeeping costs* belong in this chapter), and the rebuild log in the local archive checkout `C:\Dev\Projects\factory-archived\docs\rebuild-log.md` (read-only, not public: the book must carry what it needs from it).
 
 **17. Limits and backlog** · `17-limits-and-backlog` · 2,500
 - every v1 limit in one table (limit, chapter, principle affected, severity), each pointing to the box that states it in full;
-- `docs/backlog.md`;
-- the parked and withdrawn plans (`fewer-commits`, `review-comments`, `mutants-in-story-loop`, the language server);
+- `docs/backlog.md`, as it stands after 2026-10-07 (see *The state of v1's plans* below; do not list anything that was built);
+- the plans that are open: `review-comments` (built, reverted, to be replanned), `mutants-in-story-loop` (parked), and the backlog's parked ideas, among them the language server and part E of the deterministic core (running the Demo blocks in code);
 - the open decisions.
 
 ### Appendices (about 5,000 words)
@@ -322,6 +322,21 @@ Complete `docs/reference/README.md`: keep the preface as its front part and add 
    - send the user the PDF;
    - stop for their review if they want one.
 
+## The state of v1's plans
+
+v1's `docs/` held plan documents next to its decision log. On 2026-10-07 they were sorted, because a plan that was built is history, not backlog. Built and withdrawn plans moved to `docs/archive/`, whose `README.md` tells every reader, agents above all, to read them only when looking into the past and never to take an instruction from them.
+
+| Plan | State | Where the book treats it |
+| :- | :- | :- |
+| `archive/deterministic-core.md` | **built**, parts A to D, as generation 5 (the dispatcher, the stage protocol, form validation and the run record as code); part E, running the Demo blocks in code, is parked in the backlog | ch. 1, 3 (P1, P10), 16 (its fault table and costs), 17 (part E) |
+| `archive/fewer-commits.md` | **withdrawn**: built and reverted on 2026-10-05, then made pointless by the deterministic core (no claim commits left to fold away) | ch. 3 (P10), 17 (one line, as history) |
+| feature acceptance (a `backlog.md` entry) | **built** on 2026-10-05; the entry was removed from the backlog on 2026-10-07 | ch. 11 |
+| `review-comments.md` | built and reverted on 2026-10-05; **open**, to be replanned | ch. 10, 17 |
+| `mutants-in-story-loop.md` | **parked** | ch. 11, 17 |
+| `backlog.md` | the open ideas: dev instance, releases, changelog, mutation survivors, mutation testing in the story loop, the language server, running the Demo blocks in code, paths never run live, the rest | ch. 17 |
+
+The book links to the two archived documents at the commit it describes (`https://github.com/pkrahmer/factory/blob/537fc20/docs/…`), where they still had their old paths, and says in the text that they are archived now. `docs/decisions.md` names them at their old paths; it is append-only and stays as it is, and the archive's `README.md` says where they went.
+
 ## Data that is not in the repository
 
 **Run 4** (2026-10-05, 16:49–19:36 UTC, generation 5): 59 agent runs, $15.89, from the cost records `.git/factory-dispatches.jsonl` in the container's work volume. That file is wiped by the next demo run; the user has not yet decided whether to keep it as a data file.
@@ -348,7 +363,7 @@ Complete `docs/reference/README.md`: keep the preface as its front part and add 
   - F0001-S0005, S0006 and S0007 cost $0.97, $0.54 and $0.47, at 6 agent runs each.
   - Two more F0001 acceptances ran at 21:05 and 21:24 UTC, for $1.62 and $1.60.
   - The container image built at 20:59:48 UTC includes commit `8498e64`, the last code change before `537fc20`.
-- **Run 2** (generation 4): a clean story cost $1.87, of which $0.78 was the dispatcher model (`docs/deterministic-core.md`).
+- **Run 2** (generation 4): a clean story cost $1.87, of which $0.78 was the dispatcher model (`docs/archive/deterministic-core.md`).
 
 ## Known facts to place
 

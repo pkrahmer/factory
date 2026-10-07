@@ -28,7 +28,7 @@ The principle cuts both ways: code should not judge either. Carrying the human's
 
 *Rules out:* a model doing bookkeeping (counting, numbering, routing, posting, committing, deciding whether a check passed); code interpreting free text.
 
-*In v1:* the dispatcher and the stage protocol are code, and each agent's task names every fact the factory knows (the round, whether this is an approved test change, the form validation's result, the next free story number, the cost so far), so no agent works anything out from version control or the hosting service. [`docs/deterministic-core.md`](../../deterministic-core.md) tabulates where each fault sat. Design decisions: 2026-10-05 (dispatcher as code; stage protocol as code; story form checked by code).
+*In v1:* the dispatcher and the stage protocol are code, and each agent's task names every fact the factory knows (the round, whether this is an approved test change, the form validation's result, the next free story number, the cost so far), so no agent works anything out from version control or the hosting service. v1's plan for this step, [`docs/deterministic-core.md`](https://github.com/pkrahmer/factory/blob/537fc20/docs/deterministic-core.md), tabulates where each fault sat; it is archived in `docs/archive/` since it was built, and [chapter 16](../16-evidence/README.md) carries its findings. Design decisions: 2026-10-05 (dispatcher as code; stage protocol as code; story form checked by code).
 
 ### P2. Versioned files are the only truth
 
@@ -172,7 +172,7 @@ Code also keeps the factory changeable. A new rule in prose cannot be tested bef
 
 *Rules out:* a rule whose only defense is a sentence in an agent's instructions, when code could check it.
 
-*In v1:* two plans of 2026-10-05, *fewer commits* ([`docs/fewer-commits.md`](../../fewer-commits.md)) and *review comments* ([`docs/review-comments.md`](../../review-comments.md)), were built and reverted the same day although both worked: each added a conditional rule only a model could follow and nobody could test before a live run. The first now carries a later note withdrawing it for another reason (the claim left Git). The build and the revert are not in the repository's history, because the main branch was reset. Design decisions: 2026-10-04 (lanes enforced by a hook), 2026-10-05 (stage protocol as code).
+*In v1:* two plans of 2026-10-05, *fewer commits* ([`docs/fewer-commits.md`](https://github.com/pkrahmer/factory/blob/537fc20/docs/fewer-commits.md)) and *review comments* ([`docs/review-comments.md`](../../review-comments.md)), were built and reverted the same day although both worked: each added a conditional rule only a model could follow and nobody could test before a live run. The first became pointless the same day: once the claim left Git, there were no claim commits left to fold away, and the plan was withdrawn; it is archived in `docs/archive/`. The build and the revert are not in the repository's history, because the main branch was reset. Design decisions: 2026-10-04 (lanes enforced by a hook), 2026-10-05 (stage protocol as code).
 
 > [!WARNING]
 > **v1 limit:** some rules have no enforcement in code:
