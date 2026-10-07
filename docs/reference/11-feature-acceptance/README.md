@@ -72,7 +72,7 @@ On the board (`watch.board`), a feature's acceptance shows `-` while the feature
 - Run 3 refused two of its acceptances. *Search* (`F0003`) was refused because one draft belonged to another feature, and the human wanted a behavior change instead of a test pinning today's behavior. *Todo service* was refused on purpose, to test the refusal path: the acceptor's verdict, `not accepted` over a crash on an unpaired surrogate in a title, agreed with the human's close, but the human's reason differed. The human would write that story themselves, with the exact message they wanted, rather than take the draft.
 
 > [!WARNING]
-> **v1 limit:** test-only drafts cascade. Each acceptance's mutation survivors become draft stories; each story, once archived, makes the acceptance due again; each new acceptance can propose the next test-only drafts. Nothing ends the series but the human declining to promote. A plan to run mutation testing inside each story instead is parked (`docs/mutants-in-story-loop.md`).
+> **v1 limit:** test-only drafts cascade. Each acceptance's mutation survivors become draft stories; each story, once archived, makes the acceptance due again; each new acceptance can propose the next test-only drafts. Nothing ends the series but the human declining to promote. A plan to run mutation testing inside each story instead is parked (`docs/backlog/mutants-in-story-loop.md`).
 
 > [!WARNING]
 > **v1 limit:** an acceptance's own cost line sums every cost record of `<feature>/ACCEPTANCE.md`, so a feature's third acceptance reports the cost of all three ($4.80 for F0001 above, where the third alone cost $1.60).

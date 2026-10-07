@@ -28,7 +28,7 @@ The principle cuts both ways: code should not judge either. Carrying the human's
 
 *Rules out:* a model doing bookkeeping (counting, numbering, routing, posting, committing, deciding whether a check passed); code interpreting free text.
 
-*In v1:* the dispatcher and the stage protocol are code, and each agent's task names every fact the factory knows (the round, whether this is an approved test change, the form validation's result, the next free story number, the cost so far), so no agent works anything out from version control or the hosting service. v1's plan for this step, [`docs/deterministic-core.md`](https://github.com/pkrahmer/factory/blob/537fc20/docs/deterministic-core.md), tabulates where each fault sat; it is archived in `docs/archive/` since it was built, and [chapter 16](../16-evidence/README.md) carries its findings. Design decisions: 2026-10-05 (dispatcher as code; stage protocol as code; story form checked by code).
+*In v1:* the dispatcher and the stage protocol are code, and each agent's task names every fact the factory knows (the round, whether this is an approved test change, the form validation's result, the next free story number, the cost so far), so no agent works anything out from version control or the hosting service. v1's plan for this step, [`docs/archive/deterministic-core.md`](../../archive/deterministic-core.md), tabulates where each fault sat; it is history now that it is built, and [chapter 16](../16-evidence/README.md) carries its findings. Design decisions: 2026-10-05 (dispatcher as code; stage protocol as code; story form checked by code).
 
 ### P2. Versioned files are the only truth
 
@@ -172,7 +172,7 @@ Code also keeps the factory changeable. A new rule in prose cannot be tested bef
 
 *Rules out:* a rule whose only defense is a sentence in an agent's instructions, when code could check it.
 
-*In v1:* two plans of 2026-10-05, *fewer commits* ([`docs/fewer-commits.md`](https://github.com/pkrahmer/factory/blob/537fc20/docs/fewer-commits.md)) and *review comments* ([`docs/review-comments.md`](https://github.com/pkrahmer/factory/blob/537fc20/docs/review-comments.md)), were built and reverted the same day although both worked: each added a conditional rule only a model could follow and nobody could test before a live run. The first became pointless the same day: once the claim left Git, there were no claim commits left to fold away, and the plan was withdrawn; it is archived in `docs/archive/`. The build and the revert are not in the repository's history, because the main branch was reset. Design decisions: 2026-10-04 (lanes enforced by a hook), 2026-10-05 (stage protocol as code).
+*In v1:* two plans of 2026-10-05, *fewer commits* ([`docs/archive/fewer-commits.md`](../../archive/fewer-commits.md)) and *review comments* ([`docs/backlog/review-comments.md`](../../backlog/review-comments.md)), were built and reverted the same day although both worked: each added a conditional rule only a model could follow and nobody could test before a live run. The first became pointless the same day: once the claim left Git, there were no claim commits left to fold away, and the plan was withdrawn; it is archived in `docs/archive/`. The build and the revert are not in the repository's history, because the main branch was reset; the decision log has recorded both since 2026-10-07. Design decisions: 2026-10-04 (lanes enforced by a hook), 2026-10-05 (stage protocol as code; the two reverted plans).
 
 > [!WARNING]
 > **v1 limit:** some rules have no enforcement in code:
@@ -285,10 +285,7 @@ Two habits keep this honest. Every end-to-end run is also a hardening run: every
 
 *Rules out:* a change made because it is clever; a design decision recorded without the alternatives it beat.
 
-*In v1:* [`docs/decisions.md`](../../decisions.md) is append-only; each design decision also says what happened. [`demo/README.md`](../../../demo/README.md), *Hardening mode*, is the procedure for runs.
-
-> [!WARNING]
-> **v1 limit:** the reverted plans under P10 are not in the decision log.
+*In v1:* [`docs/decisions.md`](../../decisions.md) is append-only; each design decision also says what happened. [`demo/README.md`](../../../demo/README.md), *Hardening mode*, is the procedure for runs. The two plans reverted under P10 reached the decision log two days late, on 2026-10-07 ([chapter 17](../17-limits-and-backlog/README.md), L6).
 
 ## Where the principles pull against each other
 
@@ -331,7 +328,7 @@ A principle is useful to a planner only if a design can fail it. The last column
 | P14 | Killed at any instruction, does the factory resume without a human, without duplicated effects, and with its rules intact? | Partial: a restart costs an attempt; a kill can double-post; leftovers skip the lane undo |
 | P15 | Is the engine free of every language, tool, file name and path of the project? | Partial: `uv`, `.venv`, Python and Claude Code file names, stage names |
 | P16 | Is every agent run recorded with time, tokens and cost, and attributable to a work item and a stage? | Partial: an agent run killed by a restart, or one that ended with an error, is missing from the bill (chapter 14) |
-| P17 | Is every lasting design decision recorded with its reason and the alternatives it beat? | Partial: the reverted plans of 2026-10-05 |
+| P17 | Is every lasting design decision recorded with its reason and the alternatives it beat? | Holds; the reverted plans of 2026-10-05 were recorded two days late |
 
 v1 gives its agents the principles as fifteen rules, R1 to R15, in the `factory-rules` skill. [Chapter 9](../09-agents-and-skills/README.md) maps each rule to its principles and to the code that enforces it.
 
@@ -375,5 +372,4 @@ v1 gives its agents the principles as fifteen rules, R1 to R15, in the `factory-
 >   - P12: stops that reach only the log file;
 >   - P14: three recovery gaps;
 >   - P15: Python, `uv` and stage names in the engine;
->   - P16: no record of a killed agent run;
->   - P17: the unrecorded reverts.
+>   - P16: no record of a killed agent run.

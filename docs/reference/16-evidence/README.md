@@ -18,7 +18,7 @@ A **clean** story is one in which every stage passed the first time, with no que
 
 ### The test suite
 
-`make check` in the factory's repository runs ruff's lint and format check, `mypy` in strict mode, `hadolint` on the Dockerfile and `pytest`. At `537fc20` the suite has 183 tests in ten files and takes about 70 seconds on a laptop:
+`make check` in the factory's repository runs ruff's lint and format check, `mypy` in strict mode, `hadolint` on the Dockerfile and `pytest`. At `930c61a` the suite has 183 tests in ten files, unchanged since 5 October, and takes about 70 seconds on a laptop:
 
 | File | Tests | What it covers | How |
 | :- | -: | :- | :- |
@@ -158,7 +158,7 @@ After run 4, its records and its 59 transcripts, which five analysts read for wh
 
 ### What is not verified
 
-Beyond the narrow evidence of [chapter 1](../01-why-a-factory/README.md) (one project, a simulated human, one machine, no full run of `537fc20`):
+Beyond the narrow evidence of [chapter 1](../01-why-a-factory/README.md) (one project, a simulated human, one machine, no full run of the code this book describes):
 
 - **The effect of the last two changes.** S0006 and S0007 wrote 7,600 to 9,800 tokens to the cache per agent run, against 22,000 for run 4's stories, which fits the connector change; but they were smaller stories, and no full run has measured either change.
 - **The human.** Every run had a simulated human, who was never notified by GitHub ([chapter 10](../10-human-at-the-gate/README.md)).

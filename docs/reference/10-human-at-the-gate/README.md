@@ -92,7 +92,7 @@ The human's comment, `(a): extend criterion 3 with …`, became log entry 3, `hu
 > **v1 limit:** the description is the factory's. While the stages work it shows the Assignment and criteria as they were at promotion, even after intake carried in a change; at the gate it is overwritten, and so is anything the human wrote there.
 
 > [!NOTE]
-> On 2026-10-05 a plan to make review comments count (`docs/review-comments.md`) was built and reverted the same day. "Request changes" was to be the rework path, with line comments copied into the log and answered on the diff by the coder; a plain review comment was to start the reviewer in an answer mode. Its rework path would also have needed a factory identity of its own. Why it was reverted is under P10 in [chapter 3](../03-principles/README.md); the plan's document still reads as if nothing had been built ([chapter 17](../17-limits-and-backlog/README.md)).
+> On 2026-10-05 a plan to make review comments count (`docs/backlog/review-comments.md`) was built and reverted the same day. "Request changes" was to be the rework path, with line comments copied into the log and answered on the diff by the coder; a plain review comment was to start the reviewer in an answer mode. Its rework path would also have needed a factory identity of its own. Why it was reverted is under P10 in [chapter 3](../03-principles/README.md); the plan's document opens with its state, and it is open in v1's backlog ([chapter 17](../17-limits-and-backlog/README.md)).
 
 > [!IMPORTANT]
 > **Planner:** what this chapter fixes.

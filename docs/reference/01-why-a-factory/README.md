@@ -138,7 +138,7 @@ Generation 5 moved that protocol into code. In run 4, the first on generation 5,
 > - a simulated human;
 > - one machine.
 >
-> The commit this book describes has had no full run of its own. Its last code changes ran on one story and two feature acceptances after run 4.
+> The code this book describes has had no full run of its own. Its last changes to the engine ran on one story and two feature acceptances after run 4; the default commit address changed after that.
 
 ## What comes next
 

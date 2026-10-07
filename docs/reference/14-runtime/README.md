@@ -36,7 +36,7 @@ That state falls into four classes, and an implementation should know which is w
 | `GH_TOKEN` | required | the token of [chapter 13](../13-git-and-github/README.md) |
 | `TICK_FIRST_SECONDS` | 15 | the pause after the first idle pass that follows activity |
 | `TICK_SECONDS` | 120 | the longest pause |
-| `GIT_USER_NAME`, `GIT_USER_EMAIL` | `factory`, `factory@users.noreply.github.com` | the commit identity |
+| `GIT_USER_NAME`, `GIT_USER_EMAIL` | `factory`, `factory@noreply.invalid` | the commit identity; an address that matches no GitHub account |
 
 Claude Code is logged in once, interactively: `docker compose run --rm -it --entrypoint claude factory`. The login stays in `claude-home`. It is a subscription login (design decision 2026-10-05), so the dollars in the cost records are Claude Code's computed list prices, not a bill.
 
@@ -88,7 +88,7 @@ The scheduler reads exit 3 as "tick again at once" and treats 1 like 0. `factory
 
 An item whose tool is missing counts as missing too, and every item runs, so one preflight names everything at once. Nothing is installed and nobody is asked: the fixes go into the tick log. (The module's docstring still says the dispatcher "may offer to run" them, as in generation 2.) The `agents` item checks neither the skills nor the files' validity, which `agent.load` does at the agent run, and it reads `~/.claude` even where `FACTORY_CLAUDE_HOME` points elsewhere.
 
-After a pass the tick writes the stamp `factory-preflight-ok`: the factory's package version and the first 12 hex digits of the SHA-256 of `factory/stages.yml`. The stamp is fresh for 24 hours while both match (design decision 2026-10-04). The version is the one set by hand in `pyproject.toml`, `5.0.0` at `537fc20`, so a rebuilt image does not renew the stamp unless the version changed; a changed stage table does.
+After a pass the tick writes the stamp `factory-preflight-ok`: the factory's package version and the first 12 hex digits of the SHA-256 of `factory/stages.yml`. The stamp is fresh for 24 hours while both match (design decision 2026-10-04). The version is the one set by hand in `pyproject.toml`, `5.0.0` at `930c61a`, so a rebuilt image does not renew the stamp unless the version changed; a changed stage table does.
 
 ### Machine state
 
