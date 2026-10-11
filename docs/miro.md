@@ -25,4 +25,4 @@ The earlier attempts (the reference book under `docs/reference/`, a second sessi
 
 The humans change, move or comment on the board and then say „schau drauf“ in the chat. Claude reads the comments and the changed areas, answers in the comment threads, and does the next step: one concept gets its own frame, or the table changes. Nothing is added that the step did not ask for.
 
-The Miro MCP allows a limited number of calls, so a step should batch its board changes into few calls: one `canvas_update_from_svg` per step where possible, images by public URL in the same call instead of uploading them one by one.
+The Miro MCP allows 500 calls a day, so a step batches its board changes into few calls, three to five in all: read the comments, read only the area that changed, make one `canvas_update_from_svg` with every change in it, and pull in images by public URL in that same call instead of uploading them one by one. No preview, overview search or verifying read unless the step needs it.
