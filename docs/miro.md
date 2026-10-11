@@ -15,11 +15,14 @@ The earlier attempts (the reference book under `docs/reference/`, a second sessi
 ## What is on it
 
 - *Spielregeln*: the five rules above.
-- *1. Die Factory auf einen Blick*: the human, the repository, the pull request, tick, watcher, dispatcher and the stage agent as one Mermaid diagram (after figure 1-1 of the reference), and three statements.
+- *1. Die Factory auf einen Blick*: the human, the repository, the pull request, tick, watcher, dispatcher and the stage agent (after figure 1-1 of the reference), and three statements.
 - *2. Die 7 Kernkonzepte*: a table of the seven candidates with one sentence each, the existing diagram that shows it, and a status (*Kandidat*, *Verstanden*, *Justiert*, *Verworfen*).
 - *Offene Fragen*: the questions the current step ends with.
 - *Parkplatz*: what is deliberately not worked out now.
-- *Bestand*: the ten diagrams of `docs/diagrams/`, loaded from `main`, as material to look things up in.
+- *01* to *10*: the ten diagrams of `docs/diagrams/`, one frame each, in English as in the repository.
+- *Bestand*: the same ten diagrams as images, from the first step.
+
+Every diagram on the board is built from native Miro shapes, connectors and text, not from an image or a Mermaid widget, so the humans can move, rename, recolour and reconnect them and Claude reads exactly what changed. `docs/diagrams/to_miro.py` made the ten from `draw.py` (`python3 docs/diagrams/to_miro.py 01,02 > out.svg`, then the SVG to `canvas_create_from_svg`). It keeps the boxes, texts, colours and which side an arrow leaves and enters; Miro routes the arrows itself, so a crowded spot (the four ways back into `doing` in 01) may need tidying by hand. From here the board is where the diagrams change; a change worth keeping goes back into `draw.py` by hand, when the humans ask for it.
 
 ## How a step works
 
